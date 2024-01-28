@@ -125,14 +125,14 @@ do -- Default gearbox menus
 				local Default = ValuesData[Variable]
 
 				if not Default then
-					Default = math.Clamp(I * 0.1, -1, 1)
+					Default = math.Clamp(  ( 1 - ( I/Gears.Max ) )*4, -10, 10)
 
 					ValuesData[Variable] = Default
 				end
 
 				ACF.SetClientData(Variable, Default)
 
-				local Control = GearBase:AddSlider("Gear " .. I, -1, 1, 2)
+				local Control = GearBase:AddSlider("Gear Ratio" .. I, -10, 10, 3)
 				Control:SetClientData(Variable, "OnValueChanged")
 				Control:DefineSetter(function(Panel, _, _, Value)
 					Value = math.Round(Value, 2)
@@ -151,7 +151,8 @@ do -- Default gearbox menus
 
 			ACF.SetClientData("FinalDrive", ValuesData.FinalDrive)
 
-			local FinalDrive = GearBase:AddSlider("Final Drive", -1, 1, 2)
+			
+			local FinalDrive = GearBase:AddSlider("Final Drive", -10, 10, 3)
 			FinalDrive:SetClientData("FinalDrive", "OnValueChanged")
 			FinalDrive:DefineSetter(function(Panel, _, _, Value)
 				Value = math.Round(Value, 2)
@@ -162,6 +163,8 @@ do -- Default gearbox menus
 
 				return Value
 			end)
+			
+
 		end
 	end
 
@@ -170,10 +173,10 @@ do -- Default gearbox menus
 			{
 				Name = "Gear 2",
 				Variable = "Gear2",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
-				Default = -0.1,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
+				Default = -3,
 			},
 			{
 				Name = "Min Target RPM",
@@ -194,10 +197,10 @@ do -- Default gearbox menus
 			{
 				Name = "Final Drive",
 				Variable = "FinalDrive",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
-				Default = 1,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
+				Default = 3,
 			},
 		}
 
@@ -255,17 +258,17 @@ do -- Default gearbox menus
 			{
 				Name = "Reverse Gear",
 				Variable = "Reverse",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
 				Default = -0.1,
 			},
 			{
 				Name = "Final Drive",
 				Variable = "FinalDrive",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
 				Default = 1,
 			},
 		}
@@ -351,14 +354,14 @@ do -- Default gearbox menus
 				local DefGear = ValuesData[GearVar]
 
 				if not DefGear then
-					DefGear = math.Clamp(I * 0.1, -1, 1)
+					DefGear = math.Clamp(I * 0.1, -10, 10)
 
 					ValuesData[GearVar] = DefGear
 				end
 
 				ACF.SetClientData(GearVar, DefGear)
 
-				local Gear = GearBase:AddSlider("Gear " .. I, -1, 1, 2)
+				local Gear = GearBase:AddSlider("Gear " .. I, -10, 10, 3)
 				Gear:SetClientData(GearVar, "OnValueChanged")
 				Gear:DefineSetter(function(Panel, _, _, Value)
 					Value = math.Round(Value, 2)
@@ -423,7 +426,7 @@ do -- Default gearbox menus
 			Unit:ChooseOptionID(1)
 
 			-----------------------------------
-
+			/*
 			local GenBase = Menu:AddCollapsible("Shift Point Generator")
 
 			for _, PanelData in ipairs(GenData) do
@@ -463,14 +466,16 @@ do -- Default gearbox menus
 				local TotalRatio = ValuesData.TotalRatio
 				local FinalDrive = ValuesData.FinalDrive
 				local WheelDiameter = ValuesData.WheelDiameter
-				local Multiplier = math.pi * UpshiftRPM * TotalRatio * FinalDrive * WheelDiameter / (60 * UnitMult)
+				--local Multiplier = math.pi * UpshiftRPM * TotalRatio * FinalDrive * WheelDiameter / (60 * UnitMult)
+				local Multiplier = ( (math.pi * UpshiftRPM * WheelDiameter) / (FinalDrive) ) * (60 * UnitMult)
 
 				for I = 1, Gears.Max do
 					local Gear = ValuesData["Gear" .. I]
 
-					ACF.SetClientData("Shift" .. I, Gear * Multiplier)
+					ACF.SetClientData("Shift" .. I, Gear / Multiplier)
 				end
 			end
+			*/
 		end
 	end
 end
