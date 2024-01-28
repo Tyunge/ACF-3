@@ -76,7 +76,7 @@ do -- Spawn and Update functions -----------------------
 					Data["Gear" .. I] = nil
 				end
 
-				Gears[I] = Clamp(Gear, -1, 1)
+				Gears[I] = Clamp(Gear, -10, 10)
 			end
 		end
 
@@ -89,7 +89,7 @@ do -- Spawn and Update functions -----------------------
 				Data.Gear0 = nil
 			end
 
-			Data.FinalDrive = Clamp(Final, -1, 1)
+			Data.FinalDrive = Clamp(Final, -10, 10)
 		end
 
 		do -- External verifications
@@ -507,7 +507,7 @@ do -- Inputs -------------------------------------------
 	ACF.AddInputAction("acf_gearbox", "CVT Ratio", function(Entity, Value)
 		if not Entity.CVT then return end
 
-		Entity.CVTRatio = Clamp(Value, 0, 1)
+		Entity.CVTRatio = Clamp(Value, 0, 10)
 	end)
 
 	ACF.AddInputAction("acf_gearbox", "Steer Rate", function(Entity, Value)
@@ -754,9 +754,9 @@ do -- Movement -----------------------------------------
 
 		if self.CVT and self.Gear == 1 then
 			if self.CVTRatio > 0 then
-				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 1)
+				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 10)
 			else
-				self.Gears[1] = Clamp((InputRPM - self.MinRPM) / (self.MaxRPM - self.MinRPM), 0.05, 1)
+				self.Gears[1] = Clamp((InputRPM - self.MinRPM) / (self.MaxRPM - self.MinRPM), 0.05, 10)
 			end
 
 			self.GearRatio = self.Gears[1] * self.FinalDrive
