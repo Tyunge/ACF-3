@@ -12,6 +12,7 @@ local Utilities = ACF.Utilities
 local Clock     = Utilities.Clock
 local Clamp     = math.Clamp
 local HookRun   = hook.Run
+local Round     = math.Round
 
 local function CalcWheel(Entity, Link, Wheel, SelfWorld)
 	local WheelPhys = Wheel:GetPhysicsObject()
@@ -40,6 +41,7 @@ do -- Spawn and Update functions -----------------------
 	local Outputs = {
 		"Current Gear (Returns the gear currently in use.)",
 		"Ratio (Returns the current gear ratio, based on the current gear and final drive.)",
+		"Torque Output (Current torque, in nM, output by the gearbox.)",
 		"Entity (The gearbox itself.) [ENTITY]"
 	}
 
@@ -266,6 +268,7 @@ do -- Spawn and Update functions -----------------------
 		Entity.LClutch        = 1
 		Entity.RClutch        = 1
 		Entity.DataStore      = Entities.GetArguments("acf_gearbox")
+		Entity.InputRPM		  = 0
 
 		UpdateGearbox(Entity, Data, Class, Gearbox)
 
@@ -424,6 +427,13 @@ do -- Spawn and Update functions -----------------------
 		return true, "Gearbox updated successfully!" .. Feedback
 	end
 end ----------------------------------------------------
+--===============================================================================================--
+-- Meta Funcs
+--===============================================================================================--
+function ENT:UpdateOutputs()
+	if not IsValid(self) then return end
+	WireLib.TriggerOutput(self, "Torque Output", Round(self.TorqueOutput))
+end
 
 do -- Inputs -------------------------------------------
 	local function SetCanApplyBrakes(Gearbox)
@@ -738,26 +748,45 @@ do -- Movement -----------------------------------------
 
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
 		
-		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(math.deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
+		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(-Torque * 1.356 * DeltaTime, -500000, 500000))
+
 	end
 
-	function ENT:Calc(InputRPM, InputInertia)
+	function ENT:getInputRPM()
+		return self.InputRPM
+	end
+
+	function ENT:getClutch()
+		if self.LClutch == 0 or self.RClutch == 0 then
+			return 1
+		end
+
+		return 0
+	end
+
+	function ENT:getGear()
+		return self.Gear	
+	end
+
+	function ENT:Calc(InputTorque)
 		if self.Disabled then return 0 end
 		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
+		InputTorque = math.min(InputTorque, self.MaxTorque)
 
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
 		end
-		
 
 		local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
-
+		self.TorqueOutput = 0
+		
+		
 		if self.CVT and self.Gear == 1 then
 			if self.CVTRatio > 0 then
 				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 10)
 			else
-				local range = Clamp((InputRPM - self.MinRPM) / (self.MaxRPM - self.MinRPM), 0.05, 1)
+				local range = Clamp((self.InputRPM - self.MinRPM) / (self.MaxRPM - self.MinRPM), 0.05, 1)
 				self.Gears[1] = Clamp(  (1-range)*10 , 0.05, 10)
 			end
 
@@ -775,83 +804,57 @@ do -- Movement -----------------------------------------
 				self:ChangeGear(self.Gear - 1)
 			end
 		end
-
-		self.TotalReqTq = 0
-		self.TorqueOutput = 0
-
+		
+		
+		local AverageGearRPM = 0
 		for Ent, Link in pairs(self.GearboxOut) do
 			local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
-
-			Link.ReqTq = 0
+			
+			
+			AverageGearRPM = AverageGearRPM + Ent:getInputRPM()*self.GearRatio
 
 			if not Ent.Disabled then
-				local Inertia = 0
-
-				if self.GearRatio ~= 0 then
-					Inertia = InputInertia * self.GearRatio
-				end
-
-				if self.GearRatio == 0 then
-					Link.ReqTq = math.abs(Ent:Calc(0, Inertia)) * Clutch
-				else
-					Link.ReqTq = math.abs(Ent:Calc(InputRPM / self.GearRatio, Inertia) / self.GearRatio) * Clutch
-				end
-				
-				self.TotalReqTq = self.TotalReqTq + math.abs(Link.ReqTq)
+				Link.ReqTq = math.abs(Ent:Calc(InputTorque*self.GearRatio))
 			end
 		end
- 
+		AverageGearRPM = AverageGearRPM/table.Count(self.GearboxOut)
+		self.InputRPM = AverageGearRPM
+
+		local AverageRPM = 0
 		for Wheel, Link in pairs(self.Wheels) do
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
-
-			Link.ReqTq = 0
-
+			
 			if self.GearRatio ~= 0 then
 				local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
-				local OnRPM = ((InputRPM > 0 and RPM < InputRPM) or (InputRPM < 0 and RPM > InputRPM))
-
-				if Clutch > 0 and OnRPM then
-					local Multiplier = 1
-
-					if self.DoubleDiff and self.SteerRate ~= 0 then
-						local Rate = self.SteerRate * 2
-
-						-- this actually controls the RPM of the wheels, so the steering rate is correct
-						if Link.Side == 0 then
-							Multiplier = math.min(0, Rate) + 1
-						else
-							Multiplier = -math.max(0, Rate) + 1
-						end
-					end
-
-					Link.ReqTq = (InputRPM * Multiplier - RPM) * InputInertia * Clutch
-					
-					self.TotalReqTq = self.TotalReqTq + math.abs(Link.ReqTq)
-				end
+				Link.ReqTq = InputTorque * self.GearRatio
 			end
+			AverageRPM = AverageRPM + RPM
+		end
+		AverageRPM = AverageRPM/table.Count(self.Wheels)
+		
+		if table.Count(self.Wheels) > 0 then
+			self.InputRPM = AverageRPM
 		end
 
-		self.TorqueOutput = math.min(self.TotalReqTq, self.MaxTorque)
+		self.TorqueOutput = InputTorque*self.GearRatio
 		
 		self:UpdateOverlay()
+		self:UpdateOutputs()
 
 		return self.TorqueOutput
 	end
-
+	
 	function ENT:Act(Torque, DeltaTime, MassRatio)
 		if self.Disabled then return end
 
-		local Loss = Clamp(((1 - 0.4) / 0.5) * ((self.ACF.Health / self.ACF.MaxHealth) - 1) + 1, 0.4, 1) --internal torque loss from damaged
-		local Slop = self.Automatic and 0.9 or 1 --internal torque loss from inefficiency
+		local Loss = Clamp(((1 - 0.4) / 0.5) * ((self.ACF.Health / self.ACF.MaxHealth) - 1) + 1, 0.4, 1) --internal torque loss from damaged. What an awful looking formula
 		local ReactTq = 0
 		-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 		local AvailTq = 0
 
 		if Torque ~= 0 and self.GearRatio ~= 0 then
-			AvailTq = math.min(math.abs(Torque) / self.TotalReqTq, 1) * self.GearRatio * -(-Torque / math.abs(Torque)) * Loss * Slop
+			AvailTq = math.min(math.abs(Torque) / self.TotalReqTq, 1) * self.GearRatio * -(-Torque / math.abs(Torque)) * Loss
 		end
-		
-		
 
 		for Ent, Link in pairs(self.GearboxOut) do
 			Ent:Act(Link.ReqTq * AvailTq, DeltaTime, MassRatio)
@@ -862,7 +865,7 @@ do -- Movement -----------------------------------------
 			if not self.Braking or not Link.IsBraking then
 				local WheelTorque = Link.ReqTq * AvailTq
 				ReactTq = ReactTq + WheelTorque
-
+				
 				ActWheel(Link, Ent, WheelTorque, DeltaTime)
 			end
 		end
@@ -871,7 +874,7 @@ do -- Movement -----------------------------------------
 			local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
 
 			if IsValid(BoxPhys) then
-				BoxPhys:ApplyTorqueCenter(self:GetRight() * Clamp(2 * math.deg(ReactTq * MassRatio) * DeltaTime, -500000, 500000))
+				BoxPhys:ApplyTorqueCenter(self:GetRight() * Clamp(2 * ReactTq * MassRatio * DeltaTime, -500000, 500000))
 			end
 		end
 

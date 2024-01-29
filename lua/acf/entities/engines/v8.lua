@@ -8,18 +8,19 @@ Engines.Register("V8", {
 
 do -- Petrol Engines
 	Engines.RegisterItem("5.7-V8", "V8", {
-		Name		 = "5.7L V8 Petrol",
-		Description	 = "Car sized petrol engine, good power and mid range torque",
-		Model		 = "models/engines/v8s.mdl",
-		Sound		 = "acf_base/engines/v8_petrolsmall.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 260,
-		Torque		 = 389,
-		FlywheelMass = 0.15,
+		Name		 	= "5.7L V8 Petrol",
+		Description	 	= "Car sized petrol engine, good power and mid range torque",
+		Model		 	= "models/engines/v8s.mdl",
+		Sound		 	= "acf_base/engines/v8_petrolsmall.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 260,
+		Torque		 	= 389,
+		FlywheelRadius 	= 0.381,
+		FlywheelMass 	= 5,
 		RPM = {
-			Idle	= 800,
-			Limit	= 5700,
+			Idle		= 800,
+			Limit		= 5700,
 		},
 		Preview = {
 			FOV = 100,
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 400,
 		Torque		 = 576,
-		FlywheelMass = 0.25,
+		FlywheelRadius = 0.381,
+		FlywheelMass = 7,
 		RPM = {
 			Idle	= 700,
 			Limit	= 5500,
