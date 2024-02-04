@@ -69,7 +69,8 @@ do
 		local Link = {
 			Rope = Rope,
 			RopeLen = (OutPos - InPos):Length(),
-			ReqTq = 0
+			InputTorque = 0,
+			InputRPM = 0
 		}
 
 		Engine.Gearboxes[Target] = Link
@@ -223,7 +224,7 @@ end
 local function Sign(number)
 	if number < 0 then return -1 end
 	if number == 0 then return 0 end
-	if number > 0 then return 0 end
+	if number > 0 then return 1 end
 end
 --===============================================================================================--
 
@@ -379,10 +380,11 @@ do -- Spawn and Update functions
 		Entity.Throttle  = 0
 		Entity.FlyRPM    = 0     -- This is the rpm the engine is currently at. Uses a mix between DriveTrainRPM & FreeRevRPM, depending on gear & clutch usage.
 		Entity.DriveTrainRPM = 0 -- This is the rpm give to FlyRPM when connected to transmission
-		Entity.FreeRevRPM 	 = 0 -- This is used for when the engine is out of gear and disconnected.
 		Entity.SoundPath = Engine.Sound
 		Entity.DataStore = Entities.GetArguments("acf_engine")
 		Entity.revLimiterEnabled = true
+
+		Entity.maxRotationalFriction = Engine.Torque*0.25
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -696,7 +698,13 @@ function ENT:CalcRPM()
 			self.RevLimited = false
 		end
 	end
-	local Throttle = self.RevLimited and 0 or self.Throttle
+
+	local IdleThrottle = 0
+
+	if self.FlyRPM < self.IdleRPM then
+		IdleThrottle = Remap(self.FlyRPM/self.IdleRPM, 0, 1, 0, 0.25)
+	end
+	local Throttle = self.RevLimited and 0 or math.Clamp(self.Throttle + IdleThrottle,0,1)
 
 	-- Calculate fuel usage
 	if IsValid(FuelTank) then
@@ -716,66 +724,45 @@ function ENT:CalcRPM()
 		return 0
 	end
 
-	-- Calculate the current torque from flywheel RPM
 	local Percent = Remap(self.FlyRPM, 0, self.LimitRPM, 0, 1)
 
+	-- Similar to 'Percent' but with no upper limit.
+	local RPMRatio = self.FlyRPM/self.LimitRPM
+
 	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
-	local Boxes      = 0
-	local TotalReqTq = 0
+	local Boxes      = 1
 	local engineLoadFactor = 0
-	local inGear = 0
+	local inGear = 1
+	local clutchActive = 0
 
-	-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
 	for Ent, Link in pairs(self.Gearboxes) do
-		if not Ent.Disabled then
-			Boxes = Boxes + 1
-			self.DriveTrainRPM = Ent:getInputRPM()
-			engineLoadFactor = 1-Ent:getClutch()
-			inGear = inGear + math.min(1, Ent:getGear())
-
-			Link.ReqTq = Ent:Calc(self.Torque)
-			
-			TotalReqTq = TotalReqTq + Link.ReqTq
-		end
+		if Ent.Disabled then return end
+		Ent:CalculateTorque(self.Torque, DeltaTime)	
+		inGear = inGear * Sign(Ent.Gear)
+		clutchActive = 1-Sign(Ent.LClutch + Ent.RClutch)
+		
+		self.DriveTrainRPM = Ent.InputRPM
 	end
 
-	if inGear == 0 then
-		engineLoadFactor = 0
+	if inGear > 0 then
+		engineLoadFactor = 1 - clutchActive
 	end
 
-    local frictionalCoefficient = self.PeakTorque*0.25
-    local frictionalPower = (self.FlyRPM/self.LimitRPM)*frictionalCoefficient
-
-    local rpmAcceleration = self.Torque/self.Inertia
-    local rpmDeceleration = (frictionalPower/self.Inertia)
-    local accelerationSum = rpmAcceleration-rpmDeceleration
+    local engineFriction = RPMRatio*self.maxRotationalFriction
+	local rpmAcceleration = (self.Torque - engineFriction)/self.Inertia
 
 	self.DriveTrainRPM = self.DriveTrainRPM/Boxes
-	self.FreeRevRPM = accelerationSum
 
 	local rpmDifference = self.DriveTrainRPM - self.FlyRPM
-	local powerDifference = ((math.abs(rpmDifference)/self.LimitRPM) * self.PeakTorque) * Sign(rpmDifference)
-	local accelerationDifference = ((powerDifference/self.Inertia)) + rpmDeceleration
+	local powerDifference = ((rpmDifference/self.LimitRPM) * self.PeakTorque)
+	local driveTrainAcceleration = (powerDifference - engineFriction)/self.Inertia
 
-	local finalAccelerationSum = ((self.FreeRevRPM)*(1-engineLoadFactor)) + (accelerationDifference*engineLoadFactor)
-
-	self.FlyRPM = math.max(self.FlyRPM + finalAccelerationSum,0)
+	local finalAccelerationSum = (rpmAcceleration*(1-engineLoadFactor)) + (driveTrainAcceleration*engineLoadFactor)
+	
+	self.FlyRPM = math.max(0, self.FlyRPM + finalAccelerationSum)
 	
 	self.Torque = Throttle * ACF.GetTorque(self.TorqueCurve, Percent) * self.PeakTorque * (self.FlyRPM < self.LimitRPM and 1 or 0)
-	
-	-- This is the presently available torque from the engine
-	local TorqueDiff = max(self.FlyRPM, 0) * self.Inertia
-	-- Calculate the ratio of total requested torque versus what's available
-	local AvailRatio = min(TorqueDiff / TotalReqTq / Boxes, 1)
-	
-	-- Split the torque fairly between the gearboxes who need it
-	for Ent, Link in pairs(self.Gearboxes) do
-		if not Ent.Disabled then
-			Ent:Act(Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio)
-		end
-	end
 
-	-- self.FlyRPM = self.FlyRPM - min(TorqueDiff, TotalReqTq) / self.Inertia
 	self.LastThink = Clock.CurTime
 
 	self:UpdateSound()
