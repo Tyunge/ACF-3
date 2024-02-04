@@ -756,7 +756,7 @@ do -- Movement -----------------------------------------
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
 		
 		--Phys:ApplyTorqueCenter(TorqueAxis * Clamp(-Torque * 2 * DeltaTime, -500000, 500000))
-		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(math.deg(-Torque/39.97) * DeltaTime, -500000, 500000))
+		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(math.deg(-Torque/6) * DeltaTime, -500000, 500000))
 	end
 
 
