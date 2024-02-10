@@ -16,7 +16,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 110,
 		Torque		 = 206,
-		FlywheelMass = 0.3,
+		FlywheelMass = 8,
 		RPM = {
 			Idle	= 650,
 			Limit	= 4000,
@@ -35,7 +35,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 275,
 		Torque		 = 600,
-		FlywheelMass = 1.05,
+		FlywheelMass = 13,
 		RPM = {
 			Idle	= 600,
 			Limit	= 3900,

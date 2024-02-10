@@ -16,7 +16,7 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 15,
 		Torque		 = 25,
-		FlywheelMass = 0.005,
+		FlywheelMass = 0.25,
 		RPM = {
 			Idle	= 1200,
 			Limit	= 7500,
@@ -35,7 +35,7 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 20,
 		Torque		 = 50,
-		FlywheelMass = 0.005,
+		FlywheelMass = 0.5,
 		RPM = {
 			Idle	= 900,
 			Limit	= 8000,
@@ -54,7 +54,7 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 50,
 		Torque		 = 112,
-		FlywheelMass = 0.1,
+		FlywheelMass = 1,
 		RPM = {
 			Idle	= 600,
 			Limit	= 6700,

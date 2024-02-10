@@ -9,15 +9,14 @@ Engines.Register("V8", {
 do -- Petrol Engines
 	Engines.RegisterItem("5.7-V8", "V8", {
 		Name		 	= "5.7L V8 Petrol",
-		Description	 	= "Car sized petrol engine, good power and mid range torque",
+		Description	 	= "Vroom",
 		Model		 	= "models/engines/v8s.mdl",
 		Sound		 	= "acf_base/engines/v8_petrolsmall.wav",
 		Fuel		 	= { Petrol = true },
 		Type		 	= "GenericPetrol",
 		Mass		 	= 260,
 		Torque		 	= 389,
-		FlywheelRadius 	= 0.381,
-		FlywheelMass 	= 5,
+		FlywheelMass 	= 13,		-- Kg
 		RPM = {
 			Idle		= 800,
 			Limit		= 5700,
@@ -28,19 +27,18 @@ do -- Petrol Engines
 	})
 
 	Engines.RegisterItem("9.0-V8", "V8", {
-		Name		 = "9.0L V8 Petrol",
-		Description	 = "Thirsty, giant V8, for medium applications",
-		Model		 = "models/engines/v8m.mdl",
-		Sound		 = "acf_base/engines/v8_petrolmedium.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 400,
-		Torque		 = 576,
-		FlywheelRadius = 0.381,
-		FlywheelMass = 7,
+		Name		 	= "9.0L V8 Petrol",
+		Description	 	= "Thirsty, giant V8, for medium applications",
+		Model		 	= "models/engines/v8m.mdl",
+		Sound		 	= "acf_base/engines/v8_petrolmedium.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 400,
+		Torque		 	= 576,
+		FlywheelMass 	= 18,		-- Kg
 		RPM = {
-			Idle	= 700,
-			Limit	= 5500,
+			Idle		= 700,
+			Limit		= 5500,
 		},
 		Preview = {
 			FOV = 100,
@@ -48,18 +46,18 @@ do -- Petrol Engines
 	})
 
 	Engines.RegisterItem("18.0-V8", "V8", {
-		Name		 = "18.0L V8 Petrol",
-		Description	 = "American gasoline tank V8, good overall power and torque and fairly lightweight",
-		Model		 = "models/engines/v8l.mdl",
-		Sound		 = "acf_base/engines/v8_petrollarge.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 850,
-		Torque		 = 1848,
-		FlywheelMass = 2.8,
+		Name		 	= "18.0L V8 Petrol",
+		Description	 	= "American gasoline tank V8, good overall power and torque and fairly lightweight",
+		Model		 	= "models/engines/v8l.mdl",
+		Sound		 	= "acf_base/engines/v8_petrollarge.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 850,
+		Torque		 	= 1848,
+		FlywheelMass 	= 120,		-- Kg
 		RPM = {
-			Idle	= 600,
-			Limit	= 3000,
+			Idle		= 600,
+			Limit		= 3000,
 		},
 		Preview = {
 			FOV = 100,
@@ -69,18 +67,18 @@ end
 
 do -- Diesel Engines
 	Engines.RegisterItem("4.5-V8", "V8", {
-		Name		 = "4.5L V8 Diesel",
-		Description	 = "Light duty diesel v8, good for light vehicles that require a lot of torque",
-		Model		 = "models/engines/v8s.mdl",
-		Sound		 = "acf_base/engines/v8_dieselsmall.wav",
-		Fuel		 = { Diesel = true },
-		Type		 = "GenericDiesel",
-		Mass		 = 320,
-		Torque		 = 446,
-		FlywheelMass = 0.75,
+		Name		 	= "4.5L V8 Diesel",
+		Description	 	= "Light duty diesel v8, good for light vehicles that require a lot of torque",
+		Model		 	= "models/engines/v8s.mdl",
+		Sound		 	= "acf_base/engines/v8_dieselsmall.wav",
+		Fuel		 	= { Diesel = true },
+		Type		 	= "GenericDiesel",
+		Mass		 	= 320,
+		Torque		 	= 446,
+		FlywheelMass 	= 22,		-- Kg
 		RPM = {
-			Idle	= 800,
-			Limit	= 4000,
+			Idle		= 800,
+			Limit		= 4000,
 		},
 		Preview = {
 			FOV = 100,
@@ -88,18 +86,18 @@ do -- Diesel Engines
 	})
 
 	Engines.RegisterItem("7.8-V8", "V8", {
-		Name		 = "7.8L V8 Diesel",
-		Description	 = "Redneck chariot material. Truck duty V8 diesel, has a good, wide powerband",
-		Model		 = "models/engines/v8m.mdl",
-		Sound		 = "acf_base/engines/v8_dieselmedium2.wav",
-		Fuel		 = { Diesel = true },
-		Type		 = "GenericDiesel",
-		Mass		 = 520,
-		Torque		 = 870,
-		FlywheelMass = 1.6,
+		Name		 	= "7.8L V8 Diesel",
+		Description	 	= "Redneck chariot material. Truck duty V8 diesel, has a good, wide powerband",
+		Model		 	= "models/engines/v8m.mdl",
+		Sound		 	= "acf_base/engines/v8_dieselmedium2.wav",
+		Fuel		 	= { Diesel = true },
+		Type		 	= "GenericDiesel",
+		Mass		 	= 520,
+		Torque		 	= 870,
+		FlywheelMass 	= 38,		-- Kg
 		RPM = {
-			Idle	= 650,
-			Limit	= 3800,
+			Idle		= 650,
+			Limit		= 3800,
 		},
 		Preview = {
 			FOV = 100,
@@ -115,7 +113,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 1200,
 		Torque		 = 3308,
-		FlywheelMass = 4.5,
+		FlywheelMass = 350,
 		RPM = {
 			Idle	= 500,
 			Limit	= 2000,

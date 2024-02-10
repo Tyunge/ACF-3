@@ -17,7 +17,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 200,
 		Torque		 = 589,
-		FlywheelMass = 2.9,
+		FlywheelMass = 30,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 1400,
@@ -38,7 +38,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 400,
 		Torque		 = 1312,
-		FlywheelMass = 4.3,
+		FlywheelMass = 200,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 1800,
@@ -59,7 +59,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 1100,
 		Torque		 = 2500,
-		FlywheelMass = 10.5,
+		FlywheelMass = 500,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 2000,

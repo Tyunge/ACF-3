@@ -5,6 +5,16 @@ include("shared.lua")
 
 local ACF = ACF
 
+--[[
+	TO-DO:
+		FIX: Frictional Coefficient is shit-ass.	
+			Issue: low torque engines can't idle or hit their rev limit.
+			Issue: High torque-Low RPM engines (The big 1XLiters) are also dog shit currently.
+			Issue: Electric engines are Wonky with their frictional deceleration.
+			Issue: Turbine RPM should be treated completely different from normal engines
+
+]]
+
 --===============================================================================================--
 -- Engine class setup
 --===============================================================================================--
@@ -306,9 +316,9 @@ do -- Spawn and Update functions
 		Entity.LimitRPM         = Engine.RPM.Limit
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
-		Entity.FlywheelRadius	= Engine.FlywheelRadius
 		Entity.FlywheelMass     = Engine.FlywheelMass
-		Entity.Inertia          = (Engine.FlywheelMass * Entity.FlywheelRadius ^ 2) / 2
+		Entity.FlywheelRadius	= 0.26 -- I don't feel its necessary to give each engine a radius when we can just increase the mass. Hyper realism is not needed here.
+		Entity.Inertia          = Engine.FlywheelMass * (Entity.FlywheelRadius ^ 2) 
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
 		Entity.FuelTypes        = Engine.Fuel or { Petrol = true }
@@ -744,9 +754,11 @@ function ENT:CalcRPM()
 		self.DriveTrainRPM = Ent.InputRPM
 	end
 
-	if inGear > 0 then
+	if inGear > 0 && table.Count(self.Gearboxes) > 0 then
 		engineLoadFactor = 1 - clutchActive
 	end
+
+	
 
     local engineFriction = RPMRatio*self.maxRotationalFriction
 	local rpmAcceleration = (self.Torque - engineFriction)/self.Inertia

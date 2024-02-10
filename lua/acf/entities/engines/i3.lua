@@ -16,7 +16,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 40,
 		Torque		 = 118,
-		FlywheelMass = 0.05,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 1100,
 			Limit	= 6000,
@@ -35,7 +35,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 170,
 		Torque		 = 243,
-		FlywheelMass = 0.2,
+		FlywheelMass = 4,
 		RPM = {
 			Idle	= 900,
 			Limit	= 6800,
@@ -54,7 +54,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 500,
 		Torque		 = 893,
-		FlywheelMass = 3.7,
+		FlywheelMass = 28, -- Big engines need big flywheel. I don't like how long it takes for them to rev down though. Leave along for now and wait to see if the tank community complains.
 		RPM = {
 			Idle	= 500,
 			Limit	= 3900,
@@ -75,7 +75,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 65,
 		Torque		 = 187,
-		FlywheelMass = 0.2,
+		FlywheelMass = 5,
 		RPM = {
 			Idle	= 550,
 			Limit	= 3000,
@@ -94,7 +94,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 200,
 		Torque		 = 362,
-		FlywheelMass = 1,
+		FlywheelMass = 8,
 		RPM = {
 			Idle	= 600,
 			Limit	= 3800
@@ -113,7 +113,7 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 650,
 		Torque		 = 1500,
-		FlywheelMass = 5,
+		FlywheelMass = 50,
 		RPM = {
 			Idle	= 550,
 			Limit	= 2000
