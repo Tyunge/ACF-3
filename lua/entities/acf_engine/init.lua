@@ -8,8 +8,6 @@ local ACF = ACF
 --[[
 	TO-DO:
 		FIX: Frictional Coefficient is shit-ass.	
-			Issue: low torque engines can't idle or hit their rev limit.
-			Issue: High torque-Low RPM engines (The big 1XLiters) are also dog shit currently.
 			Issue: Electric engines are Wonky with their frictional deceleration.
 			Issue: Turbine RPM should be treated completely different from normal engines
 
@@ -744,9 +742,11 @@ function ENT:CalcRPM()
 	local inGear = 1
 	local clutchActive = 0
 
+	local engineBrakeTorque = ( self.Displacement*self.FlyRPM/60 )*(1-Sign(Throttle))
+
 	for Ent, Link in pairs(self.Gearboxes) do
 		if Ent.Disabled then return end
-		Ent:CalculateTorque(self.Torque, DeltaTime)	
+		Ent:CalculateTorque(self.Torque, engineBrakeTorque*0.125, DeltaTime)	
 		inGear = inGear * Sign(Ent.Gear)
 		clutchActive = 1-Sign(Ent.LClutch + Ent.RClutch)
 		
@@ -757,9 +757,6 @@ function ENT:CalcRPM()
 		engineLoadFactor = 1 - clutchActive
 	end
 
-	
-
-    local engineBrakeTorque = ( self.Displacement*self.FlyRPM/60 )*(1-Sign(Throttle))
 	local rpmAcceleration = (self.Torque - engineBrakeTorque)/self.Inertia
 
 	self.DriveTrainRPM = self.DriveTrainRPM/Boxes

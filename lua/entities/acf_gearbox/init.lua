@@ -760,7 +760,7 @@ do -- Movement -----------------------------------------
 	end
 
 
-	function ENT:CalculateTorque(InputTorque, DeltaTime)
+	function ENT:CalculateTorque(InputTorque, EngineBrakeTorque, DeltaTime)
 		if self.Disabled then return 0 end
 		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
 
@@ -769,8 +769,8 @@ do -- Movement -----------------------------------------
 		local reactTq = 0
 
 		--Limit the input torque to the gearbox torque limit. 
-		self.TorqueInput = math.min(InputTorque, self.MaxTorque)
-		self.TorqueOutput = self.TorqueInput*self.GearRatio
+		self.TorqueInput = math.min(InputTorque-EngineBrakeTorque, self.MaxTorque)
+		self.TorqueOutput = (self.TorqueInput*self.GearRatio)
 		
 		--Gear change delay
 		if self.ChangeFinished < Clock.CurTime then
@@ -782,15 +782,21 @@ do -- Movement -----------------------------------------
 		self.InputRPM = 0
 
 		if( table.Count(self.GearboxOut) > 0 ) then
+
+			self.TorqueOutput = self.TorqueOutput/table.Count(self.GearboxOut)
+
 			for Ent, Link in pairs(self.GearboxOut) do
 				local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
 				self.InputRPM = self.InputRPM + Ent.InputRPM * self.GearRatio
-				Ent:CalculateTorque(self.TorqueOutput, DeltaTime)
+				Ent:CalculateTorque(self.TorqueOutput,EngineBrakeTorque, DeltaTime)
 			end
 			self.InputRPM = self.InputRPM / table.Count(self.GearboxOut)
 		end
 
 		if( table.Count(self.Wheels) > 0 ) then
+
+			self.TorqueOutput = self.TorqueOutput/table.Count(self.Wheels)
+
 			for Wheel, Link in pairs(self.Wheels) do
 				local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
 				
@@ -799,7 +805,7 @@ do -- Movement -----------------------------------------
 				if self.GearRatio != 0 then
 					local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
 					self.InputTorque = InputTorque * self.GearRatio
-					ActWheel(Link, Wheel, self.TorqueOutput, DeltaTime)
+					ActWheel(Link, Wheel, self.TorqueOutput/table.Count(self.Wheels), DeltaTime)
 
 					reactTq = reactTq + self.TorqueOutput
 					if reactTq ~= 0 then
