@@ -16,6 +16,7 @@ do
 		Type		 = "Radial",
 		Mass		 = 210,
 		Torque		 = 387,
+		Displacement = 3.8,
 		FlywheelMass = 8,
 		RPM = {
 			Idle	= 700,
@@ -35,6 +36,7 @@ do
 		Type		 = "Radial",
 		Mass		 = 385,
 		Torque		 = 700,
+		Displacement = 11,
 		FlywheelMass = 12,
 		RPM = {
 			Idle	= 600,
@@ -54,6 +56,7 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 450,
 		Torque		 = 1000,
+		Displacement = 8.0,
 		FlywheelMass = 50,
 		RPM = {
 			Idle	= 400,
@@ -73,6 +76,7 @@ do
 		Type		 = "Radial",
 		Mass		 = 952,
 		Torque		 = 1990,
+		Displacement = 24,
 		FlywheelMass = 75,
 		RPM = {
 			Idle	= 750,

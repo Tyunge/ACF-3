@@ -18,6 +18,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 250,
 		Torque		 = 480,
+		Displacement = 0,
 		FlywheelMass = 5,
 		IsElectric	 = true,
 		RPM = {
@@ -39,6 +40,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 850,
 		Torque		 = 1440,
+		Displacement = 0,
 		FlywheelMass = 20,
 		IsElectric	 = true,
 		RPM = {
@@ -60,6 +62,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 1900,
 		Torque		 = 4200,
+		Displacement = 0,
 		FlywheelMass = 75,
 		IsElectric	 = true,
 		RPM = {
@@ -85,6 +88,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 50,
 		Torque		 = 40,
+		Displacement = 0,
 		FlywheelMass = 0.5,
 		IsElectric	 = true,
 		RPM = {
@@ -106,6 +110,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 125,
 		Torque		 = 384,
+		Displacement = 0,
 		FlywheelMass = 1,
 		IsElectric	 = true,
 		RPM = {
@@ -127,6 +132,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 575,
 		Torque		 = 1152,
+		Displacement = 0,
 		FlywheelMass = 2,
 		IsElectric	 = true,
 		RPM = {
@@ -148,6 +154,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 1500,
 		Torque		 = 3360,
+		Displacement = 0,
 		FlywheelMass = 20,
 		IsElectric	 = true,
 		RPM = {

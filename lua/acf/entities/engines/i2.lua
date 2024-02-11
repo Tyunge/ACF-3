@@ -16,6 +16,7 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 45,
 		Torque		 = 131,
+		Displacement = 0.8,
 		FlywheelMass = 5,
 		RPM = {
 			Idle	= 500,
@@ -35,6 +36,7 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 800,
 		Torque		 = 2500,
+		Displacement = 10,
 		FlywheelMass = 100,
 		RPM = {
 			Idle	= 350,
