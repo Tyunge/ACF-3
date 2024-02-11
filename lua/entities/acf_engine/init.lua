@@ -316,9 +316,10 @@ do -- Spawn and Update functions
 		Entity.LimitRPM         = Engine.RPM.Limit
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
+		Entity.Displacement		= Engine.Displacement
 		Entity.FlywheelMass     = Engine.FlywheelMass
 		Entity.FlywheelRadius	= 0.26 -- I don't feel its necessary to give each engine a radius when we can just increase the mass. Hyper realism is not needed here.
-		Entity.Inertia          = Engine.FlywheelMass * (Entity.FlywheelRadius ^ 2) 
+		Entity.Inertia          = Engine.FlywheelMass * (Entity.FlywheelRadius ^ 2) -- Not completely accurate calculation but we go by feeling when working with Gmod.
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
 		Entity.FuelTypes        = Engine.Fuel or { Petrol = true }
@@ -393,8 +394,6 @@ do -- Spawn and Update functions
 		Entity.SoundPath = Engine.Sound
 		Entity.DataStore = Entities.GetArguments("acf_engine")
 		Entity.revLimiterEnabled = true
-
-		Entity.maxRotationalFriction = Engine.Torque*0.25
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -760,14 +759,14 @@ function ENT:CalcRPM()
 
 	
 
-    local engineFriction = RPMRatio*self.maxRotationalFriction
-	local rpmAcceleration = (self.Torque - engineFriction)/self.Inertia
+    local engineBrakeTorque = ( self.Displacement*self.FlyRPM/60 )*(1-Sign(Throttle))
+	local rpmAcceleration = (self.Torque - engineBrakeTorque)/self.Inertia
 
 	self.DriveTrainRPM = self.DriveTrainRPM/Boxes
 
 	local rpmDifference = self.DriveTrainRPM - self.FlyRPM
 	local powerDifference = ((rpmDifference/self.LimitRPM) * self.PeakTorque)
-	local driveTrainAcceleration = (powerDifference - engineFriction)/self.Inertia
+	local driveTrainAcceleration = (powerDifference - engineBrakeTorque)/self.Inertia
 
 	local finalAccelerationSum = (rpmAcceleration*(1-engineLoadFactor)) + (driveTrainAcceleration*engineLoadFactor)
 	

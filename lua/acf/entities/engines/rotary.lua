@@ -18,7 +18,7 @@ do
 		Mass		 = 50,
 		Torque		 = 97,
 		Displacement = 0.9,
-		FlywheelMass = 1,
+		FlywheelMass = 1.75,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9200,
