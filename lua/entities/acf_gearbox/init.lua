@@ -27,6 +27,13 @@ local function CalcWheel(Entity, Link, Wheel, SelfWorld)
 	return ( BaseRPM / -6 ) --* Entity.GearRatio
 end
 
+--[[
+	TO-DO:
+		FIX: Figure out how to apply torque using ApplyTorqueCenter. Engines feel very very weak.
+		ADD: CVT transmission
+		ADD: Automatic transmission
+]]
+
 do -- Spawn and Update functions -----------------------
 	local Classes   = ACF.Classes
 	local WireIO    = Utilities.WireIO
@@ -783,7 +790,7 @@ do -- Movement -----------------------------------------
 
 		if( table.Count(self.GearboxOut) > 0 ) then
 
-			self.TorqueOutput = self.TorqueOutput/table.Count(self.GearboxOut)
+			self.TorqueOutput = self.TorqueOutput--/table.Count(self.GearboxOut)
 
 			for Ent, Link in pairs(self.GearboxOut) do
 				local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
@@ -795,7 +802,7 @@ do -- Movement -----------------------------------------
 
 		if( table.Count(self.Wheels) > 0 ) then
 
-			self.TorqueOutput = self.TorqueOutput/table.Count(self.Wheels)
+			self.TorqueOutput = self.TorqueOutput--/table.Count(self.Wheels)
 
 			for Wheel, Link in pairs(self.Wheels) do
 				local RPM = CalcWheel(self, Link, Wheel, SelfWorld)

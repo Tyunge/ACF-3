@@ -7,9 +7,9 @@ local ACF = ACF
 
 --[[
 	TO-DO:
-		FIX: Frictional Coefficient is shit-ass.	
-			Issue: Electric engines are Wonky with their frictional deceleration.
-			Issue: Turbine RPM should be treated completely different from normal engines
+		ADD: Electric and Turbine Engines.
+		ISSUE: Enginebraking is applied when in Neutral or Clutched.
+
 
 ]]
 
@@ -742,7 +742,7 @@ function ENT:CalcRPM()
 	local inGear = 1
 	local clutchActive = 0
 
-	local engineBrakeTorque = ( self.Displacement*self.FlyRPM/60 )*(1-Sign(Throttle))
+	local engineBrakeTorque = ( self.Displacement*self.FlyRPM/100 )*(1-Sign(Throttle))
 
 	for Ent, Link in pairs(self.Gearboxes) do
 		if Ent.Disabled then return end
