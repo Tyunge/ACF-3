@@ -4,18 +4,24 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 local ACF = ACF
-local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
+
+--[[
+	TO-DO:
+		ADD: Electric and Turbine Engines.
+		ISSUE: Enginebraking is applied when in Neutral or Clutched.
+
+
+]]
 
 --===============================================================================================--
 -- Engine class setup
 --===============================================================================================--
 do
-	ACF.RegisterClassLink("acf_engine", "acf_fueltank", function(Engine, Target)
+	ACF.RegisterClassLink("acf_engine_realism", "acf_fueltank", function(Engine, Target)
 		if Engine.FuelTanks[Target] then return false, "This engine is already linked to this fuel tank!" end
 		if Target.Engines[Engine] then return false, "This engine is already linked to this fuel tank!" end
 		if not Engine.FuelTypes[Target.FuelType] then return false, "Cannot link because fuel type is incompatible." end
 		if Target.NoLinks then return false, "This fuel tank doesn't allow linking." end
-		if Engine:GetPos():DistToSqr(Target:GetPos()) > MaxDistance then return false, "This fuel tank is too far away from this engine." end
 
 		Engine.FuelTanks[Target] = true
 		Target.Engines[Engine] = true
@@ -26,7 +32,7 @@ do
 		return true, "Engine linked successfully!"
 	end)
 
-	ACF.RegisterClassUnlink("acf_engine", "acf_fueltank", function(Engine, Target)
+	ACF.RegisterClassUnlink("acf_engine_realism", "acf_fueltank", function(Engine, Target)
 		if Engine.FuelTanks[Target] or Target.Engines[Engine] then
 			if Engine.FuelTank == Target then
 				Engine.FuelTank = next(Engine.FuelTanks, Target)
@@ -44,7 +50,7 @@ do
 		return false, "This engine is not linked to this fuel tank."
 	end)
 
-	ACF.RegisterClassLink("acf_engine", "acf_gearbox", function(Engine, Target)
+	ACF.RegisterClassLink("acf_engine_realism", "acf_gearbox", function(Engine, Target)
 		if Engine.Gearboxes[Target] then return false, "This engine is already linked to this gearbox." end
 
 		-- make sure the angle is not excessive
@@ -71,7 +77,8 @@ do
 		local Link = {
 			Rope = Rope,
 			RopeLen = (OutPos - InPos):Length(),
-			ReqTq = 0
+			InputTorque = 0,
+			InputRPM = 0
 		}
 
 		Engine.Gearboxes[Target] = Link
@@ -83,7 +90,7 @@ do
 		return true, "Engine linked successfully!"
 	end)
 
-	ACF.RegisterClassUnlink("acf_engine", "acf_gearbox", function(Engine, Target)
+	ACF.RegisterClassUnlink("acf_engine_realism", "acf_gearbox", function(Engine, Target)
 		if not Engine.Gearboxes[Target] then
 			return false, "This engine is not linked to this gearbox."
 		end
@@ -108,6 +115,7 @@ end
 local Damage      = ACF.Damage
 local Utilities   = ACF.Utilities
 local Clock       = Utilities.Clock
+local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
 local UnlinkSound = "physics/metal/metal_box_impact_bullet%s.wav"
 local IsValid     = IsValid
 local Clamp       = math.Clamp
@@ -221,6 +229,11 @@ local function SetActive(Entity, Value)
 	Entity:UpdateOutputs()
 end
 
+local function Sign(number)
+	if number < 0 then return -1 end
+	if number == 0 then return 0 end
+	if number > 0 then return 1 end
+end
 --===============================================================================================--
 
 do -- Spawn and Update functions
@@ -264,7 +277,7 @@ do -- Spawn and Update functions
 				Class.VerifyData(Data, Class, Engine)
 			end
 
-			HookRun("ACF_VerifyData", "acf_engine", Data, Class, Engine)
+			HookRun("ACF_VerifyData", "acf_engine_realism", Data, Class, Engine)
 		end
 	end
 
@@ -301,8 +314,10 @@ do -- Spawn and Update functions
 		Entity.LimitRPM         = Engine.RPM.Limit
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
+		Entity.Displacement		= Engine.Displacement
 		Entity.FlywheelMass     = Engine.FlywheelMass
-		Entity.Inertia          = Engine.FlywheelMass * math.pi ^ 2
+		Entity.FlywheelRadius	= 0.26 -- I don't feel its necessary to give each engine a radius when we can just increase the mass. Hyper realism is not needed here.
+		Entity.Inertia          = Engine.FlywheelMass * (Entity.FlywheelRadius ^ 2) -- Not completely accurate calculation but we go by feeling when working with Gmod.
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
 		Entity.FuelTypes        = Engine.Fuel or { Petrol = true }
@@ -338,7 +353,7 @@ do -- Spawn and Update functions
 		end
 	end
 
-	function MakeACF_Engine(Player, Pos, Angle, Data)
+	function MakeACF_Engine_realism(Player, Pos, Angle, Data)
 		VerifyData(Data)
 
 		local Class  = Classes.GetGroup(Engines, Data.Engine)
@@ -348,11 +363,11 @@ do -- Spawn and Update functions
 
 		if not Player:CheckLimit(Limit) then return false end
 
-		local CanSpawn = HookRun("ACF_PreEntitySpawn", "acf_engine", Player, Data, Class, Engine)
+		local CanSpawn = HookRun("ACF_PreEntitySpawn", "acf_engine_realism", Player, Data, Class, Engine)
 
 		if CanSpawn == false then return false end
 
-		local Entity = ents.Create("acf_engine")
+		local Entity = ents.Create("acf_engine_realism")
 
 		if not IsValid(Entity) then return false end
 
@@ -361,7 +376,7 @@ do -- Spawn and Update functions
 		Entity:SetPos(Pos)
 		Entity:Spawn()
 
-		Player:AddCleanup("acf_engine", Entity)
+		Player:AddCleanup("acf_engine_realism", Entity)
 		Player:AddCount(Limit, Entity)
 
 		Entity.Owner     = Player -- MUST be stored on ent for PP
@@ -372,9 +387,10 @@ do -- Spawn and Update functions
 		Entity.MassRatio = 1
 		Entity.FuelUsage = 0
 		Entity.Throttle  = 0
-		Entity.FlyRPM    = 0
+		Entity.FlyRPM    = 0     -- This is the rpm the engine is currently at. Uses a mix between DriveTrainRPM & FreeRevRPM, depending on gear & clutch usage.
+		Entity.DriveTrainRPM = 0 -- This is the rpm give to FlyRPM when connected to transmission
 		Entity.SoundPath = Engine.Sound
-		Entity.DataStore = Entities.GetArguments("acf_engine")
+		Entity.DataStore = Entities.GetArguments("acf_engine_realism")
 		Entity.revLimiterEnabled = true
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
@@ -385,7 +401,7 @@ do -- Spawn and Update functions
 			Class.OnSpawn(Entity, Data, Class, Engine)
 		end
 
-		HookRun("ACF_OnEntitySpawn", "acf_engine", Entity, Data, Class, Engine)
+		HookRun("ACF_OnEntitySpawn", "acf_engine_realism", Entity, Data, Class, Engine)
 
 		Entity:UpdateOverlay(true)
 
@@ -402,10 +418,10 @@ do -- Spawn and Update functions
 		return Entity
 	end
 
-	Entities.Register("acf_engine", MakeACF_Engine, "Engine")
+	Entities.Register("acf_engine_realism", MakeACF_Engine_realism, "Engine")
 
-	ACF.RegisterLinkSource("acf_engine", "FuelTanks")
-	ACF.RegisterLinkSource("acf_engine", "Gearboxes")
+	ACF.RegisterLinkSource("acf_engine_realism", "FuelTanks")
+	ACF.RegisterLinkSource("acf_engine_realism", "Gearboxes")
 
 	------------------- Updating ---------------------
 
@@ -420,7 +436,7 @@ do -- Spawn and Update functions
 		local OldClass = self.ClassData
 		local Feedback = ""
 
-		local CanUpdate, Reason = HookRun("ACF_PreEntityUpdate", "acf_engine", self, Data, Class, Engine)
+		local CanUpdate, Reason = HookRun("ACF_PreEntityUpdate", "acf_engine_realism", self, Data, Class, Engine)
 
 		if CanUpdate == false then return CanUpdate, Reason end
 
@@ -428,7 +444,7 @@ do -- Spawn and Update functions
 			OldClass.OnLast(self, OldClass)
 		end
 
-		HookRun("ACF_OnEntityLast", "acf_engine", self, OldClass)
+		HookRun("ACF_OnEntityLast", "acf_engine_realism", self, OldClass)
 
 		ACF.SaveEntity(self)
 
@@ -440,7 +456,7 @@ do -- Spawn and Update functions
 			Class.OnUpdate(self, Data, Class, Engine)
 		end
 
-		HookRun("ACF_OnEntityUpdate", "acf_engine", self, Data, Class, Engine)
+		HookRun("ACF_OnEntityUpdate", "acf_engine_realism", self, Data, Class, Engine)
 
 		if next(self.Gearboxes) then
 			local Count, Total = 0, 0
@@ -544,18 +560,18 @@ function ENT:UpdateOverlayText()
 	return Text:format(State, Name, Power, PowerFt, Torque, TorqueFt, PowerbandMin, PowerbandMax, Redline)
 end
 
-ACF.AddInputAction("acf_engine", "Throttle", function(Entity, Value)
+ACF.AddInputAction("acf_engine_realism", "Throttle", function(Entity, Value)
 	Entity.Throttle = Clamp(Value, 0, 100) * 0.01
 end)
 
-ACF.AddInputAction("acf_engine", "Active", function(Entity, Value)
+ACF.AddInputAction("acf_engine_realism", "Active", function(Entity, Value)
 	SetActive(Entity, tobool(Value))
 end)
 
 function ENT:ACF_Activate(Recalc)
 	local PhysObj = self.ACF.PhysObj
 	local Mass    = PhysObj:GetMass()
-	local Area    = PhysObj:GetSurfaceArea() * ACF.InchToCmSq
+	local Area    = PhysObj:GetSurfaceArea() * 6.45
 	local Armour  = Mass * 1000 / Area / 0.78 * ACF.ArmorMod -- Density of steel = 7.8g cm3 so 7.8kg for a 1mx1m plate 1m thick
 	local Health  = Area / ACF.Threshold
 	local Percent = 1
@@ -627,6 +643,7 @@ function ENT:DestroySound()
 end
 
 -- specialized calcmassratio for engines
+-- This function reduces power output of engines drastically. Should be removed but 50,000 ton+ ACF users get angry.
 function ENT:CalcMassRatio()
 	local PhysMass 	= 0
 	local TotalMass = 0
@@ -654,6 +671,10 @@ function ENT:CalcMassRatio()
 	end
 
 	self.MassRatio = PhysMass / TotalMass
+
+	if TotalMass < 5e4 then
+		self.MassRatio = 1
+	end
 
 	WireLib.TriggerOutput(self, "Mass", Round(TotalMass, 2))
 	WireLib.TriggerOutput(self, "Physical Mass", Round(PhysMass, 2))
@@ -684,7 +705,13 @@ function ENT:CalcRPM()
 			self.RevLimited = false
 		end
 	end
-	local Throttle = self.RevLimited and 0 or self.Throttle
+
+	local IdleThrottle = 0
+
+	if self.FlyRPM < self.IdleRPM then
+		IdleThrottle = Remap(self.FlyRPM/self.IdleRPM, 0, 1, 0, 0.25)
+	end
+	local Throttle = self.RevLimited and 0 or math.Clamp(self.Throttle + IdleThrottle,0,1)
 
 	-- Calculate fuel usage
 	if IsValid(FuelTank) then
@@ -704,45 +731,51 @@ function ENT:CalcRPM()
 		return 0
 	end
 
-	-- Calculate the current torque from flywheel RPM
-	local Percent = Remap(self.FlyRPM, self.IdleRPM, self.LimitRPM, 0, 1)
-	local PeakRPM = self.IsElectric and self.FlywheelOverride or self.PeakMaxRPM
-	local Drag    = self.PeakTorque * (max(self.FlyRPM - self.IdleRPM, 0) / PeakRPM) * (1 - Throttle) / self.Inertia
+	local Percent = Remap(self.FlyRPM, 0, self.LimitRPM, 0, 1)
 
-	self.Torque = Throttle * ACF.GetTorque(self.TorqueCurve, Percent) * self.PeakTorque * (self.FlyRPM < self.LimitRPM and 1 or 0)
-	-- Let's accelerate the flywheel based on that torque
-	self.FlyRPM = min(max(self.FlyRPM + self.Torque / self.Inertia - Drag, 0), self.LimitRPM)
+	-- Similar to 'Percent' but with no upper limit.
+	local RPMRatio = self.FlyRPM/self.LimitRPM
 
 	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
-	local Boxes      = 0
-	local TotalReqTq = 0
+	local Boxes      = 1
+	local engineLoadFactor = 0
+	local inGear = 1
+	local clutchActive = 0
 
-	-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+	local engineBrakeTorque = ( self.Displacement*self.FlyRPM/100 )*(1-Sign(Throttle))
+
 	for Ent, Link in pairs(self.Gearboxes) do
-		if not Ent.Disabled then
-			Boxes = Boxes + 1
-			Link.ReqTq = Ent:Calc(self.FlyRPM, self.Inertia)
-			TotalReqTq = TotalReqTq + Link.ReqTq
-		end
+		if Ent.Disabled then return end
+		Ent:CalculateTorque(self.Torque, engineBrakeTorque*0.125, DeltaTime)	
+		inGear = inGear * Sign(Ent.Gear)
+		clutchActive = 1-Sign(Ent.LClutch + Ent.RClutch)
+		
+		self.DriveTrainRPM = Ent.InputRPM
 	end
 
-	-- This is the presently available torque from the engine
-	local TorqueDiff = max(self.FlyRPM - self.IdleRPM, 0) * self.Inertia
-	-- Calculate the ratio of total requested torque versus what's available
-	local AvailRatio = min(TorqueDiff / TotalReqTq / Boxes, 1)
-
-	-- Split the torque fairly between the gearboxes who need it
-	for Ent, Link in pairs(self.Gearboxes) do
-		if not Ent.Disabled then
-			Ent:Act(Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio)
-		end
+	if inGear > 0 && table.Count(self.Gearboxes) > 0 then
+		engineLoadFactor = 1 - clutchActive
 	end
 
-	self.FlyRPM = self.FlyRPM - min(TorqueDiff, TotalReqTq) / self.Inertia
+	local rpmAcceleration = (self.Torque - engineBrakeTorque)/self.Inertia
+
+	self.DriveTrainRPM = self.DriveTrainRPM/Boxes
+
+	local rpmDifference = self.DriveTrainRPM - self.FlyRPM
+	local powerDifference = ((rpmDifference/self.LimitRPM) * self.PeakTorque)
+	local driveTrainAcceleration = (powerDifference - engineBrakeTorque)/self.Inertia
+
+	local finalAccelerationSum = (rpmAcceleration*(1-engineLoadFactor)) + (driveTrainAcceleration*engineLoadFactor)
+	
+	self.FlyRPM = math.max(0, self.FlyRPM + finalAccelerationSum)
+	
+	self.Torque = Throttle * ACF.GetTorque(self.TorqueCurve, Percent) * self.PeakTorque * (self.FlyRPM < self.LimitRPM and 1 or 0)
+
 	self.LastThink = Clock.CurTime
 
 	self:UpdateSound()
 	self:UpdateOutputs()
+	self.DriveTrainRPM = 0
 
 	TimerSimple(engine.TickInterval(), function()
 		if not IsValid(self) then return end
@@ -828,7 +861,7 @@ function ENT:OnRemove()
 		Class.OnLast(self, Class)
 	end
 
-	HookRun("ACF_OnEntityLast", "acf_engine", self, Class)
+	HookRun("ACF_OnEntityLast", "acf_engine_realism", self, Class)
 
 	self:DestroySound()
 
