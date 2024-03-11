@@ -62,7 +62,6 @@ end
 local function CreateMenu(Menu)
 	local EngineEntries = Engines.GetEntries()
 	local FuelEntries   = FuelTanks.GetEntries()
-	ACF.SetClientData("PrimaryClass", "acf_engine")
 
 	Menu:AddTitle("Engine Settings")
 
@@ -80,9 +79,12 @@ local function CreateMenu(Menu)
 		local usingLegacy = Value
 		Panel:SetValue(usingLegacy)
 
-		if( !usingLegacy )then
+		if( usingLegacy )then
+			ACF.SetClientData("PrimaryClass", "acf_engine")
+		else
 			ACF.SetClientData("PrimaryClass", "acf_engine_realism")
 		end
+
 
 		return usingLegacy
 	end)

@@ -3,7 +3,6 @@ local Gearboxes = ACF.Classes.Gearboxes
 
 local function CreateMenu(Menu)
 	local Entries = Gearboxes.GetEntries()
-	ACF.SetClientData("PrimaryClass", "acf_gearbox")
 
 	Menu:AddTitle("Gearbox Settings")
 
@@ -20,7 +19,9 @@ local function CreateMenu(Menu)
 		local usingLegacy = Value
 		Panel:SetValue(usingLegacy)
 
-		if( !usingLegacy )then
+		if( usingLegacy )then
+			ACF.SetClientData("PrimaryClass", "acf_gearbox")
+		else
 			ACF.SetClientData("PrimaryClass", "acf_gearbox_realism")
 		end
 
