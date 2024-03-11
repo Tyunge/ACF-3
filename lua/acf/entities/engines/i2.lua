@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I2_Realism", {
+Engines.Register("I2", {
 	Name = "Inline 2 Engine",
 })
 
 do
-	Engines.RegisterItem("0.8L-I2", "I2_Realism", {
+	Engines.RegisterItem("0.8L-I2", "I2", {
 		Name		 = "0.8L I2 Diesel",
 		Description	 = "For when a 3 banger is still too bulky for your micro-needs.",
 		Model		 = "models/engines/inline2s.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("10.0-I2", "I2_Realism", {
+	Engines.RegisterItem("10.0-I2", "I2", {
 		Name		 = "10.0L I2 Diesel",
 		Description	 = "TORQUE.",
 		Model		 = "models/engines/inline2b.mdl",

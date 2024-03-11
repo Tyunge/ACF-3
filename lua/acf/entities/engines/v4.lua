@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V4_Realism", {
+Engines.Register("V4", {
 	Name = "V4 Engine",
 })
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.9L-V4", "V4_Realism", {
+	Engines.RegisterItem("1.9L-V4", "V4", {
 		Name		 = "1.9L V4 Diesel",
 		Description	 = "Torquey little lunchbox; for those smaller vehicles that don't agree with petrol powerbands",
 		Model		 = "models/engines/v4s.mdl",
@@ -27,7 +27,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("3.3L-V4", "V4_Realism", {
+	Engines.RegisterItem("3.3L-V4", "V4", {
 		Name		 = "3.3L V4 Diesel",
 		Description	 = "Compact cube of git; for moderate utility applications",
 		Model		 = "models/engines/v4m.mdl",

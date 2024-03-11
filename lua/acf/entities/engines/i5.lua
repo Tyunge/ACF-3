@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I5_Realism", {
+Engines.Register("I5", {
 	Name = "Inline 5 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("2.3-I5", "I5_Realism", {
+	Engines.RegisterItem("2.3-I5", "I5", {
 		Name		 = "2.3L I5 Petrol",
 		Description	 = "Sedan-grade 5-cylinder, solid and dependable.",
 		Model		 = "models/engines/inline5s.mdl",
@@ -27,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("3.9-I5", "I5_Realism", {
+	Engines.RegisterItem("3.9-I5", "I5", {
 		Name		 = "3.9L I5 Petrol",
 		Description	 = "Truck sized inline 5, strong with a good balance of revs and torque.",
 		Model		 = "models/engines/inline5m.mdl",
@@ -49,7 +49,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("2.9-I5", "I5_Realism", {
+	Engines.RegisterItem("2.9-I5", "I5", {
 		Name		 = "2.9L I5 Diesel",
 		Description	 = "Aging fuel-injected diesel, low in horsepower but very forgiving and durable.",
 		Model		 = "models/engines/inline5s.mdl",
@@ -69,7 +69,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("4.1-I5", "I5_Realism", {
+	Engines.RegisterItem("4.1-I5", "I5", {
 		Name		 = "4.1L I5 Diesel",
 		Description	 = "Heavier duty diesel, found in things that work hard.",
 		Model		 = "models/engines/inline5m.mdl",

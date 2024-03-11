@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("B6_Realism", {
+Engines.Register("B6", {
 	Name = "Flat 6 Engine",
 })
 
 do
-	Engines.RegisterItem("2.8-B6", "B6_Realism", {
+	Engines.RegisterItem("2.8-B6", "B6", {
 		Name		 = "2.8L Flat 6 Petrol",
 		Description	 = "Car sized flat six engine, sporty and light",
 		Model		 = "models/engines/b6small.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("5.0-B6", "B6_Realism", {
+	Engines.RegisterItem("5.0-B6", "B6", {
 		Name		 = "5.0L Flat 6 Petrol",
 		Description	 = "Sports car grade flat six, renown for their smooth operation and light weight",
 		Model		 = "models/engines/b6med.mdl",
@@ -47,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("8.3-B6", "B6_Realism", {
+	Engines.RegisterItem("8.3-B6", "B6", {
 		Name		 = "8.3L Flat 6 Multifuel",
 		Description	 = "Military-grade multifuel boxer engine. Although heavy, it is compact, durable, and has excellent performance under adverse conditions.",
 		Model		 = "models/engines/b6med.mdl",
@@ -67,7 +67,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("15.8-B6", "B6_Realism", {
+	Engines.RegisterItem("15.8-B6", "B6", {
 		Name		 = "15.8L Flat 6 Petrol",
 		Description	 = "Monstrous aircraft-grade boxer with a high rev range biased powerband",
 		Model		 = "models/engines/b6large.mdl",
@@ -87,7 +87,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("14.5-B6", "B6_Realism", {
+	Engines.RegisterItem("14.5-B6", "B6", {
 		Name		 = "14.5L Flat 6 Diesel",
 		Description	 = "Very large diesel boxer, compact, but lacking in torque compared to others",
 		Model		 = "models/engines/b6large.mdl",

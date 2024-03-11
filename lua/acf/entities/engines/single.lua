@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I1_Realism", {
+Engines.Register("I1", {
 	Name = "Single Cylinder Engine",
 })
 
 do
-	Engines.RegisterItem("0.25-I1", "I1_Realism", {
+	Engines.RegisterItem("0.25-I1", "I1", {
 		Name		 = "250cc Single Cylinder",
 		Description	 = "Tiny bike engine.",
 		Model		 = "models/engines/1cylsml.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("0.5-I1", "I1_Realism", {
+	Engines.RegisterItem("0.5-I1", "I1", {
 		Name		 = "500cc Single Cylinder",
 		Description	 = "Large single cylinder bike engine.",
 		Model		 = "models/engines/1cylmed.mdl",
@@ -47,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("1.3-I1", "I1_Realism", {
+	Engines.RegisterItem("1.3-I1", "I1", {
 		Name		 = "1300cc Single Cylinder",
 		Description	 = "Ridiculously large single cylinder engine, seriously what the fuck.",
 		Model		 = "models/engines/1cylbig.mdl",

@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I4_Realism", {
+Engines.Register("I4", {
 	Name = "Inline 4 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("1.5-I4", "I4_Realism", {
+	Engines.RegisterItem("1.5-I4", "I4", {
 		Name		 = "1.5L I4 Petrol",
 		Description	 = "Small car engine, not a whole lot of git.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -27,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("3.7-I4", "I4_Realism", {
+	Engines.RegisterItem("3.7-I4", "I4", {
 		Name		 = "3.7L I4 Petrol",
 		Description	 = "Large inline 4, sees most use in light trucks.",
 		Model		 = "models/engines/inline4m.mdl",
@@ -47,7 +47,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("16.0-I4", "I4_Realism", {
+	Engines.RegisterItem("16.0-I4", "I4", {
 		Name		 = "16.0L I4 Petrol",
 		Description	 = "Giant, thirsty I4 petrol, most commonly used in boats.",
 		Model		 = "models/engines/inline4l.mdl",
@@ -69,7 +69,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.6-I4", "I4_Realism", {
+	Engines.RegisterItem("1.6-I4", "I4", {
 		Name		 = "1.6L I4 Diesel",
 		Description	 = "Small and light diesel, for low power applications requiring a wide powerband.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -89,7 +89,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("3.1-I4", "I4_Realism", {
+	Engines.RegisterItem("3.1-I4", "I4", {
 		Name		 = "3.1L I4 Diesel",
 		Description	 = "Light truck duty diesel, good overall grunt.",
 		Model		 = "models/engines/inline4m.mdl",
@@ -109,7 +109,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("15.0-I4", "I4_Realism", {
+	Engines.RegisterItem("15.0-I4", "I4", {
 		Name		 = "15.0L I4 Diesel",
 		Description	 = "Small boat sized diesel, with large amounts of torque.",
 		Model		 = "models/engines/inline4l.mdl",
