@@ -16,7 +16,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 100,
 		Torque		 = 170,
-		FlywheelMass = 0.08,
+		Displacement = 2.8,
+		FlywheelMass = 7,
 		RPM = {
 			Idle	= 750,
 			Limit	= 7250,
@@ -35,7 +36,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 240,
 		Torque		 = 412,
-		FlywheelMass = 0.11,
+		Displacement = 5.0,
+		FlywheelMass = 7.5,
 		RPM = {
 			Idle	= 900,
 			Limit	= 6800,
@@ -54,7 +56,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 480,
 		Torque		 = 606,
-		FlywheelMass = 0.65,
+		Displacement = 8.3,
+		FlywheelMass = 28,
 		RPM = {
 			Idle	= 500,
 			Limit	= 4200,
@@ -73,7 +76,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 725,
 		Torque		 = 1375,
-		FlywheelMass = 1,
+		Displacement = 15.8,
+		FlywheelMass = 32,	-- Idk what the mass should be. This engine has high torque and high rpm. Difficult to find a good balance.
 		RPM = {
 			Idle	= 620,
 			Limit	= 4900,
@@ -92,7 +96,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 1600,
 		Torque		 = 1995,
-		FlywheelMass = 3,
+		Displacement = 14.5,
+		FlywheelMass = 125,
 		RPM = {
 			Idle	= 620,
 			Limit	= 2550,

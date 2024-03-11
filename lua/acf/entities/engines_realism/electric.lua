@@ -1,6 +1,7 @@
 local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
+-- Electric motors are weird. Should adjust how the rpms are handled with the flywheel mass
 
 do -- Electric Motors
 	Engines.Register("EL", {
@@ -17,7 +18,8 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 250,
 		Torque		 = 480,
-		FlywheelMass = 0.3,
+		Displacement = 0,
+		FlywheelMass = 5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -38,7 +40,8 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 850,
 		Torque		 = 1440,
-		FlywheelMass = 1.5,
+		Displacement = 0,
+		FlywheelMass = 20,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -59,7 +62,8 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 1900,
 		Torque		 = 4200,
-		FlywheelMass = 11.2,
+		Displacement = 0,
+		FlywheelMass = 75,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -84,7 +88,8 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 50,
 		Torque		 = 40,
-		FlywheelMass = 0.025,
+		Displacement = 0,
+		FlywheelMass = 0.5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -105,7 +110,8 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 125,
 		Torque		 = 384,
-		FlywheelMass = 0.3,
+		Displacement = 0,
+		FlywheelMass = 1,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -126,7 +132,8 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 575,
 		Torque		 = 1152,
-		FlywheelMass = 1.5,
+		Displacement = 0,
+		FlywheelMass = 2,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -147,7 +154,8 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 1500,
 		Torque		 = 3360,
-		FlywheelMass = 11.2,
+		Displacement = 0,
+		FlywheelMass = 20,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,

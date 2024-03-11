@@ -229,7 +229,7 @@ do -- Spawn and Update functions
 	local Engines     = Classes.Engines
 	local EngineTypes = Classes.EngineTypes
 	local Entities    = Classes.Entities
-
+	
 	local Inputs = {
 		"Active (If set to a non-zero value, it'll attempt to start the engine.)",
 		"Throttle (On a range from 0 to 100, defines how much power will be given to the engine.)"
@@ -270,7 +270,7 @@ do -- Spawn and Update functions
 
 	local function UpdateEngine(Entity, Data, Class, Engine, Type)
 		local Mass = Engine.Mass
-
+		
 		Entity.ACF = Entity.ACF or {}
 		Entity.ACF.Model = Engine.Model
 
@@ -340,12 +340,12 @@ do -- Spawn and Update functions
 
 	function MakeACF_Engine(Player, Pos, Angle, Data)
 		VerifyData(Data)
-
+		
 		local Class  = Classes.GetGroup(Engines, Data.Engine)
 		local Engine = Engines.GetItem(Class.ID, Data.Engine)
 		local Type   = EngineTypes.Get(Engine.Type)
 		local Limit  = Class.LimitConVar.Name
-
+		
 		if not Player:CheckLimit(Limit) then return false end
 
 		local CanSpawn = HookRun("ACF_PreEntitySpawn", "acf_engine", Player, Data, Class, Engine)
@@ -376,7 +376,7 @@ do -- Spawn and Update functions
 		Entity.SoundPath = Engine.Sound
 		Entity.DataStore = Entities.GetArguments("acf_engine")
 		Entity.revLimiterEnabled = true
-
+		
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
 		WireLib.TriggerOutput(Entity, "Entity", Entity)
@@ -419,7 +419,7 @@ do -- Spawn and Update functions
 		local Type     = EngineTypes.Get(Engine.Type)
 		local OldClass = self.ClassData
 		local Feedback = ""
-
+		
 		local CanUpdate, Reason = HookRun("ACF_PreEntityUpdate", "acf_engine", self, Data, Class, Engine)
 
 		if CanUpdate == false then return CanUpdate, Reason end

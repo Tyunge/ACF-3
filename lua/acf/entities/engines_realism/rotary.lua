@@ -17,7 +17,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 50,
 		Torque		 = 97,
-		FlywheelMass = 0.06,
+		Displacement = 0.9,
+		FlywheelMass = 1.75,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9200,
@@ -36,7 +37,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 140,
 		Torque		 = 155,
-		FlywheelMass = 0.06,
+		Displacement = 1.3,
+		FlywheelMass = 2.5,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,
@@ -55,7 +57,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 200,
 		Torque		 = 235,
-		FlywheelMass = 0.1,
+		Displacement = 2.0,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9500,

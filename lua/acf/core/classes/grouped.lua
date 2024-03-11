@@ -66,16 +66,16 @@ end
 function Classes.GetGroup(Namespace, ID)
 	if not istable(Namespace) then return end
 	if not isstring(ID) then return end
-
+	
 	local Class = Namespace.Get(ID)
-
+	
 	if Class then return Class end
 
 	local Groups = Namespace.GetList()
 
 	for _, Group in ipairs(Groups) do
 		local Item = Namespace.GetItem(Group.ID, ID)
-
+		
 		if Item then return Group end
 	end
 end
@@ -91,7 +91,7 @@ function Classes.AddGroupedFunctions(Namespace, Entries)
 		local Group = isstring(ClassID) and Entries[ClassID]
 
 		if not Group then return end
-
+		
 		return isstring(ID) and Group.Lookup[ID] or nil
 	end
 

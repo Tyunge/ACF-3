@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 120,
 		Torque		 = 169,
-		FlywheelMass = 0.1,
+		Displacement = 2.2,
+		FlywheelMass = 3.5,
 		RPM = {
 			Idle	= 800,
 			Limit	= 7500,
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 300,
 		Torque		 = 460,
-		FlywheelMass = 0.2,
+		Displacement = 4.8,
+		FlywheelMass = 5,
 		RPM = {
 			Idle	= 900,
 			Limit	= 5500,
@@ -54,7 +56,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 850,
 		Torque		 = 1760,
-		FlywheelMass = 2.5,
+		Displacement = 17.2,
+		FlywheelMass = 100,
 		RPM = {
 			Idle	= 800,
 			Limit	= 2700,
@@ -75,7 +78,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 150,
 		Torque		 = 250,
-		FlywheelMass = 0.5,
+		Displacement = 3.0,
+		FlywheelMass = 7,
 		RPM = {
 			Idle	= 650,
 			Limit	= 4900,
@@ -94,7 +98,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 450,
 		Torque		 = 700,
-		FlywheelMass = 1.5,
+		Displacement = 6.5,
+		FlywheelMass = 10,
 		RPM = {
 			Idle	= 600,
 			Limit	= 4000,
@@ -113,7 +118,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 1200,
 		Torque		 = 2490,
-		FlywheelMass = 8,
+		Displacement = 20,
+		FlywheelMass = 100,
 		RPM = {
 			Idle	= 400,
 			Limit	= 2350,

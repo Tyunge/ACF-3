@@ -62,7 +62,7 @@ end
 local function CreateMenu(Menu)
 	local EngineEntries = Engines.GetEntries()
 	local FuelEntries   = FuelTanks.GetEntries()
-
+	
 	Menu:AddTitle("Engine Settings")
 
 	local EngineClass = Menu:AddComboBox()
@@ -151,7 +151,7 @@ local function CreateMenu(Menu)
 
 	function EngineClass:OnSelect(Index, _, Data)
 		if self.Selected == Data then return end
-
+		
 		self.ListData.Index = Index
 		self.Selected = Data
 		

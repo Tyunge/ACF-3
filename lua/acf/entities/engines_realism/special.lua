@@ -16,7 +16,8 @@ do -- Special Rotary Engines
 		Type		 = "Wankel",
 		Mass		 = 260,
 		Torque		 = 312,
-		FlywheelMass = 0.11,
+		Displacement = 2.6,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 1200,
 			Limit	= 9500,
@@ -37,7 +38,8 @@ do -- Special I2 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 60,
 		Torque		 = 145,
-		FlywheelMass = 0.085,
+		Displacement = 0.9,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 750,
 			Limit	= 6000,
@@ -58,7 +60,8 @@ do -- Special I4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 78,
 		Torque		 = 85,
-		FlywheelMass = 0.031,
+		Displacement = 1,
+		FlywheelMass = 1,
 		Pitch		 = 0.75,
 		RPM = {
 			Idle	= 1200,
@@ -78,7 +81,8 @@ do -- Special I4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 150,
 		Torque		 = 220,
-		FlywheelMass = 0.06,
+		Displacement = 1.9,
+		FlywheelMass = 2.5,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,
@@ -99,7 +103,8 @@ do -- Special V4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 92,
 		Torque		 = 156,
-		FlywheelMass = 0.04,
+		Displacement = 1.8,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 900,
 			Limit	= 7500,
@@ -120,7 +125,8 @@ do -- Special I6 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 180,
 		Torque		 = 280,
-		FlywheelMass = 0.1,
+		Displacement = 3.8,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -141,7 +147,8 @@ do -- Special V6 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 134,
 		Torque		 = 215,
-		FlywheelMass = 0.075,
+		Displacement = 2.4,
+		FlywheelMass = 2.5,
 		RPM = {
 			Idle	= 950,
 			Limit	= 8000,
@@ -162,7 +169,8 @@ do -- Special V8 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 180,
 		Torque		 = 250,
-		FlywheelMass = 0.075,
+		Displacement = 2.9,
+		FlywheelMass = 2.5,
 		RPM = {
 			Idle	= 1000,
 			Limit	= 10000,
@@ -181,7 +189,8 @@ do -- Special V8 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 400,
 		Torque		 = 425,
-		FlywheelMass = 0.15,
+		Displacement = 7.2,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 1000,
 			Limit	= 8500,
@@ -202,7 +211,8 @@ do -- Special V10 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 300,
 		Torque		 = 400,
-		FlywheelMass = 0.15,
+		Displacement = 5.3,
+		FlywheelMass = 3,
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -223,7 +233,8 @@ do -- Special V12 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 175,
 		Torque		 = 310,
-		FlywheelMass = 0.1,
+		Displacement = 3.0,
+		FlywheelMass = 3,
 		Pitch		 = 0.85,
 		RPM = {
 			Idle	= 1200,
