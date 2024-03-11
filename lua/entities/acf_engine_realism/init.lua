@@ -128,6 +128,7 @@ local TimerSimple = timer.Simple
 local TimerRemove = timer.Remove
 local HookRun     = hook.Run
 
+
 local function GetPitchVolume(Engine)
 	local RPM = Engine.FlyRPM
 	local Pitch = Clamp(20 + (RPM * Engine.SoundPitch) * 0.02, 1, 255)
@@ -271,7 +272,7 @@ do -- Spawn and Update functions
 		end
 
 		local Engine = Engines.GetItem(Class.ID, Data.Engine)
-
+		
 		do -- External verifications
 			if Class.VerifyData then
 				Class.VerifyData(Data, Class, Engine)
@@ -315,9 +316,9 @@ do -- Spawn and Update functions
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
 		Entity.Displacement		= Engine.Displacement
-		Entity.FlywheelMass     = Engine.FlywheelMass
+		Entity.FlywheelMass     = Engine.FlywheelMass.Realism
 		Entity.FlywheelRadius	= 0.26 -- I don't feel its necessary to give each engine a radius when we can just increase the mass. Hyper realism is not needed here.
-		Entity.Inertia          = Engine.FlywheelMass * (Entity.FlywheelRadius ^ 2) -- Not completely accurate calculation but we go by feeling when working with Gmod.
+		Entity.Inertia          = Engine.FlywheelMass.Realism * (Entity.FlywheelRadius ^ 2) -- Not completely accurate calculation but we go by feeling when working with Gmod.
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
 		Entity.FuelTypes        = Engine.Fuel or { Petrol = true }

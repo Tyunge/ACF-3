@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I3", {
+Engines.Register("I3_Realism", {
 	Name = "Inline 3 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("1.2-I3", "I3", {
+	Engines.RegisterItem("1.2-I3", "I3_Realism", {
 		Name		 = "1.2L I3 Petrol",
 		Description	 = "Tiny microcar engine, efficient but weak.",
 		Model		 = "models/engines/inline3s.mdl",
@@ -16,7 +16,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 40,
 		Torque		 = 118,
-		FlywheelMass = 0.05,
+		FlywheelMass = { Realism = 3, Legacy = 0.05 },
 		RPM = {
 			Idle	= 1100,
 			Limit	= 6000,
@@ -26,7 +26,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("3.4-I3", "I3", {
+	Engines.RegisterItem("3.4-I3", "I3_Realism", {
 		Name		 = "3.4L I3 Petrol",
 		Description	 = "Short block engine for light utility use.",
 		Model		 = "models/engines/inline3m.mdl",
@@ -35,7 +35,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 170,
 		Torque		 = 243,
-		FlywheelMass = 0.2,
+		FlywheelMass = { Realism = 4, Legacy = 0.2 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 6800,
@@ -45,7 +45,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("13.5-I3", "I3", {
+	Engines.RegisterItem("13.5-I3", "I3_Realism", {
 		Name		 = "13.5L I3 Petrol",
 		Description	 = "Short block light tank engine, likes sideways mountings.",
 		Model		 = "models/engines/inline3b.mdl",
@@ -54,7 +54,7 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 500,
 		Torque		 = 893,
-		FlywheelMass = 3.7,
+		FlywheelMass = { Realism = 28, Legacy = 3.7 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 3900,
@@ -66,7 +66,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.1-I3", "I3", {
+	Engines.RegisterItem("1.1-I3", "I3_Realism", {
 		Name		 = "1.1L I3 Diesel",
 		Description	 = "ATV grade 3-banger, enormous rev band but a choppy idle, great for light utility work.",
 		Model		 = "models/engines/inline3s.mdl",
@@ -75,7 +75,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 65,
 		Torque		 = 187,
-		FlywheelMass = 0.2,
+		Displacement = 1.1,
+		FlywheelMass = { Realism = 5, Legacy = 0.2 },
 		RPM = {
 			Idle	= 550,
 			Limit	= 3000,
@@ -85,7 +86,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("2.8-I3", "I3", {
+	Engines.RegisterItem("2.8-I3", "I3_Realism", {
 		Name		 = "2.8L I3 Diesel",
 		Description	 = "Medium utility grade I3 diesel, for tractors",
 		Model		 = "models/engines/inline3m.mdl",
@@ -94,7 +95,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 200,
 		Torque		 = 362,
-		FlywheelMass = 1,
+		Displacement = 2.8,
+		FlywheelMass = { Realism = 8, Legacy = 1 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 3800
@@ -104,7 +106,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("11.0-I3", "I3", {
+	Engines.RegisterItem("11.0-I3", "I3_Realism", {
 		Name		 = "11.0L I3 Diesel",
 		Description	 = "Light tank duty engine, compact yet grunts hard.",
 		Model		 = "models/engines/inline3b.mdl",
@@ -113,7 +115,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 650,
 		Torque		 = 1500,
-		FlywheelMass = 5,
+		Displacement = 11,
+		FlywheelMass = { Realism = 50, Legacy = 5 },
 		RPM = {
 			Idle	= 550,
 			Limit	= 2000

@@ -2,13 +2,13 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("R", {
+Engines.Register("R_Realism", {
 	Name		= "Rotary Engine",
 	Description	= "Wankels have rather wide powerbands, but are very high strung."
 })
 
 do
-	Engines.RegisterItem("900cc-R", "R", {
+	Engines.RegisterItem("900cc-R", "R_Realism", {
 		Name		 = "0.9L Rotary",
 		Description	 = "Small 2-rotor Wankel, suited for yard use.",
 		Model		 = "models/engines/wankel_2_small.mdl",
@@ -17,7 +17,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 50,
 		Torque		 = 97,
-		FlywheelMass = 0.06,
+		Displacement = 0.9,
+		FlywheelMass = { Realism = 1.75, Legacy = 0.06 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 9200,
@@ -27,7 +28,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("1.3L-R", "R", {
+	Engines.RegisterItem("1.3L-R", "R_Realism", {
 		Name		 = "1.3L Rotary",
 		Description	 = "Medium 2-rotor Wankel.",
 		Model		 = "models/engines/wankel_2_med.mdl",
@@ -36,7 +37,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 140,
 		Torque		 = 155,
-		FlywheelMass = 0.06,
+		Displacement = 1.3,
+		FlywheelMass = { Realism = 2.5, Legacy = 0.06 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,
@@ -46,7 +48,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("2.0L-R", "R", {
+	Engines.RegisterItem("2.0L-R", "R_Realism", {
 		Name		 = "2.0L Rotary",
 		Description	 = "High performance 3-rotor Wankel.",
 		Model		 = "models/engines/wankel_3_med.mdl",
@@ -55,7 +57,8 @@ do
 		Type		 = "Wankel",
 		Mass		 = 200,
 		Torque		 = 235,
-		FlywheelMass = 0.1,
+		Displacement = 2.0,
+		FlywheelMass = { Realism = 3, Legacy = 0.1 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 9500,

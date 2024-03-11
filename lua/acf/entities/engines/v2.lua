@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V2", {
+Engines.Register("V2_Realism", {
 	Name = "V-Twin Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("0.6-V2", "V2", {
+	Engines.RegisterItem("0.6-V2", "V2_Realism", {
 		Name		 = "600cc V-Twin",
 		Description	 = "Twin cylinder bike engine, torquey for its size",
 		Model		 = "models/engines/v-twins2.mdl",
@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 30,
 		Torque		 = 62,
-		FlywheelMass = 0.01,
+		Displacement = 0.6,
+		FlywheelMass = { Realism = 1, Legacy = 0.01 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 7000,
@@ -26,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("1.2-V2", "V2", {
+	Engines.RegisterItem("1.2-V2", "V2_Realism", {
 		Name		 = "1200cc V-Twin",
 		Description	 = "Large displacement vtwin engine",
 		Model		 = "models/engines/v-twinm2.mdl",
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 50,
 		Torque		 = 106,
-		FlywheelMass = 0.02,
+		Displacement = 1.2,
+		FlywheelMass = { Realism = 2, Legacy = 0.02 },
 		RPM = {
 			Idle	= 725,
 			Limit	= 6250,
@@ -45,7 +47,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("2.4-V2", "V2", {
+	Engines.RegisterItem("2.4-V2", "V2_Realism", {
 		Name		 = "2400cc V-Twin",
 		Description	 = "Huge fucking Vtwin 'MURRICA FUCK YEAH",
 		Model		 = "models/engines/v-twinl2.mdl",
@@ -54,7 +56,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 100,
 		Torque		 = 200,
-		FlywheelMass = 0.075,
+		Displacement = 2.4,
+		FlywheelMass = { Realism = 3, Legacy = 0.075 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 6000,

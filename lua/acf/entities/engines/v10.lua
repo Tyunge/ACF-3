@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V10", {
+Engines.Register("V10_Realism", {
 	Name = "V10 Engine",
 })
 
 do
-	Engines.RegisterItem("4.3-V10", "V10", {
+	Engines.RegisterItem("4.3-V10", "V10_Realism", {
 		Name		 = "4.3L V10 Petrol",
 		Description	 = "Small-block V-10 gasoline engine, great for powering a hot rod lincoln",
 		Model		 = "models/engines/v10sml.mdl",
@@ -16,7 +16,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 160,
 		Torque		 = 360,
-		FlywheelMass = 0.2,
+		Displacement = 4.3,
+		FlywheelMass = { Realism = 10, Legacy = 0.2 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 6250,
@@ -26,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("8.0-V10", "V10", {
+	Engines.RegisterItem("8.0-V10", "V10_Realism", {
 		Name		 = "8.0L V10 Petrol",
 		Description	 = "Beefy 10-cylinder gas engine, gets 9 kids to soccer practice",
 		Model		 = "models/engines/v10med.mdl",
@@ -35,7 +36,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 300,
 		Torque		 = 612,
-		FlywheelMass = 0.5,
+		Displacement = 8,
+		FlywheelMass = { Realism = 13, Legacy = 0.5 },
 		RPM = {
 			Idle	= 750,
 			Limit	= 6500,
@@ -45,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("22.0-V10", "V10", {
+	Engines.RegisterItem("22.0-V10", "V10_Realism", {
 		Name		 = "22.0L V10 Multifuel",
 		Description	 = "Heavy multifuel V-10, gearbox-shredding torque but very heavy.",
 		Model		 = "models/engines/v10big.mdl",
@@ -54,7 +56,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 1600,
 		Torque		 = 3240,
-		FlywheelMass = 5,
+		Displacement = 22,
+		FlywheelMass = { Realism = 100, Legacy = 5 },
 		RPM = {
 			Idle	= 525,
 			Limit	= 2200,

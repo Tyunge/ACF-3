@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I2", {
+Engines.Register("I2_Realism", {
 	Name = "Inline 2 Engine",
 })
 
 do
-	Engines.RegisterItem("0.8L-I2", "I2", {
+	Engines.RegisterItem("0.8L-I2", "I2_Realism", {
 		Name		 = "0.8L I2 Diesel",
 		Description	 = "For when a 3 banger is still too bulky for your micro-needs.",
 		Model		 = "models/engines/inline2s.mdl",
@@ -16,7 +16,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 45,
 		Torque		 = 131,
-		FlywheelMass = 0.12,
+		Displacement = 0.8,
+		FlywheelMass = { Realism = 5, Legacy = 0.12 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 2950,
@@ -26,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("10.0-I2", "I2", {
+	Engines.RegisterItem("10.0-I2", "I2_Realism", {
 		Name		 = "10.0L I2 Diesel",
 		Description	 = "TORQUE.",
 		Model		 = "models/engines/inline2b.mdl",
@@ -35,7 +36,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 800,
 		Torque		 = 2500,
-		FlywheelMass = 7,
+		Displacement = 10,
+		FlywheelMass = { Realism = 100, Legacy = 7 },
 		RPM = {
 			Idle	= 350,
 			Limit	= 1200,

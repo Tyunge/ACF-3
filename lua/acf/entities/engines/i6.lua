@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I6", {
+Engines.Register("I6_Realism", {
 	Name = "Inline 6 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("2.2-I6", "I6", {
+	Engines.RegisterItem("2.2-I6", "I6_Realism", {
 		Name		 = "2.2L I6 Petrol",
 		Description	 = "Car sized I6 petrol with power in the high revs.",
 		Model		 = "models/engines/inline6s.mdl",
@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 120,
 		Torque		 = 169,
-		FlywheelMass = 0.1,
+		Displacement = 2.2,
+		FlywheelMass = { Realism = 3.5, Legacy = 0.1 },
 		RPM = {
 			Idle	= 800,
 			Limit	= 7500,
@@ -26,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("4.8-I6", "I6", {
+	Engines.RegisterItem("4.8-I6", "I6_Realism", {
 		Name		 = "4.8L I6 Petrol",
 		Description	 = "Light truck duty I6, good for offroad applications.",
 		Model		 = "models/engines/inline6m.mdl",
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 300,
 		Torque		 = 460,
-		FlywheelMass = 0.2,
+		Displacement = 4.8,
+		FlywheelMass = { Realism = 5, Legacy = 0.2 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 5500,
@@ -45,7 +47,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("17.2-I6", "I6", {
+	Engines.RegisterItem("17.2-I6", "I6_Realism", {
 		Name		 = "17.2L I6 Petrol",
 		Description	 = "Heavy tractor duty petrol I6, decent overall powerband.",
 		Model		 = "models/engines/inline6l.mdl",
@@ -54,7 +56,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 850,
 		Torque		 = 1760,
-		FlywheelMass = 2.5,
+		Displacement = 17.2,
+		FlywheelMass = { Realism = 100, Legacy = 2.5 },
 		RPM = {
 			Idle	= 800,
 			Limit	= 2700,
@@ -66,7 +69,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("3.0-I6", "I6", {
+	Engines.RegisterItem("3.0-I6", "I6_Realism", {
 		Name		 = "3.0L I6 Diesel",
 		Description	 = "Car sized I6 diesel, good, wide powerband.",
 		Model		 = "models/engines/inline6s.mdl",
@@ -75,7 +78,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 150,
 		Torque		 = 250,
-		FlywheelMass = 0.5,
+		Displacement = 3.0,
+		FlywheelMass = { Realism = 7, Legacy = 0.5 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 4900,
@@ -85,7 +89,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("6.5-I6", "I6", {
+	Engines.RegisterItem("6.5-I6", "I6_Realism", {
 		Name		 = "6.5L I6 Diesel",
 		Description	 = "Truck duty I6, good overall powerband and torque.",
 		Model		 = "models/engines/inline6m.mdl",
@@ -94,7 +98,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 450,
 		Torque		 = 700,
-		FlywheelMass = 1.5,
+		Displacement = 6.5,
+		FlywheelMass = { Realism = 10, Legacy = 1.5 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 4000,
@@ -104,7 +109,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("20.0-I6", "I6", {
+	Engines.RegisterItem("20.0-I6", "I6_Realism", {
 		Name		 = "20.0L I6 Diesel",
 		Description	 = "Heavy duty diesel I6, used in generators and heavy movers.",
 		Model		 = "models/engines/inline6l.mdl",
@@ -113,7 +118,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 1200,
 		Torque		 = 2490,
-		FlywheelMass = 8,
+		Displacement = 20,
+		FlywheelMass = { Realism = 100, Legacy = 8 },
 		RPM = {
 			Idle	= 400,
 			Limit	= 2350,

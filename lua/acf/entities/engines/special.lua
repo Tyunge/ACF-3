@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("SP", {
+Engines.Register("SP_Realism", {
 	Name = "Special Engine",
 })
 
 do -- Special Rotary Engines
-	Engines.RegisterItem("2.6L-Wankel", "SP", {
+	Engines.RegisterItem("2.6L-Wankel", "SP_Realism", {
 		Name		 = "2.6L Rotary",
 		Description	 = "4 rotor racing Wankel, high revving and high strung.",
 		Model		 = "models/engines/wankel_4_med.mdl",
@@ -16,7 +16,8 @@ do -- Special Rotary Engines
 		Type		 = "Wankel",
 		Mass		 = 260,
 		Torque		 = 312,
-		FlywheelMass = 0.11,
+		Displacement = 2.6,
+		FlywheelMass = { Realism = 3, Legacy = 0.11 },
 		RPM = {
 			Idle	= 1200,
 			Limit	= 9500,
@@ -28,7 +29,7 @@ do -- Special Rotary Engines
 end
 
 do -- Special I2 Engines
-	Engines.RegisterItem("0.9L-I2", "SP", {
+	Engines.RegisterItem("0.9L-I2", "SP_Realism", {
 		Name		 = "0.9L I2 Petrol",
 		Description	 = "Turbocharged inline twin engine that delivers surprising pep for its size.",
 		Model		 = "models/engines/inline2s.mdl",
@@ -37,7 +38,8 @@ do -- Special I2 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 60,
 		Torque		 = 145,
-		FlywheelMass = 0.085,
+		Displacement = 0.9,
+		FlywheelMass = { Realism = 3, Legacy = 0.085 },
 		RPM = {
 			Idle	= 750,
 			Limit	= 6000,
@@ -49,7 +51,7 @@ do -- Special I2 Engines
 end
 
 do -- Special I4 Engines
-	Engines.RegisterItem("1.0L-I4", "SP", {
+	Engines.RegisterItem("1.0L-I4", "SP_Realism", {
 		Name		 = "1.0L I4 Petrol",
 		Description	 = "Tiny I4 designed for racing bikes. Doesn't pack much torque, but revs ludicrously high.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -58,7 +60,8 @@ do -- Special I4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 78,
 		Torque		 = 85,
-		FlywheelMass = 0.031,
+		Displacement = 1,
+		FlywheelMass = { Realism = 1, Legacy = 0.031 },
 		Pitch		 = 0.75,
 		RPM = {
 			Idle	= 1200,
@@ -69,7 +72,7 @@ do -- Special I4 Engines
 		},
 	})
 
-	Engines.RegisterItem("1.9L-I4", "SP", {
+	Engines.RegisterItem("1.9L-I4", "SP_Realism", {
 		Name		 = "1.9L I4 Petrol",
 		Description	 = "Supercharged racing 4 cylinder, most of the power in the high revs.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -78,7 +81,8 @@ do -- Special I4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 150,
 		Torque		 = 220,
-		FlywheelMass = 0.06,
+		Displacement = 1.9,
+		FlywheelMass = { Realism = 2.5, Legacy = 0.06 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,
@@ -90,7 +94,7 @@ do -- Special I4 Engines
 end
 
 do -- Special V4 Engines
-	Engines.RegisterItem("1.8L-V4", "SP", {
+	Engines.RegisterItem("1.8L-V4", "SP_Realism", {
 		Name		 = "1.8L V4 Petrol",
 		Description	 = "Naturally aspirated rally-tuned V4 with enlarged bore and stroke.",
 		Model		 = "models/engines/v4s.mdl",
@@ -99,7 +103,8 @@ do -- Special V4 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 92,
 		Torque		 = 156,
-		FlywheelMass = 0.04,
+		Displacement = 1.8,
+		FlywheelMass = { Realism = 3, Legacy = 0.04 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 7500,
@@ -111,7 +116,7 @@ do -- Special V4 Engines
 end
 
 do -- Special I6 Engines
-	Engines.RegisterItem("3.8-I6", "SP", {
+	Engines.RegisterItem("3.8-I6", "SP_Realism", {
 		Name		 = "3.8L I6 Petrol",
 		Description	 = "Large racing straight six, powerful and high revving, but lacking in torque.",
 		Model		 = "models/engines/inline6m.mdl",
@@ -120,7 +125,8 @@ do -- Special I6 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 180,
 		Torque		 = 280,
-		FlywheelMass = 0.1,
+		Displacement = 3.8,
+		FlywheelMass = { Realism = 3, Legacy = 0.1 },
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -132,7 +138,7 @@ do -- Special I6 Engines
 end
 
 do -- Special V6 Engines
-	Engines.RegisterItem("2.4L-V6", "SP", {
+	Engines.RegisterItem("2.4L-V6", "SP_Realism", {
 		Name		 = "2.4L V6 Petrol",
 		Description	 = "Although the cast iron engine block is fairly weighty, this tiny v6 makes up for it with impressive power. The unique V angle allows uncharacteristically high RPM for a V6.",
 		Model		 = "models/engines/v6small.mdl",
@@ -141,7 +147,8 @@ do -- Special V6 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 134,
 		Torque		 = 215,
-		FlywheelMass = 0.075,
+		Displacement = 2.4,
+		FlywheelMass = { Realism = 2.5, Legacy = 0.075 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 8000,
@@ -153,7 +160,7 @@ do -- Special V6 Engines
 end
 
 do -- Special V8 Engines
-	Engines.RegisterItem("2.9-V8", "SP", {
+	Engines.RegisterItem("2.9-V8", "SP_Realism", {
 		Name		 = "2.9L V8 Petrol",
 		Description	 = "Racing V8, very high revving and loud",
 		Model		 = "models/engines/v8s.mdl",
@@ -162,7 +169,8 @@ do -- Special V8 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 180,
 		Torque		 = 250,
-		FlywheelMass = 0.075,
+		Displacement = 2.9,
+		FlywheelMass = { Realism = 2.5, Legacy = 0.075 },
 		RPM = {
 			Idle	= 1000,
 			Limit	= 10000,
@@ -172,7 +180,7 @@ do -- Special V8 Engines
 		},
 	})
 
-	Engines.RegisterItem("7.2-V8", "SP", {
+	Engines.RegisterItem("7.2-V8", "SP_Realism", {
 		Name		 = "7.2L V8 Petrol",
 		Description	 = "Very high revving, glorious v8 of ear rapetasticalness.",
 		Model		 = "models/engines/v8m.mdl",
@@ -181,7 +189,8 @@ do -- Special V8 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 400,
 		Torque		 = 425,
-		FlywheelMass = 0.15,
+		Displacement = 7.2,
+		FlywheelMass = { Realism = 3, Legacy = 0.15 },
 		RPM = {
 			Idle	= 1000,
 			Limit	= 8500,
@@ -193,7 +202,7 @@ do -- Special V8 Engines
 end
 
 do -- Special V10 Engines
-	Engines.RegisterItem("5.3-V10", "SP", {
+	Engines.RegisterItem("5.3-V10", "SP_Realism", {
 		Name		 = "5.3L V10 Special",
 		Description	 = "Extreme performance v10",
 		Model		 = "models/engines/v10sml.mdl",
@@ -202,7 +211,8 @@ do -- Special V10 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 300,
 		Torque		 = 400,
-		FlywheelMass = 0.15,
+		Displacement = 5.3,
+		FlywheelMass = { Realism = 3, Legacy = 0.15 },
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -214,7 +224,7 @@ do -- Special V10 Engines
 end
 
 do -- Special V12 Engines
-	Engines.RegisterItem("3.0-V12", "SP", {
+	Engines.RegisterItem("3.0-V12", "SP_Realism", {
 		Name		 = "3.0L V12 Petrol",
 		Description	 = "A purpose-built racing v12, not known for longevity.",
 		Model		 = "models/engines/v12s.mdl",
@@ -223,7 +233,8 @@ do -- Special V12 Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 175,
 		Torque		 = 310,
-		FlywheelMass = 0.1,
+		Displacement = 3.0,
+		FlywheelMass = { Realism = 3, Legacy = 0.1 },
 		Pitch		 = 0.85,
 		RPM = {
 			Idle	= 1200,

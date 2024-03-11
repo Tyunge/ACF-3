@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I4", {
+Engines.Register("I4_Realism", {
 	Name = "Inline 4 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("1.5-I4", "I4", {
+	Engines.RegisterItem("1.5-I4", "I4_Realism", {
 		Name		 = "1.5L I4 Petrol",
 		Description	 = "Small car engine, not a whole lot of git.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 50,
 		Torque		 = 119,
-		FlywheelMass = 0.06,
+		Displacement = 1.5,
+		FlywheelMass = { Realism = 3, Legacy = 0.06 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 8000,
@@ -26,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("3.7-I4", "I4", {
+	Engines.RegisterItem("3.7-I4", "I4_Realism", {
 		Name		 = "3.7L I4 Petrol",
 		Description	 = "Large inline 4, sees most use in light trucks.",
 		Model		 = "models/engines/inline4m.mdl",
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 200,
 		Torque		 = 305,
-		FlywheelMass = 0.2,
+		Displacement = 3.7,
+		FlywheelMass = { Realism = 5, Legacy = 0.2 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 6500
@@ -45,7 +47,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("16.0-I4", "I4", {
+	Engines.RegisterItem("16.0-I4", "I4_Realism", {
 		Name		 = "16.0L I4 Petrol",
 		Description	 = "Giant, thirsty I4 petrol, most commonly used in boats.",
 		Model		 = "models/engines/inline4l.mdl",
@@ -54,7 +56,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 600,
 		Torque		 = 1165,
-		FlywheelMass = 4,
+		Displacement = 16,
+		FlywheelMass = { Realism = 50, Legacy = 4 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 3400,
@@ -66,7 +69,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.6-I4", "I4", {
+	Engines.RegisterItem("1.6-I4", "I4_Realism", {
 		Name		 = "1.6L I4 Diesel",
 		Description	 = "Small and light diesel, for low power applications requiring a wide powerband.",
 		Model		 = "models/engines/inline4s.mdl",
@@ -75,7 +78,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 90,
 		Torque		 = 184,
-		FlywheelMass = 0.2,
+		Displacement = 1.6,
+		FlywheelMass = { Realism = 4, Legacy = 0.2 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 5000,
@@ -85,7 +89,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("3.1-I4", "I4", {
+	Engines.RegisterItem("3.1-I4", "I4_Realism", {
 		Name		 = "3.1L I4 Diesel",
 		Description	 = "Light truck duty diesel, good overall grunt.",
 		Model		 = "models/engines/inline4m.mdl",
@@ -94,7 +98,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 250,
 		Torque		 = 510,
-		FlywheelMass = 1,
+		Displacement = 3.1,
+		FlywheelMass = { Realism = 7, Legacy = 1 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 4000,
@@ -104,7 +109,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("15.0-I4", "I4", {
+	Engines.RegisterItem("15.0-I4", "I4_Realism", {
 		Name		 = "15.0L I4 Diesel",
 		Description	 = "Small boat sized diesel, with large amounts of torque.",
 		Model		 = "models/engines/inline4l.mdl",
@@ -113,7 +118,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 800,
 		Torque		 = 2060,
-		FlywheelMass = 5,
+		Displacement = 15,
+		FlywheelMass = { Realism = 75, Legacy = 5 },
 		RPM = {
 			Idle	= 450,
 			Limit	= 2100,

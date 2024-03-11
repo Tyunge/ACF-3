@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V12", {
+Engines.Register("V12_Realism", {
 	Name = "V12 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("4.6-V12", "V12", {
+	Engines.RegisterItem("4.6-V12", "V12_Realism", {
 		Name		 = "4.6L V12 Petrol",
 		Description	 = "An elderly racecar engine; low on torque, but plenty of power",
 		Model		 = "models/engines/v12s.mdl",
@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 188,
 		Torque		 = 317,
-		FlywheelMass = 0.2,
+		Displacement = 4.6,
+		FlywheelMass = { Realism = 5, Legacy = 0.2 },
 		RPM = {
 			Idle	= 1000,
 			Limit	= 8000,
@@ -26,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("7.0-V12", "V12", {
+	Engines.RegisterItem("7.0-V12", "V12_Realism", {
 		Name		 = "7.0L V12 Petrol",
 		Description	 = "A high end V12; primarily found in very expensive cars",
 		Model		 = "models/engines/v12m.mdl",
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 360,
 		Torque		 = 726,
-		FlywheelMass = 0.45,
+		Displacement = 7,
+		FlywheelMass = { Realism = 12, Legacy = 0.45 },
 		RPM = {
 			Idle	= 800,
 			Limit	= 6000,
@@ -45,7 +47,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("13.0-V12", "V12", {
+	Engines.RegisterItem("13.0-V12", "V12_Realism", {
 		Name		 = "13.0L V12 Petrol",
 		Description	 = "Thirsty gasoline v12, good torque and power for medium applications.",
 		Model		 = "models/engines/v12m.mdl",
@@ -54,7 +56,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 520,
 		Torque		 = 932,
-		FlywheelMass = 2,
+		Displacement = 13,
+		FlywheelMass = { Realism = 32, Legacy = 2 },
 		RPM = {
 			Idle	= 700,
 			Limit	= 4250,
@@ -64,7 +67,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("23.0-V12", "V12", {
+	Engines.RegisterItem("23.0-V12", "V12_Realism", {
 		Name		 = "23.0L V12 Petrol",
 		Description	 = "A large, thirsty gasoline V12, found in early cold war tanks",
 		Model		 = "models/engines/v12l.mdl",
@@ -73,7 +76,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 1350,
 		Torque		 = 2436,
-		FlywheelMass = 5,
+		Displacement = 23,
+		FlywheelMass = { Realism = 100, Legacy = 5 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 3250,
@@ -85,7 +89,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("4.0-V12", "V12", {
+	Engines.RegisterItem("4.0-V12", "V12_Realism", {
 		Name		 = "4.0L V12 Diesel",
 		Description	 = "Reliable truck-duty diesel; a lot of smooth torque",
 		Model		 = "models/engines/v12s.mdl",
@@ -94,7 +98,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 305,
 		Torque		 = 510,
-		FlywheelMass = 0.475,
+		Displacement = 4,
+		FlywheelMass = { Realism = 15, Legacy = 0.475 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 4000,
@@ -104,7 +109,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("9.2-V12", "V12", {
+	Engines.RegisterItem("9.2-V12", "V12_Realism", {
 		Name		 = "9.2L V12 Diesel",
 		Description	 = "High torque light-tank V12, used mainly for vehicles that require balls",
 		Model		 = "models/engines/v12m.mdl",
@@ -113,7 +118,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 600,
 		Torque		 = 1202,
-		FlywheelMass = 2.5,
+		Displacement = 9.2,
+		FlywheelMass = { Realism = 25, Legacy = 2.5 },
 		RPM = {
 			Idle	= 675,
 			Limit	= 3600,
@@ -123,7 +129,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("21.0-V12", "V12", {
+	Engines.RegisterItem("21.0-V12", "V12_Realism", {
 		Name		 = "21.0L V12 Diesel",
 		Description	 = "AVDS-1790-2 tank engine; massively powerful, but enormous and heavy",
 		Model		 = "models/engines/v12l.mdl",
@@ -132,7 +138,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 1800,
 		Torque		 = 4325,
-		FlywheelMass = 7,
+		Displacement = 21,
+		FlywheelMass = { Realism = 150, Legacy = 7 },
 		RPM = {
 			Idle	= 400,
 			Limit	= 2000,

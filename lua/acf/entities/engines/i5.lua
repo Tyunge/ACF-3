@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I5", {
+Engines.Register("I5_Realism", {
 	Name = "Inline 5 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("2.3-I5", "I5", {
+	Engines.RegisterItem("2.3-I5", "I5_Realism", {
 		Name		 = "2.3L I5 Petrol",
 		Description	 = "Sedan-grade 5-cylinder, solid and dependable.",
 		Model		 = "models/engines/inline5s.mdl",
@@ -16,7 +16,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 100,
 		Torque		 = 156,
-		FlywheelMass = 0.12,
+		Displacement = 2.3,
+		FlywheelMass = { Realism = 3, Legacy = 0.12 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 7000,
@@ -26,7 +27,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("3.9-I5", "I5", {
+	Engines.RegisterItem("3.9-I5", "I5_Realism", {
 		Name		 = "3.9L I5 Petrol",
 		Description	 = "Truck sized inline 5, strong with a good balance of revs and torque.",
 		Model		 = "models/engines/inline5m.mdl",
@@ -35,7 +36,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 250,
 		Torque		 = 343,
-		FlywheelMass = 0.25,
+		Displacement = 3.9,
+		FlywheelMass = { Realism = 4, Legacy = 0.25 },
 		RPM = {
 			Idle	= 700,
 			Limit	= 6500,
@@ -47,7 +49,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("2.9-I5", "I5", {
+	Engines.RegisterItem("2.9-I5", "I5_Realism", {
 		Name		 = "2.9L I5 Diesel",
 		Description	 = "Aging fuel-injected diesel, low in horsepower but very forgiving and durable.",
 		Model		 = "models/engines/inline5s.mdl",
@@ -56,7 +58,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 130,
 		Torque		 = 225,
-		FlywheelMass = 0.5,
+		Displacement = 2.9,
+		FlywheelMass = { Realism = 5, Legacy = 0.5 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 4200,
@@ -66,7 +69,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("4.1-I5", "I5", {
+	Engines.RegisterItem("4.1-I5", "I5_Realism", {
 		Name		 = "4.1L I5 Diesel",
 		Description	 = "Heavier duty diesel, found in things that work hard.",
 		Model		 = "models/engines/inline5m.mdl",
@@ -75,7 +78,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 400,
 		Torque		 = 550,
-		FlywheelMass = 1.5,
+		Displacement = 4.1,
+		FlywheelMass = { Realism = 9, Legacy = 1.5 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 3800,

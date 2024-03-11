@@ -2,13 +2,13 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V6", {
+Engines.Register("V6_Realism", {
 	Name		= "V6 Engine",
 	Description	= "V6s are more torquey than the Boxer and Inline 6s but suffer in power."
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("3.6-V6", "V6", {
+	Engines.RegisterItem("3.6-V6", "V6_Realism", {
 		Name		 = "3.6L V6 Petrol",
 		Description	 = "Meaty Car sized V6, lots of torque.",
 		Model		 = "models/engines/v6small.mdl",
@@ -17,7 +17,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 190,
 		Torque		 = 316,
-		FlywheelMass = 0.25,
+		Displacement = 3.6,
+		FlywheelMass = { Realism = 10, Legacy = 0.25 },
 		RPM = {
 			Idle	= 700,
 			Limit	= 5000,
@@ -27,7 +28,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("6.2-V6", "V6", {
+	Engines.RegisterItem("6.2-V6", "V6_Realism", {
 		Name		 = "6.2L V6 Petrol",
 		Description	 = "Heavy duty 6V71 v6, throatier than an LA whore, but loaded with torque.",
 		Model		 = "models/engines/v6med.mdl",
@@ -36,7 +37,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 360,
 		Torque		 = 590,
-		FlywheelMass = 0.45,
+		Displacement = 6.2,
+		FlywheelMass = { Realism = 15, Legacy = 0.45 },
 		RPM = {
 			Idle	= 800,
 			Limit	= 5000,
@@ -46,7 +48,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("12.0-V6", "V6", {
+	Engines.RegisterItem("12.0-V6", "V6_Realism", {
 		Name		 = "12.0L V6 Petrol",
 		Description	 = "Fuck duty V6, guts ripped from god himself diluted in salt and shaped into an engine.",
 		Model		 = "models/engines/v6large.mdl",
@@ -55,7 +57,8 @@ do -- Petrol Engines
 		Type		 = "GenericPetrol",
 		Mass		 = 675,
 		Torque		 = 1806,
-		FlywheelMass = 4,
+		Displacement = 12,
+		FlywheelMass = { Realism = 50, Legacy = 4 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 3800,
@@ -67,7 +70,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("5.2-V6", "V6", {
+	Engines.RegisterItem("5.2-V6", "V6_Realism", {
 		Name		 = "5.2L V6 Diesel",
 		Description	 = "Light AFV-grade two-stroke diesel, high output but heavy.",
 		Model		 = "models/engines/v6med.mdl",
@@ -76,7 +79,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 520,
 		Torque		 = 606,
-		FlywheelMass = 0.8,
+		Displacement = 5.2,
+		FlywheelMass = { Realism = 15, Legacy = 0.8 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 4300,
@@ -86,7 +90,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("15.0-V6", "V6", {
+	Engines.RegisterItem("15.0-V6", "V6_Realism", {
 		Name		 = "15.0L V6 Diesel",
 		Description	 = "Powerful military-grade large V6, with impressive output. Well suited to medium-sized AFVs.",
 		Model		 = "models/engines/v6large.mdl",
@@ -95,7 +99,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 900,
 		Torque		 = 2208,
-		FlywheelMass = 6.4,
+		Displacement = 15,
+		FlywheelMass = { Realism = 75, Legacy = 6.4 },
 		RPM = {
 			Idle	= 400,
 			Limit	= 3100,

@@ -1,63 +1,65 @@
 local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
-
-Engines.Register("V8", {
+Engines.Register("V8_Realism", {
 	Name = "V8 Engine",
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("5.7-V8", "V8", {
-		Name		 = "5.7L V8 Petrol",
-		Description	 = "Car sized petrol engine, good power and mid range torque",
-		Model		 = "models/engines/v8s.mdl",
-		Sound		 = "acf_base/engines/v8_petrolsmall.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 260,
-		Torque		 = 389,
-		FlywheelMass = 0.15,
+	Engines.RegisterItem("5.7-V8", "V8_Realism", {
+		Name		 	= "5.7L V8 Petrol",
+		Description	 	= "Vroom",
+		Model		 	= "models/engines/v8s.mdl",
+		Sound		 	= "acf_base/engines/v8_petrolsmall.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 260,
+		Torque		 	= 389,
+		Displacement	= 5.7,
+		FlywheelMass 	= { Realism = 13, Legacy = 0.15 },		-- Kg
 		RPM = {
-			Idle	= 800,
-			Limit	= 5700,
+			Idle		= 800,
+			Limit		= 5700,
 		},
 		Preview = {
 			FOV = 100,
 		},
 	})
 
-	Engines.RegisterItem("9.0-V8", "V8", {
-		Name		 = "9.0L V8 Petrol",
-		Description	 = "Thirsty, giant V8, for medium applications",
-		Model		 = "models/engines/v8m.mdl",
-		Sound		 = "acf_base/engines/v8_petrolmedium.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 400,
-		Torque		 = 576,
-		FlywheelMass = 0.25,
+	Engines.RegisterItem("9.0-V8", "V8_Realism", {
+		Name		 	= "9.0L V8 Petrol",
+		Description	 	= "Thirsty, giant V8, for medium applications",
+		Model		 	= "models/engines/v8m.mdl",
+		Sound		 	= "acf_base/engines/v8_petrolmedium.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 400,
+		Torque		 	= 576,
+		Displacement	= 9,
+		FlywheelMass 	= { Realism = 18, Legacy = 0.25 },		-- Kg
 		RPM = {
-			Idle	= 700,
-			Limit	= 5500,
+			Idle		= 700,
+			Limit		= 5500,
 		},
 		Preview = {
 			FOV = 100,
 		},
 	})
 
-	Engines.RegisterItem("18.0-V8", "V8", {
-		Name		 = "18.0L V8 Petrol",
-		Description	 = "American gasoline tank V8, good overall power and torque and fairly lightweight",
-		Model		 = "models/engines/v8l.mdl",
-		Sound		 = "acf_base/engines/v8_petrollarge.wav",
-		Fuel		 = { Petrol = true },
-		Type		 = "GenericPetrol",
-		Mass		 = 850,
-		Torque		 = 1848,
-		FlywheelMass = 2.8,
+	Engines.RegisterItem("18.0-V8", "V8_Realism", {
+		Name		 	= "18.0L V8 Petrol",
+		Description	 	= "American gasoline tank V8, good overall power and torque and fairly lightweight",
+		Model		 	= "models/engines/v8l.mdl",
+		Sound		 	= "acf_base/engines/v8_petrollarge.wav",
+		Fuel		 	= { Petrol = true },
+		Type		 	= "GenericPetrol",
+		Mass		 	= 850,
+		Torque		 	= 1848,
+		Displacement	= 18,
+		FlywheelMass 	= { Realism = 120, Legacy = 2.8 },		-- Kg
 		RPM = {
-			Idle	= 600,
-			Limit	= 3000,
+			Idle		= 600,
+			Limit		= 3000,
 		},
 		Preview = {
 			FOV = 100,
@@ -66,45 +68,47 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("4.5-V8", "V8", {
-		Name		 = "4.5L V8 Diesel",
-		Description	 = "Light duty diesel v8, good for light vehicles that require a lot of torque",
-		Model		 = "models/engines/v8s.mdl",
-		Sound		 = "acf_base/engines/v8_dieselsmall.wav",
-		Fuel		 = { Diesel = true },
-		Type		 = "GenericDiesel",
-		Mass		 = 320,
-		Torque		 = 446,
-		FlywheelMass = 0.75,
+	Engines.RegisterItem("4.5-V8", "V8_Realism", {
+		Name		 	= "4.5L V8 Diesel",
+		Description	 	= "Light duty diesel v8, good for light vehicles that require a lot of torque",
+		Model		 	= "models/engines/v8s.mdl",
+		Sound		 	= "acf_base/engines/v8_dieselsmall.wav",
+		Fuel		 	= { Diesel = true },
+		Type		 	= "GenericDiesel",
+		Mass		 	= 320,
+		Torque		 	= 446,
+		Displacement	= 4.5,
+		FlywheelMass 	= { Realism = 22, Legacy = 0.75 },		-- Kg
 		RPM = {
-			Idle	= 800,
-			Limit	= 4000,
+			Idle		= 800,
+			Limit		= 4000,
 		},
 		Preview = {
 			FOV = 100,
 		},
 	})
 
-	Engines.RegisterItem("7.8-V8", "V8", {
-		Name		 = "7.8L V8 Diesel",
-		Description	 = "Redneck chariot material. Truck duty V8 diesel, has a good, wide powerband",
-		Model		 = "models/engines/v8m.mdl",
-		Sound		 = "acf_base/engines/v8_dieselmedium2.wav",
-		Fuel		 = { Diesel = true },
-		Type		 = "GenericDiesel",
-		Mass		 = 520,
-		Torque		 = 870,
-		FlywheelMass = 1.6,
+	Engines.RegisterItem("7.8-V8", "V8_Realism", {
+		Name		 	= "7.8L V8 Diesel",
+		Description	 	= "Redneck chariot material. Truck duty V8 diesel, has a good, wide powerband",
+		Model		 	= "models/engines/v8m.mdl",
+		Sound		 	= "acf_base/engines/v8_dieselmedium2.wav",
+		Fuel		 	= { Diesel = true },
+		Type		 	= "GenericDiesel",
+		Mass		 	= 520,
+		Torque		 	= 870,
+		Displacement	= 7.8,
+		FlywheelMass 	= { Realism = 38, Legacy = 1.6 },		-- Kg
 		RPM = {
-			Idle	= 650,
-			Limit	= 3800,
+			Idle		= 650,
+			Limit		= 3800,
 		},
 		Preview = {
 			FOV = 100,
 		},
 	})
 
-	Engines.RegisterItem("19.0-V8", "V8", {
+	Engines.RegisterItem("19.0-V8", "V8_Realism", {
 		Name		 = "19.0L V8 Diesel",
 		Description	 = "Heavy duty diesel V8, used in heavy construction equipment and tanks",
 		Model		 = "models/engines/v8l.mdl",
@@ -113,7 +117,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 1200,
 		Torque		 = 3308,
-		FlywheelMass = 4.5,
+		Displacement = 19,
+		FlywheelMass = { Realism = 350, Legacy = 4.5 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 2000,

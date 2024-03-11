@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V4", {
+Engines.Register("V4_Realism", {
 	Name = "V4 Engine",
 })
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.9L-V4", "V4", {
+	Engines.RegisterItem("1.9L-V4", "V4_Realism", {
 		Name		 = "1.9L V4 Diesel",
 		Description	 = "Torquey little lunchbox; for those smaller vehicles that don't agree with petrol powerbands",
 		Model		 = "models/engines/v4s.mdl",
@@ -16,7 +16,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 110,
 		Torque		 = 206,
-		FlywheelMass = 0.3,
+		Displacement = 1.9,
+		FlywheelMass = { Realism = 8, Legacy = 0.3 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 4000,
@@ -26,7 +27,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("3.3L-V4", "V4", {
+	Engines.RegisterItem("3.3L-V4", "V4_Realism", {
 		Name		 = "3.3L V4 Diesel",
 		Description	 = "Compact cube of git; for moderate utility applications",
 		Model		 = "models/engines/v4m.mdl",
@@ -35,7 +36,8 @@ do -- Diesel Engines
 		Type		 = "GenericDiesel",
 		Mass		 = 275,
 		Torque		 = 600,
-		FlywheelMass = 1.05,
+		Displacement = 3.3,
+		FlywheelMass = { Realism = 13, Legacy = 1.05 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 3900,

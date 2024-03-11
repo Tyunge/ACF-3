@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I1", {
+Engines.Register("I1_Realism", {
 	Name = "Single Cylinder Engine",
 })
 
 do
-	Engines.RegisterItem("0.25-I1", "I1", {
+	Engines.RegisterItem("0.25-I1", "I1_Realism", {
 		Name		 = "250cc Single Cylinder",
 		Description	 = "Tiny bike engine.",
 		Model		 = "models/engines/1cylsml.mdl",
@@ -16,7 +16,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 15,
 		Torque		 = 25,
-		FlywheelMass = 0.005,
+		Displacement = 0.25,
+		FlywheelMass = { Realism = 0.5, Legacy = 0.005 },
 		RPM = {
 			Idle	= 1200,
 			Limit	= 7500,
@@ -26,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("0.5-I1", "I1", {
+	Engines.RegisterItem("0.5-I1", "I1_Realism", {
 		Name		 = "500cc Single Cylinder",
 		Description	 = "Large single cylinder bike engine.",
 		Model		 = "models/engines/1cylmed.mdl",
@@ -35,7 +36,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 20,
 		Torque		 = 50,
-		FlywheelMass = 0.005,
+		Displacement = 0.5,
+		FlywheelMass = { Realism = 1, Legacy = 0.005 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 8000,
@@ -45,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("1.3-I1", "I1", {
+	Engines.RegisterItem("1.3-I1", "I1_Realism", {
 		Name		 = "1300cc Single Cylinder",
 		Description	 = "Ridiculously large single cylinder engine, seriously what the fuck.",
 		Model		 = "models/engines/1cylbig.mdl",
@@ -54,7 +56,8 @@ do
 		Type		 = "GenericPetrol",
 		Mass		 = 50,
 		Torque		 = 112,
-		FlywheelMass = 0.1,
+		Displacement = 1.3,
+		FlywheelMass = { Realism = 2, Legacy = 0.1 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 6700,

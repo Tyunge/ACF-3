@@ -2,12 +2,12 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("R7", {
+Engines.Register("R7_Realism", {
 	Name = "Radial 7 Engine",
 })
 
 do
-	Engines.RegisterItem("3.8-R7", "R7", {
+	Engines.RegisterItem("3.8-R7", "R7_Realism", {
 		Name		 = "3.8L R7 Petrol",
 		Description	 = "A tiny, old worn-out radial.",
 		Model		 = "models/engines/radial7s.mdl",
@@ -16,7 +16,8 @@ do
 		Type		 = "Radial",
 		Mass		 = 210,
 		Torque		 = 387,
-		FlywheelMass = 0.22,
+		Displacement = 3.8,
+		FlywheelMass = { Realism = 8, Legacy = 0.22 },
 		RPM = {
 			Idle	= 700,
 			Limit	= 4800,
@@ -26,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("11.0-R7", "R7", {
+	Engines.RegisterItem("11.0-R7", "R7_Realism", {
 		Name		 = "11.0L R7 Petrol",
 		Description	 = "Mid range radial, thirsty and smooth.",
 		Model		 = "models/engines/radial7m.mdl",
@@ -35,7 +36,8 @@ do
 		Type		 = "Radial",
 		Mass		 = 385,
 		Torque		 = 700,
-		FlywheelMass = 0.45,
+		Displacement = 11,
+		FlywheelMass = { Realism = 12, Legacy = 0.45 },
 		RPM = {
 			Idle	= 600,
 			Limit	= 4000,
@@ -45,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("8.0-R7", "R7", {
+	Engines.RegisterItem("8.0-R7", "R7_Realism", {
 		Name		 = "8.0L R7 Diesel",
 		Description	 = "Heavy and with a narrow powerband, but efficient, and well-optimized to cruising.",
 		Model		 = "models/engines/radial7m.mdl",
@@ -54,7 +56,8 @@ do
 		Type		 = "GenericDiesel",
 		Mass		 = 450,
 		Torque		 = 1000,
-		FlywheelMass = 1,
+		Displacement = 8.0,
+		FlywheelMass = { Realism = 50, Legacy = 1 },
 		RPM = {
 			Idle	= 400,
 			Limit	= 2800,
@@ -64,7 +67,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("24.0-R7", "R7", {
+	Engines.RegisterItem("24.0-R7", "R7_Realism", {
 		Name		 = "24.0L R7 Petrol",
 		Description	 = "Massive American radial monster, destined for fighter aircraft and heavy tanks.",
 		Model		 = "models/engines/radial7l.mdl",
@@ -73,7 +76,8 @@ do
 		Type		 = "Radial",
 		Mass		 = 952,
 		Torque		 = 1990,
-		FlywheelMass = 3.4,
+		Displacement = 24,
+		FlywheelMass = { Realism = 75, Legacy = 3.4 },
 		RPM = {
 			Idle	= 750,
 			Limit	= 2650,
