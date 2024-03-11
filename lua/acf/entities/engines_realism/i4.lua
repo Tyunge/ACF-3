@@ -2,7 +2,7 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("I4", {
+Engines.Register("I4_Realism", {
 	Name = "Inline 4 Engine",
 })
 

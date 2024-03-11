@@ -2,7 +2,7 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("R", {
+Engines.Register("R_Realism", {
 	Name		= "Rotary Engine",
 	Description	= "Wankels have rather wide powerbands, but are very high strung."
 })

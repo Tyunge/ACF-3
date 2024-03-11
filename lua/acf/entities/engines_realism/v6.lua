@@ -2,7 +2,7 @@ local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
 
-Engines.Register("V6", {
+Engines.Register("V6_Realism", {
 	Name		= "V6 Engine",
 	Description	= "V6s are more torquey than the Boxer and Inline 6s but suffer in power."
 })

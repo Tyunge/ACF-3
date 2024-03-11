@@ -93,7 +93,7 @@ do -- Spawning and updating
 		if not isstring(Class) then return false end
 
 		local ClassData = Entities.Get(Class)
-
+		
 		if not ClassData then return false, Class .. " is not a registered ACF entity class." end
 		if not ClassData.Spawn then return false, Class .. " doesn't have a spawn function assigned to it." end
 

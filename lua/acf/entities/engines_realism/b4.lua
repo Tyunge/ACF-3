@@ -1,8 +1,7 @@
 local ACF     = ACF
 local Engines = ACF.Classes.Engines
 
-
-Engines.Register("B4", {
+Engines.Register("B4_Realism", {
 	Name = "Flat 4 Engine",
 })
 
