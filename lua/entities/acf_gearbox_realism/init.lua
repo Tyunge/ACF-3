@@ -234,7 +234,7 @@ do -- Spawn and Update functions -----------------------
 
 	-------------------------------------------------------------------------------
 
-	function Makeacf_gearbox_realism(Player, Pos, Angle, Data)
+	function MakeACF_Gearbox_Realism(Player, Pos, Angle, Data)
 		VerifyData(Data)
 
 		local Class   = Classes.GetGroup(Gearboxes, Data.Gearbox)
@@ -314,7 +314,7 @@ do -- Spawn and Update functions -----------------------
 		return Entity
 	end
 
-	Entities.Register("acf_gearbox_realism", Makeacf_gearbox_realism, "Gearbox", "Gears", "FinalDrive", "ShiftPoints", "Reverse", "MinRPM", "MaxRPM")
+	Entities.Register("acf_gearbox_realism", MakeACF_Gearbox_Realism, "Gearbox", "Gears", "FinalDrive", "ShiftPoints", "Reverse", "MinRPM", "MaxRPM")
 
 	ACF.RegisterLinkSource("acf_gearbox_realism", "GearboxIn")
 	ACF.RegisterLinkSource("acf_gearbox_realism", "GearboxOut")

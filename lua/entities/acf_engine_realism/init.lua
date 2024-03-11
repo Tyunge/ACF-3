@@ -50,7 +50,7 @@ do
 		return false, "This engine is not linked to this fuel tank."
 	end)
 
-	ACF.RegisterClassLink("acf_engine_realism", "acf_gearbox", function(Engine, Target)
+	ACF.RegisterClassLink("acf_engine_realism", "acf_gearbox_realism", function(Engine, Target)
 		if Engine.Gearboxes[Target] then return false, "This engine is already linked to this gearbox." end
 
 		-- make sure the angle is not excessive
@@ -90,7 +90,7 @@ do
 		return true, "Engine linked successfully!"
 	end)
 
-	ACF.RegisterClassUnlink("acf_engine_realism", "acf_gearbox", function(Engine, Target)
+	ACF.RegisterClassUnlink("acf_engine_realism", "acf_gearbox_realism", function(Engine, Target)
 		if not Engine.Gearboxes[Target] then
 			return false, "This engine is not linked to this gearbox."
 		end
