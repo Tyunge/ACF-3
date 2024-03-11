@@ -62,6 +62,7 @@ end
 local function CreateMenu(Menu)
 	local EngineEntries = Engines.GetEntries()
 	local FuelEntries   = FuelTanks.GetEntries()
+	ACF.SetClientData("PrimaryClass", "acf_engine")
 
 	Menu:AddTitle("Engine Settings")
 
@@ -73,6 +74,18 @@ local function CreateMenu(Menu)
 	local EngineDesc = EngineBase:AddLabel()
 	local EnginePreview = EngineBase:AddModelPreview(nil, true)
 	local EngineStats = EngineBase:AddLabel()
+	local EngineLegacy = EngineBase:AddCheckBox("Use Legacy Mobility")
+	EngineLegacy:SetClientData("Use Legacy Mobility", "OnChange")
+	EngineLegacy:DefineSetter(function(Panel, _, _, Value)
+		local usingLegacy = Value
+		Panel:SetValue(usingLegacy)
+
+		if( !usingLegacy )then
+			ACF.SetClientData("PrimaryClass", "acf_engine_realism")
+		end
+
+		return usingLegacy
+	end)
 
 	Menu:AddTitle("Fuel Tank Settings")
 	local FuelType = Menu:AddComboBox()
@@ -129,7 +142,7 @@ local function CreateMenu(Menu)
 	local FuelPreview = FuelBase:AddModelPreview(nil, true)
 	local FuelInfo = FuelBase:AddLabel()
 
-	ACF.SetClientData("PrimaryClass", "acf_engine")
+	
 	ACF.SetClientData("SecondaryClass", "acf_fueltank")
 
 	ACF.SetToolMode("acf_menu", "Spawner", "Engine")
@@ -139,9 +152,9 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
-
+		
 		ACF.SetClientData("EngineClass", Data.ID)
-
+		
 		ACF.LoadSortedList(EngineList, Data.Items, "Mass")
 	end
 
@@ -150,10 +163,10 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
-
+		
 		local ClassData = EngineClass.Selected
 		local ClassDesc = ClassData.Description
-
+		
 		ACF.SetClientData("Engine", Data.ID)
 
 		EngineName:SetText(Data.Name)
