@@ -7,7 +7,7 @@ Engines.Register("I2_Realism", {
 })
 
 do
-	Engines.RegisterItem("0.8L-I2", "I2", {
+	Engines.RegisterItem("0.8L-I2", "I2_Realism", {
 		Name		 = "0.8L I2 Diesel",
 		Description	 = "For when a 3 banger is still too bulky for your micro-needs.",
 		Model		 = "models/engines/inline2s.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("10.0-I2", "I2", {
+	Engines.RegisterItem("10.0-I2", "I2_Realism", {
 		Name		 = "10.0L I2 Diesel",
 		Description	 = "TORQUE.",
 		Model		 = "models/engines/inline2b.mdl",

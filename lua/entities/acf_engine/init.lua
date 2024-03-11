@@ -353,7 +353,7 @@ do -- Spawn and Update functions
 		if CanSpawn == false then return false end
 
 		local Entity = ents.Create("acf_engine")
-
+		
 		if not IsValid(Entity) then return false end
 
 		Entity:SetPlayer(Player)

@@ -50,7 +50,7 @@ function Entities.Register(Class, Function, ...)
 	local Entity    = GetEntityTable(Class)
 	local Arguments = istable(...) and ... or { ... }
 	local List      = AddArguments(Entity, Arguments)
-	
+	PrintTable(Entity)
 	Entity.Spawn = Function
 
 	duplicator.RegisterEntityClass(Class, Function, "Pos", "Angle", "Data", unpack(List))

@@ -7,7 +7,7 @@ Engines.Register("V10_Realism", {
 })
 
 do
-	Engines.RegisterItem("4.3-V10", "V10", {
+	Engines.RegisterItem("4.3-V10", "V10_Realism", {
 		Name		 = "4.3L V10 Petrol",
 		Description	 = "Small-block V-10 gasoline engine, great for powering a hot rod lincoln",
 		Model		 = "models/engines/v10sml.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("8.0-V10", "V10", {
+	Engines.RegisterItem("8.0-V10", "V10_Realism", {
 		Name		 = "8.0L V10 Petrol",
 		Description	 = "Beefy 10-cylinder gas engine, gets 9 kids to soccer practice",
 		Model		 = "models/engines/v10med.mdl",
@@ -47,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("22.0-V10", "V10", {
+	Engines.RegisterItem("22.0-V10", "V10_Realism", {
 		Name		 = "22.0L V10 Multifuel",
 		Description	 = "Heavy multifuel V-10, gearbox-shredding torque but very heavy.",
 		Model		 = "models/engines/v10big.mdl",

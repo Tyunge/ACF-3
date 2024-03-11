@@ -8,7 +8,7 @@ Engines.Register("V6_Realism", {
 })
 
 do -- Petrol Engines
-	Engines.RegisterItem("3.6-V6", "V6", {
+	Engines.RegisterItem("3.6-V6", "V6_Realism", {
 		Name		 = "3.6L V6 Petrol",
 		Description	 = "Meaty Car sized V6, lots of torque.",
 		Model		 = "models/engines/v6small.mdl",
@@ -28,7 +28,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("6.2-V6", "V6", {
+	Engines.RegisterItem("6.2-V6", "V6_Realism", {
 		Name		 = "6.2L V6 Petrol",
 		Description	 = "Heavy duty 6V71 v6, throatier than an LA whore, but loaded with torque.",
 		Model		 = "models/engines/v6med.mdl",
@@ -48,7 +48,7 @@ do -- Petrol Engines
 		},
 	})
 
-	Engines.RegisterItem("12.0-V6", "V6", {
+	Engines.RegisterItem("12.0-V6", "V6_Realism", {
 		Name		 = "12.0L V6 Petrol",
 		Description	 = "Fuck duty V6, guts ripped from god himself diluted in salt and shaped into an engine.",
 		Model		 = "models/engines/v6large.mdl",
@@ -70,7 +70,7 @@ do -- Petrol Engines
 end
 
 do -- Diesel Engines
-	Engines.RegisterItem("5.2-V6", "V6", {
+	Engines.RegisterItem("5.2-V6", "V6_Realism", {
 		Name		 = "5.2L V6 Diesel",
 		Description	 = "Light AFV-grade two-stroke diesel, high output but heavy.",
 		Model		 = "models/engines/v6med.mdl",
@@ -90,7 +90,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("15.0-V6", "V6", {
+	Engines.RegisterItem("15.0-V6", "V6_Realism", {
 		Name		 = "15.0L V6 Diesel",
 		Description	 = "Powerful military-grade large V6, with impressive output. Well suited to medium-sized AFVs.",
 		Model		 = "models/engines/v6large.mdl",

@@ -8,7 +8,7 @@ Engines.Register("R_Realism", {
 })
 
 do
-	Engines.RegisterItem("900cc-R", "R", {
+	Engines.RegisterItem("900cc-R", "R_Realism", {
 		Name		 = "0.9L Rotary",
 		Description	 = "Small 2-rotor Wankel, suited for yard use.",
 		Model		 = "models/engines/wankel_2_small.mdl",
@@ -28,7 +28,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("1.3L-R", "R", {
+	Engines.RegisterItem("1.3L-R", "R_Realism", {
 		Name		 = "1.3L Rotary",
 		Description	 = "Medium 2-rotor Wankel.",
 		Model		 = "models/engines/wankel_2_med.mdl",
@@ -48,7 +48,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("2.0L-R", "R", {
+	Engines.RegisterItem("2.0L-R", "R_Realism", {
 		Name		 = "2.0L Rotary",
 		Description	 = "High performance 3-rotor Wankel.",
 		Model		 = "models/engines/wankel_3_med.mdl",

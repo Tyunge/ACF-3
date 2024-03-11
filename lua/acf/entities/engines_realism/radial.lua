@@ -7,7 +7,7 @@ Engines.Register("R7_Realism", {
 })
 
 do
-	Engines.RegisterItem("3.8-R7", "R7", {
+	Engines.RegisterItem("3.8-R7", "R7_Realism", {
 		Name		 = "3.8L R7 Petrol",
 		Description	 = "A tiny, old worn-out radial.",
 		Model		 = "models/engines/radial7s.mdl",
@@ -27,7 +27,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("11.0-R7", "R7", {
+	Engines.RegisterItem("11.0-R7", "R7_Realism", {
 		Name		 = "11.0L R7 Petrol",
 		Description	 = "Mid range radial, thirsty and smooth.",
 		Model		 = "models/engines/radial7m.mdl",
@@ -47,7 +47,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("8.0-R7", "R7", {
+	Engines.RegisterItem("8.0-R7", "R7_Realism", {
 		Name		 = "8.0L R7 Diesel",
 		Description	 = "Heavy and with a narrow powerband, but efficient, and well-optimized to cruising.",
 		Model		 = "models/engines/radial7m.mdl",
@@ -67,7 +67,7 @@ do
 		},
 	})
 
-	Engines.RegisterItem("24.0-R7", "R7", {
+	Engines.RegisterItem("24.0-R7", "R7_Realism", {
 		Name		 = "24.0L R7 Petrol",
 		Description	 = "Massive American radial monster, destined for fighter aircraft and heavy tanks.",
 		Model		 = "models/engines/radial7l.mdl",

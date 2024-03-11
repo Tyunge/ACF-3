@@ -7,7 +7,7 @@ Engines.Register("V4_Realism", {
 })
 
 do -- Diesel Engines
-	Engines.RegisterItem("1.9L-V4", "V4", {
+	Engines.RegisterItem("1.9L-V4", "V4_Realism", {
 		Name		 = "1.9L V4 Diesel",
 		Description	 = "Torquey little lunchbox; for those smaller vehicles that don't agree with petrol powerbands",
 		Model		 = "models/engines/v4s.mdl",
@@ -27,7 +27,7 @@ do -- Diesel Engines
 		},
 	})
 
-	Engines.RegisterItem("3.3L-V4", "V4", {
+	Engines.RegisterItem("3.3L-V4", "V4_Realism", {
 		Name		 = "3.3L V4 Diesel",
 		Description	 = "Compact cube of git; for moderate utility applications",
 		Model		 = "models/engines/v4m.mdl",
