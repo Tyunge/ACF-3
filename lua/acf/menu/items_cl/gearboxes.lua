@@ -13,20 +13,22 @@ local function CreateMenu(Menu)
 	local GearboxName = Base:AddTitle()
 	local GearboxDesc = Base:AddLabel()
 	local GearboxPreview = Base:AddModelPreview(nil, true)
-	local GearboxLegacy = Base:AddCheckBox("Use Legacy Gearbox")
-	GearboxLegacy:SetClientData("Use Legacy Gearbox", "OnChange")
-	GearboxLegacy:DefineSetter(function(Panel, _, _, Value)
-		local usingLegacy = Value
-		Panel:SetValue(usingLegacy)
 
-		if( usingLegacy )then
-			ACF.SetClientData("PrimaryClass", "acf_gearbox")
-		else
-			ACF.SetClientData("PrimaryClass", "acf_gearbox_realism")
-		end
+	if ( ACF.MobilityUpdate ) then
+		local EnableMobilityUpdate = Base:AddCheckBox("Enable Mobility Update")
+		EnableMobilityUpdate:SetClientData("Enable Mobility Update", "OnChange")
+		EnableMobilityUpdate:DefineSetter(function(Panel, _, _, Value)
+			Panel:SetValue(Value)
 
-		return usingLegacy
-	end)
+			if( Value )then
+				ACF.SetClientData("PrimaryClass", "acf_gearbox_realism")
+			else
+				ACF.SetClientData("PrimaryClass", "acf_gearbox")
+			end
+		end)
+	else
+		ACF.SetClientData("PrimaryClass", "acf_gearbox")
+	end
 
 	
 	ACF.SetClientData("SecondaryClass", "N/A")

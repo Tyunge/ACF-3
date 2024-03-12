@@ -22,6 +22,7 @@ ACF.PersistServerData("AllowProcArmor", false)
 ACF.PersistServerData("ShowFunMenu", true)
 ACF.PersistServerData("WorkshopContent", true)
 ACF.PersistServerData("WorkshopExtras", false)
+ACF.PersistServerData("MobilityUpdate", true)
 
 -- Debris
 ACF.PersistServerData("CreateDebris", true)

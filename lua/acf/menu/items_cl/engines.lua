@@ -59,10 +59,45 @@ local function UpdateEngineStats(Label, Data)
 	Label:SetText(RPMText:format(RPM.Idle, MinPower, MaxPower, RPM.Limit, Mass, FuelList, Power))
 end
 
+--Adds or removes the checkbox if the engine supports the new mobility system.
+local function CheckMobilityUpdateEligibility(ID, Menu, CheckBox)
+	local LegacyEngineIDs = {["EL"] = true, ["EL-S"] = true, ["GGT"] = true, ["GT"] = true}
+
+	if LegacyEngineIDs[ID] then
+		
+		--CheckBox is a table because it is a pass by reference type.
+		if CheckBox[0] != nil then
+			CheckBox[0]:Remove()
+			CheckBox[0] = nil
+		end
+
+		ACF.SetClientData("PrimaryClass","acf_engine")
+	else
+
+		if( CheckBox[0] == nil ) then
+			CheckBox[0] = Menu:AddCheckBox("Enable Mobility Update")
+			CheckBox[0]:SetClientData("Mobility Update", "OnChange")
+			CheckBox[0]:DefineSetter(function(Panel, _, _, Value)
+				Panel:SetValue(Value)
+
+				if(Value)then
+					ACF.SetClientData("PrimaryClass", "acf_engine_realism")
+				else
+					ACF.SetClientData("PrimaryClass", "acf_engine")
+				end
+
+			end)
+		end
+
+
+	end
+
+end
+
 local function CreateMenu(Menu)
 	local EngineEntries = Engines.GetEntries()
 	local FuelEntries   = FuelTanks.GetEntries()
-	
+
 	Menu:AddTitle("Engine Settings")
 
 	local EngineClass = Menu:AddComboBox()
@@ -73,21 +108,9 @@ local function CreateMenu(Menu)
 	local EngineDesc = EngineBase:AddLabel()
 	local EnginePreview = EngineBase:AddModelPreview(nil, true)
 	local EngineStats = EngineBase:AddLabel()
-	local EngineLegacy = EngineBase:AddCheckBox("Use Legacy Engine")
-	EngineLegacy:SetClientData("Use Legacy Engine", "OnChange")
-	EngineLegacy:DefineSetter(function(Panel, _, _, Value)
-		local usingLegacy = Value
-		Panel:SetValue(usingLegacy)
 
-		if( usingLegacy )then
-			ACF.SetClientData("PrimaryClass", "acf_engine")
-		else
-			ACF.SetClientData("PrimaryClass", "acf_engine_realism")
-		end
-
-
-		return usingLegacy
-	end)
+	--This is a table so it can be used in a pass by reference nature for the CheckMobilityUpdateEligibility function.
+	local EnableMobilityUpdate = {}
 
 	Menu:AddTitle("Fuel Tank Settings")
 	local FuelType = Menu:AddComboBox()
@@ -144,9 +167,8 @@ local function CreateMenu(Menu)
 	local FuelPreview = FuelBase:AddModelPreview(nil, true)
 	local FuelInfo = FuelBase:AddLabel()
 
-	
+	ACF.SetClientData("PrimaryClass", "acf_engine")
 	ACF.SetClientData("SecondaryClass", "acf_fueltank")
-
 	ACF.SetToolMode("acf_menu", "Spawner", "Engine")
 
 	function EngineClass:OnSelect(Index, _, Data)
@@ -154,7 +176,11 @@ local function CreateMenu(Menu)
 		
 		self.ListData.Index = Index
 		self.Selected = Data
-		
+
+		if ACF.MobilityUpdate then
+			CheckMobilityUpdateEligibility(Data.ID, EngineBase, EnableMobilityUpdate)
+		end
+
 		ACF.SetClientData("EngineClass", Data.ID)
 		
 		ACF.LoadSortedList(EngineList, Data.Items, "Mass")
