@@ -28,7 +28,7 @@ do -- ACF global vars
 	ACF.MinimumArmor       = 1 -- Minimum possible armor that can be given to an entity
 	ACF.MaximumArmor       = 5000 -- Maximum possible armor that can be given to an entity
 	ACF.KillIconColor      = Color(200, 200, 48)
-	ACF.MobilityUpdate	   = false -- Whether or not to enable the updated mobility system or only allow the legacy system.
+	ACF.MobilityUpdate	   = true -- Whether or not to enable the updated mobility system or only allow the legacy system.
 
 	ACF.GunsCanFire        = true
 	ACF.GunsCanSmoke       = true

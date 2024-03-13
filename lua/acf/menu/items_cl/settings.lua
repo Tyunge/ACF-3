@@ -179,6 +179,14 @@ do -- Serverside settings
 			return Value
 		end)
 
+		local MobilityUpdate = Base:AddCheckBox("Enable mobility overhaul.")
+		MobilityUpdate:SetServerData("MobilityUpdate", "OnChange")
+		MobilityUpdate:DefineSetter(function(Panel, _, _, Value)
+			Panel:SetValue(Value)
+
+			return Value
+		end)
+
 		local MaxThickness = Base:AddSlider("Max Armor Thickness", ACF.MinimumArmor, ACF.MaximumArmor)
 		MaxThickness:SetServerData("MaxThickness", "OnValueChanged")
 		MaxThickness:DefineSetter(function(Panel, _, _, Value)
