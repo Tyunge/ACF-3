@@ -778,7 +778,7 @@ do -- Movement -----------------------------------------
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
 		end
-
+ 
 		if( table.Count( self.GearboxOut ) > 0 ) then
 			for Ent, Link in pairs( self.GearboxOut ) do
 				self.InputRPM = self.InputRPM + Ent:UpdatePhys(self.TorqueOutput/table.Count( self.GearboxOut ), DeltaTime) * self.GearRatio
@@ -815,75 +815,6 @@ do -- Movement -----------------------------------------
 		return self.InputRPM
 	end
 
-	/*
-	function ENT:CalculateTorque(InputTorque, EngineBrakeTorque, DeltaTime)
-		if self.Disabled then return 0 end
-		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
-
-		local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
-		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
-		local reactTq = 0
-
-		--Limit the input torque to the gearbox torque limit. 
-		self.TorqueInput = math.min(InputTorque-EngineBrakeTorque, self.MaxTorque)
-		self.TorqueOutput = (self.TorqueInput*self.GearRatio)
-		
-		--Gear change delay
-		if self.ChangeFinished < Clock.CurTime then
-			self.InGear = true
-		end
-
-		-- TODO: Do CVT and Automatic Ratio Changes
-		
-		self.InputRPM = 0
-
-		if( table.Count(self.GearboxOut) > 0 ) then
-
-			self.TorqueOutput = self.TorqueOutput--/table.Count(self.GearboxOut)
-
-			for Ent, Link in pairs(self.GearboxOut) do
-				local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
-				self.InputRPM = self.InputRPM + Ent.InputRPM * self.GearRatio
-				Ent:CalculateTorque(self.TorqueOutput,EngineBrakeTorque, DeltaTime)
-			end
-			self.InputRPM = self.InputRPM / table.Count(self.GearboxOut)
-		end
-
-		if( table.Count(self.Wheels) > 0 ) then
-
-			self.TorqueOutput = self.TorqueOutput--/table.Count(self.Wheels)
-
-			for Wheel, Link in pairs(self.Wheels) do
-				local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
-				
-				self.InputRPM = self.InputRPM + RPM*self.GearRatio
-
-				if self.GearRatio != 0 then
-					local Clutch = Link.Side == 0 and self.LClutch or self.RClutch
-					self.InputTorque = InputTorque * self.GearRatio
-					ActWheel(Link, Wheel, self.TorqueOutput/table.Count(self.Wheels), DeltaTime)
-
-					reactTq = reactTq + self.TorqueOutput
-					if reactTq ~= 0 then
-						local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
-			
-						if IsValid(BoxPhys) then
-							BoxPhys:ApplyTorqueCenter(self:GetRight() * Clamp(2 * reactTq * DeltaTime, -500000, 500000))
-						end
-					end
-
-				end
-			end
-			self.InputRPM = self.InputRPM / table.Count(self.Wheels)
-		end
-
-		self:UpdateOverlay()
-		self:UpdateOutputs()
-
-		self.LastActive = Clock.CurTime
-		return self.TorqueOutput
-	end
-	*/
 end ----------------------------------------------------
 
 do -- Braking ------------------------------------------
@@ -912,6 +843,7 @@ do -- Braking ------------------------------------------
 		if not self.Braking then return end -- Kills the whole thing if its not supposed to be running
 		if not next(self.Wheels) then return end -- No brakes for the non-wheel users
 		if self.LastBrake == Clock.CurTime then return end -- Don't run this twice in a tick
+	
 
 		local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
@@ -922,7 +854,9 @@ do -- Braking ------------------------------------------
 
 			if Brake > 0 then -- regular ol braking
 				Link.IsBraking = true
-				CalcWheel(self, Link, Wheel, SelfWorld) -- Updating the link velocity
+				Link.Vel = CalcWheelRPM(self, Link, Wheel, SelfWorld)
+				
+				--CalcWheel(self, Link, Wheel, SelfWorld) -- Updating the link velocity
 				BrakeWheel(Link, Wheel, Brake, DeltaTime)
 			else
 				Link.IsBraking = false

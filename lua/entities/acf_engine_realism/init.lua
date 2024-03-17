@@ -8,7 +8,7 @@ local ACF = ACF
 --[[
 	TO-DO:
 		ADD: Electric and Turbine Engines.
-		ISSUE: Enginebraking is applied when in Neutral or Clutched.
+		ISSUE: Gear 0?
 
 
 ]]
