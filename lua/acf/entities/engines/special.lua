@@ -212,7 +212,7 @@ do -- Special V10 Engines
 		Mass		 = 300,
 		Torque		 = 400,
 		Displacement = 5.3,
-		FlywheelMass = { Realism = 3, Legacy = 0.15 },
+		FlywheelMass = { Realism = 8, Legacy = 0.15 },
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,

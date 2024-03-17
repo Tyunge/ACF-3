@@ -749,8 +749,9 @@ function ENT:CalcRPM()
 		end
 		
 	end
-	averageGearboxRPM = averageGearboxRPM/table.Count(self.Gearboxes)
-
+	if ( table.Count( self.Gearboxes ) > 0 ) then
+		averageGearboxRPM = averageGearboxRPM/table.Count(self.Gearboxes)
+	end
 
     local rpmDeceleration = ((self.Displacement*self.FlyRPM)/100)*(1-math.ceil(Throttle))
     local accelerationSum = (self.Torque-rpmDeceleration)/self.Inertia
@@ -760,7 +761,7 @@ function ENT:CalcRPM()
 	local accelerationDifference = (clutchStrength/self.Inertia)
 
 	local engineAcceleration = ( accelerationSum*(1-gearboxLoad) ) + ( -accelerationDifference*gearboxLoad )
-
+	
 	self.FlyRPM = math.max(0, self.FlyRPM + engineAcceleration)
 
 	self.LastThink = Clock.CurTime
