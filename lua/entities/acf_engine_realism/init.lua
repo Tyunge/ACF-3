@@ -757,7 +757,7 @@ function ENT:CalcRPM()
     local accelerationSum = (self.Torque-rpmDeceleration)/self.Inertia
 
 	local rpmDifference = self.FlyRPM - averageGearboxRPM
-	local clutchStrength = rpmDifference*0.02
+	local clutchStrength = rpmDifference*0.09
 	local accelerationDifference = (clutchStrength/self.Inertia)
 
 	local engineAcceleration = ( accelerationSum*(1-gearboxLoad) ) + ( -accelerationDifference*gearboxLoad )
