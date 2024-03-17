@@ -17,7 +17,7 @@ do -- Petrol Engines
 		Mass		 = 50,
 		Torque		 = 119,
 		Displacement = 1.5,
-		FlywheelMass = { Realism = 3, Legacy = 0.06 },
+		FlywheelMass = { Realism = 5, Legacy = 0.06 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 8000,
@@ -37,7 +37,7 @@ do -- Petrol Engines
 		Mass		 = 200,
 		Torque		 = 305,
 		Displacement = 3.7,
-		FlywheelMass = { Realism = 5, Legacy = 0.2 },
+		FlywheelMass = { Realism = 10, Legacy = 0.2 },
 		RPM = {
 			Idle	= 900,
 			Limit	= 6500
@@ -57,7 +57,7 @@ do -- Petrol Engines
 		Mass		 = 600,
 		Torque		 = 1165,
 		Displacement = 16,
-		FlywheelMass = { Realism = 50, Legacy = 4 },
+		FlywheelMass = { Realism = 110, Legacy = 4 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 3400,
@@ -79,7 +79,7 @@ do -- Diesel Engines
 		Mass		 = 90,
 		Torque		 = 184,
 		Displacement = 1.6,
-		FlywheelMass = { Realism = 4, Legacy = 0.2 },
+		FlywheelMass = { Realism = 8, Legacy = 0.2 },
 		RPM = {
 			Idle	= 650,
 			Limit	= 5000,
@@ -99,7 +99,7 @@ do -- Diesel Engines
 		Mass		 = 250,
 		Torque		 = 510,
 		Displacement = 3.1,
-		FlywheelMass = { Realism = 7, Legacy = 1 },
+		FlywheelMass = { Realism = 15, Legacy = 1 },
 		RPM = {
 			Idle	= 500,
 			Limit	= 4000,
@@ -119,7 +119,7 @@ do -- Diesel Engines
 		Mass		 = 800,
 		Torque		 = 2060,
 		Displacement = 15,
-		FlywheelMass = { Realism = 75, Legacy = 5 },
+		FlywheelMass = { Realism = 200, Legacy = 5 },
 		RPM = {
 			Idle	= 450,
 			Limit	= 2100,
