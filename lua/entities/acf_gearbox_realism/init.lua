@@ -854,7 +854,7 @@ do -- Braking ------------------------------------------
 
 			if Brake > 0 then -- regular ol braking
 				Link.IsBraking = true
-				Link.Vel = CalcWheelRPM(self, Link, Wheel, SelfWorld)
+				Link.Vel = CalcWheelRPM(self, Link, Wheel, SelfWorld)*6
 				
 				--CalcWheel(self, Link, Wheel, SelfWorld) -- Updating the link velocity
 				BrakeWheel(Link, Wheel, Brake, DeltaTime)
