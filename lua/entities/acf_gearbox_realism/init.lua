@@ -770,8 +770,9 @@ do -- Movement -----------------------------------------
 		
 		local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
+		local ReactTq = 0
 		self.InputRPM = 0
-
+ 
 		self.TorqueOutput = InputTorque * self.GearRatio
 
 		if self.ChangeFinished < Clock.CurTime then
@@ -791,12 +792,22 @@ do -- Movement -----------------------------------------
 			for Wheel, Link in pairs( self.Wheels ) do
 				local RPM = CalcWheelRPM(self, Link, Wheel, SelfWorld)
 				AverageRPM = AverageRPM + RPM
+				local WheelTorque = self.TorqueOutput/table.Count(self.Wheels)
+				ReactTq = ReactTq + WheelTorque
 
-				ActWheel(Link, Wheel, self.TorqueOutput/table.Count(self.Wheels), DeltaTime)
+				ActWheel(Link, Wheel, WheelTorque, DeltaTime)
 			end
 			AverageRPM = AverageRPM / table.Count( self.Wheels )
 		end
 		self.InputRPM = self.InputRPM + (-AverageRPM * self.GearRatio)
+
+		if ReactTq ~= 0 then
+			local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
+
+			if IsValid(BoxPhys) then
+				BoxPhys:ApplyTorqueCenter(self:GetRight() * ReactTq)
+			end
+		end
 
 		self:UpdateOverlay()
 		self:UpdateOutputs()
