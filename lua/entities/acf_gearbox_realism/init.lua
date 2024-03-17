@@ -14,17 +14,12 @@ local Clamp     = math.Clamp
 local HookRun   = hook.Run
 local Round     = math.Round
 
-local function CalcWheel(Entity, Link, Wheel, SelfWorld)
+local function CalcWheelRPM(Entity, Link, Wheel, SelfWorld)
 	local WheelPhys = Wheel:GetPhysicsObject()
 	local VelDiff = WheelPhys:LocalToWorldVector(WheelPhys:GetAngleVelocity()) - SelfWorld
 	local BaseRPM = VelDiff:Dot(WheelPhys:LocalToWorldVector(Link.Axis))
-
-	Link.Vel = BaseRPM
-
-	if Entity.GearRatio == 0 then return 0 end
-
-	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
-	return ( BaseRPM / -6 ) --* Entity.GearRatio
+	
+	return ( BaseRPM / 6 ) 
 end
 
 --[[
@@ -48,8 +43,7 @@ do -- Spawn and Update functions -----------------------
 	local Outputs = {
 		"Current Gear (Returns the gear currently in use.)",
 		"Ratio (Returns the current gear ratio, based on the current gear and final drive.)",
-		"Input RPM (Returns the RPM being supplied to the gearbox)",
-		"Torque Input (Torque being supplied to the gearbox. Limited by gearbox torque rating.)",
+		"RPM (Returns the RPM of this gearbox)",
 		"Torque Output (Current torque, in nM, output by the gearbox.)",
 		"Entity (The gearbox itself.) [ENTITY]"
 	}
@@ -443,8 +437,7 @@ end ----------------------------------------------------
 function ENT:UpdateOutputs()
 	if not IsValid(self) then return end
 	WireLib.TriggerOutput(self, "Torque Output", Round(self.TorqueOutput))
-	WireLib.TriggerOutput(self, "Torque Input", Round(self.TorqueInput))
-	WireLib.TriggerOutput(self, "Input RPM", Round(self.InputRPM))
+	WireLib.TriggerOutput(self, "RPM", Round(self.InputRPM))
 end
 
 do -- Inputs -------------------------------------------
@@ -610,9 +603,7 @@ do -- Linking ------------------------------------------
 			Rope = Rope,
 			RopeLen = (OutPosWorld - InPosWorld):Length(),
 			Output = OutPos,
-			Vel = 0,
-			InputTorque = 0,
-			InputRPM = 0
+			Vel = 0
 		}
 	end
 
@@ -755,18 +746,65 @@ end ----------------------------------------------------
 
 do -- Movement -----------------------------------------
 	
+
 	local function ActWheel(Link, Wheel, Torque, DeltaTime)
 		local Phys = Wheel:GetPhysicsObject()
-
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
-
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
 		
+		Phys:ApplyTorqueCenter( TorqueAxis * -Torque )
 		--Phys:ApplyTorqueCenter(TorqueAxis * Clamp(-Torque * 2 * DeltaTime, -500000, 500000))
-		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(math.deg(-Torque/6) * DeltaTime, -500000, 500000))
+		--Phys:ApplyTorqueCenter(TorqueAxis * Clamp(math.deg(-Torque/6) * DeltaTime, -500000, 500000))
 	end
 
+	function ENT:GetClutch()
+		return self.LClutch or self.RClutch
+	end
 
+	function ENT:GearEngaged()
+		return self.GearRatio != 0
+	end
+
+	function ENT:UpdatePhys(InputTorque, DeltaTime)
+		if self.Disabled then return 0 end
+		
+		local BoxPhys = ACF_GetAncestor(self):GetPhysicsObject()
+		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
+		self.InputRPM = 0
+
+		self.TorqueOutput = InputTorque * self.GearRatio
+
+		if self.ChangeFinished < Clock.CurTime then
+			self.InGear = true
+		end
+
+		if( table.Count( self.GearboxOut ) > 0 ) then
+			for Ent, Link in pairs( self.GearboxOut ) do
+				self.InputRPM = self.InputRPM + Ent:UpdatePhys(self.TorqueOutput/table.Count( self.GearboxOut ), DeltaTime) * self.GearRatio
+			end
+			self.InputRPM = self.InputRPM / table.Count( self.GearboxOut )
+		end
+
+		local AverageRPM = 0
+		if( table.Count( self.Wheels ) > 0 ) then
+		
+			for Wheel, Link in pairs( self.Wheels ) do
+				local RPM = CalcWheelRPM(self, Link, Wheel, SelfWorld)
+				AverageRPM = AverageRPM + RPM
+
+				ActWheel(Link, Wheel, self.TorqueOutput/table.Count(self.Wheels), DeltaTime)
+			end
+			AverageRPM = AverageRPM / table.Count( self.Wheels )
+		end
+		self.InputRPM = self.InputRPM + (-AverageRPM * self.GearRatio)
+
+		self:UpdateOverlay()
+		self:UpdateOutputs()
+
+		return self.InputRPM
+	end
+
+	/*
 	function ENT:CalculateTorque(InputTorque, EngineBrakeTorque, DeltaTime)
 		if self.Disabled then return 0 end
 		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
@@ -834,7 +872,7 @@ do -- Movement -----------------------------------------
 		self.LastActive = Clock.CurTime
 		return self.TorqueOutput
 	end
-
+	*/
 end ----------------------------------------------------
 
 do -- Braking ------------------------------------------

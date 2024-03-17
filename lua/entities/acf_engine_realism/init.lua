@@ -77,8 +77,8 @@ do
 		local Link = {
 			Rope = Rope,
 			RopeLen = (OutPos - InPos):Length(),
-			InputTorque = 0,
-			InputRPM = 0
+			ClutchEngaged = false,
+			InGear = false
 		}
 
 		Engine.Gearboxes[Target] = Link
@@ -733,51 +733,41 @@ function ENT:CalcRPM()
 	end
 
 	local Percent = Remap(self.FlyRPM, 0, self.LimitRPM, 0, 1)
+	local gearboxLoad = 0
+	self.Torque = Throttle * ACF.GetTorque(self.TorqueCurve, Percent) * self.PeakTorque * (self.FlyRPM < self.LimitRPM and 1 or 0)
 
-	-- Similar to 'Percent' but with no upper limit.
-	local RPMRatio = self.FlyRPM/self.LimitRPM
-
-	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
-	local Boxes      = 1
-	local engineLoadFactor = 0
-	local inGear = 1
-	local clutchActive = 0
-
-	local engineBrakeTorque = ( self.Displacement*self.FlyRPM/100 )*(1-Sign(Throttle))
-
+	local averageGearboxRPM = 0
 	for Ent, Link in pairs(self.Gearboxes) do
 		if Ent.Disabled then return end
-		Ent:CalculateTorque(self.Torque, engineBrakeTorque*0.125, DeltaTime)	
-		inGear = inGear * Sign(Ent.Gear)
-		clutchActive = 1-Sign(Ent.LClutch + Ent.RClutch)
+
+		if Ent:GetClutch() > 0 then
+			averageGearboxRPM = averageGearboxRPM + Ent:UpdatePhys(self.Torque,DeltaTime)
+		end
+
+		if Ent:GearEngaged() then
+			gearboxLoad = 1*Ent:GetClutch()
+		end
 		
-		self.DriveTrainRPM = Ent.InputRPM
 	end
+	averageGearboxRPM = averageGearboxRPM/table.Count(self.Gearboxes)
 
-	if inGear > 0 && table.Count(self.Gearboxes) > 0 then
-		engineLoadFactor = 1 - clutchActive
-	end
 
-	local rpmAcceleration = (self.Torque - engineBrakeTorque)/self.Inertia
+    local rpmDeceleration = ((self.Displacement*self.FlyRPM)/100)*(1-math.ceil(Throttle))
+    local accelerationSum = (self.Torque-rpmDeceleration)/self.Inertia
 
-	self.DriveTrainRPM = self.DriveTrainRPM/Boxes
+	local rpmDifference = self.FlyRPM - averageGearboxRPM
+	local clutchStrength = rpmDifference*0.02
+	local accelerationDifference = (clutchStrength/self.Inertia)
 
-	local rpmDifference = self.DriveTrainRPM - self.FlyRPM
-	local powerDifference = ((rpmDifference/self.LimitRPM) * self.PeakTorque)
-	local driveTrainAcceleration = (powerDifference - engineBrakeTorque)/self.Inertia
+	local engineAcceleration = ( accelerationSum*(1-gearboxLoad) ) + ( -accelerationDifference*gearboxLoad )
 
-	local finalAccelerationSum = (rpmAcceleration*(1-engineLoadFactor)) + (driveTrainAcceleration*engineLoadFactor)
-	
-	self.FlyRPM = math.max(0, self.FlyRPM + finalAccelerationSum)
-	
-	self.Torque = Throttle * ACF.GetTorque(self.TorqueCurve, Percent) * self.PeakTorque * (self.FlyRPM < self.LimitRPM and 1 or 0)
+	self.FlyRPM = math.max(0, self.FlyRPM + engineAcceleration)
 
 	self.LastThink = Clock.CurTime
 
 	self:UpdateSound()
 	self:UpdateOutputs()
-	self.DriveTrainRPM = 0
-
+	
 	TimerSimple(engine.TickInterval(), function()
 		if not IsValid(self) then return end
 
