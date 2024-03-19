@@ -82,7 +82,7 @@ do -- Special I4 Engines
 		Mass		 = 150,
 		Torque		 = 220,
 		Displacement = 1.9,
-		FlywheelMass = { Realism = 6, Legacy = 0.06 },
+		FlywheelMass = { Realism = 12, Legacy = 0.06 },
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,

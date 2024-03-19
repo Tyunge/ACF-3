@@ -9,6 +9,9 @@ local ACF = ACF
 	TO-DO:
 		ADD: Electric and Turbine Engines.
 		ISSUE: Gear 0?
+		ADD: Flywheel weight effect on transmission
+			*Applytorque through the gearbox when rpms are not matching up??
+		ISSUE: Power loss issue when trying to match engine speed to gearbox speed
 
 
 ]]
@@ -390,6 +393,7 @@ do -- Spawn and Update functions
 		Entity.Throttle  = 0
 		Entity.FlyRPM    = 0     -- This is the rpm the engine is currently at. Uses a mix between DriveTrainRPM & FreeRevRPM, depending on gear & clutch usage.
 		Entity.DriveTrainRPM = 0 -- This is the rpm give to FlyRPM when connected to transmission
+		Entity.PowerDifference = 0
 		Entity.SoundPath = Engine.Sound
 		Entity.DataStore = Entities.GetArguments("acf_engine_realism")
 		Entity.revLimiterEnabled = true
@@ -741,7 +745,7 @@ function ENT:CalcRPM()
 		if Ent.Disabled then return end
 
 		if Ent:GetClutch() > 0 then
-			averageGearboxRPM = averageGearboxRPM + Ent:UpdatePhys(self.Torque,DeltaTime)
+			averageGearboxRPM = averageGearboxRPM + Ent:UpdatePhys( math.Clamp(self.Torque+self.PowerDifference, -self.PeakTorque, self.PeakTorque),DeltaTime)
 		end
 
 		if Ent:GearEngaged() then
@@ -756,9 +760,13 @@ function ENT:CalcRPM()
     local rpmDeceleration = ((self.Displacement*self.FlyRPM)/100)*(1-math.ceil(Throttle))
     local accelerationSum = (self.Torque-rpmDeceleration)/self.Inertia
 
+
+
 	local rpmDifference = self.FlyRPM - averageGearboxRPM
-	local clutchStrength = rpmDifference*0.09
-	local accelerationDifference = (clutchStrength/self.Inertia)
+	local powerDifference = ACF.GetTorque(self.TorqueCurve, Remap( math.abs(rpmDifference), 0, self.LimitRPM, 0, 1) )*Sign( rpmDifference ) * self.PeakTorque * gearboxLoad
+	local accelerationDifference = (powerDifference/self.Inertia)
+
+	self.PowerDifference = powerDifference*self.Inertia
 
 	local engineAcceleration = ( accelerationSum*(1-gearboxLoad) ) + ( -accelerationDifference*gearboxLoad )
 	
