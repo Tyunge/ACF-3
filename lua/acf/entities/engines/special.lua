@@ -17,7 +17,8 @@ do -- Special Rotary Engines
 		Mass		 = 260,
 		Torque		 = 312,
 		Displacement = 2.6,
-		FlywheelMass = { Realism = 8, Legacy = 0.11 },
+		FlywheelMass = 0.11,
+		FlywheelMassRealism = 8,
 		RPM = {
 			Idle	= 1200,
 			Limit	= 9500,
@@ -39,7 +40,8 @@ do -- Special I2 Engines
 		Mass		 = 60,
 		Torque		 = 145,
 		Displacement = 0.9,
-		FlywheelMass = { Realism = 4, Legacy = 0.085 },
+		FlywheelMass = 0.085,
+		FlywheelMassRealism = 4,
 		RPM = {
 			Idle	= 750,
 			Limit	= 6000,
@@ -61,7 +63,8 @@ do -- Special I4 Engines
 		Mass		 = 78,
 		Torque		 = 85,
 		Displacement = 1,
-		FlywheelMass = { Realism = 2, Legacy = 0.031 },
+		FlywheelMass = 0.031,
+		FlywheelMassRealism = 2,
 		Pitch		 = 0.75,
 		RPM = {
 			Idle	= 1200,
@@ -82,7 +85,8 @@ do -- Special I4 Engines
 		Mass		 = 150,
 		Torque		 = 220,
 		Displacement = 1.9,
-		FlywheelMass = { Realism = 12, Legacy = 0.06 },
+		FlywheelMass = 0.06,
+		FlywheelMassRealism = 12,
 		RPM = {
 			Idle	= 950,
 			Limit	= 9000,
@@ -104,7 +108,8 @@ do -- Special V4 Engines
 		Mass		 = 92,
 		Torque		 = 156,
 		Displacement = 1.8,
-		FlywheelMass = { Realism = 6, Legacy = 0.04 },
+		FlywheelMass = 0.04,
+		FlywheelMassRealism = 6,
 		RPM = {
 			Idle	= 900,
 			Limit	= 7500,
@@ -126,7 +131,8 @@ do -- Special I6 Engines
 		Mass		 = 180,
 		Torque		 = 280,
 		Displacement = 3.8,
-		FlywheelMass = { Realism = 10, Legacy = 0.1 },
+		FlywheelMass = 0.1,
+		FlywheelMassRealism = 10,
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -148,7 +154,8 @@ do -- Special V6 Engines
 		Mass		 = 134,
 		Torque		 = 215,
 		Displacement = 2.4,
-		FlywheelMass = { Realism = 6, Legacy = 0.075 },
+		FlywheelMass = 0.075,
+		FlywheelMassRealism = 6,
 		RPM = {
 			Idle	= 950,
 			Limit	= 8000,
@@ -170,7 +177,8 @@ do -- Special V8 Engines
 		Mass		 = 180,
 		Torque		 = 250,
 		Displacement = 2.9,
-		FlywheelMass = { Realism = 8, Legacy = 0.075 },
+		FlywheelMass = 0.075,
+		FlywheelMassRealism = 8,
 		RPM = {
 			Idle	= 1000,
 			Limit	= 10000,
@@ -190,7 +198,8 @@ do -- Special V8 Engines
 		Mass		 = 400,
 		Torque		 = 425,
 		Displacement = 7.2,
-		FlywheelMass = { Realism = 13, Legacy = 0.15 },
+		FlywheelMass = 0.15,
+		FlywheelMassRealism = 13,
 		RPM = {
 			Idle	= 1000,
 			Limit	= 8500,
@@ -212,7 +221,8 @@ do -- Special V10 Engines
 		Mass		 = 300,
 		Torque		 = 400,
 		Displacement = 5.3,
-		FlywheelMass = { Realism = 12, Legacy = 0.15 },
+		FlywheelMass = 0.15,
+		FlywheelMassRealism = 12,
 		RPM = {
 			Idle	= 1100,
 			Limit	= 9000,
@@ -234,7 +244,8 @@ do -- Special V12 Engines
 		Mass		 = 175,
 		Torque		 = 310,
 		Displacement = 3.0,
-		FlywheelMass = { Realism = 8, Legacy = 0.1 },
+		FlywheelMass = 0.1,
+		FlywheelMassRealism = 8,
 		Pitch		 = 0.85,
 		RPM = {
 			Idle	= 1200,

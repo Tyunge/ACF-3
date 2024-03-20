@@ -17,7 +17,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 250,
 		Torque		 = 480,
-		FlywheelMass = { Legacy = 0.3 },
+		FlywheelMass = 0.3,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -38,7 +38,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 850,
 		Torque		 = 1440,
-		FlywheelMass = { Legacy = 1.5 },
+		FlywheelMass = 1.5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -59,7 +59,7 @@ do -- Electric Motors
 		Type		 = "Electric",
 		Mass		 = 1900,
 		Torque		 = 4200,
-		FlywheelMass = { Legacy = 11.2 },
+		FlywheelMass = 11.2,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -84,7 +84,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 50,
 		Torque		 = 40,
-		FlywheelMass = { Legacy = 0.025 },
+		FlywheelMass = 0.025,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -105,7 +105,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 125,
 		Torque		 = 384,
-		FlywheelMass = { Legacy = 0.3 },
+		FlywheelMass = 0.3,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -126,7 +126,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 575,
 		Torque		 = 1152,
-		FlywheelMass = { Legacy = 1.5 },
+		FlywheelMass = 1.5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,
@@ -147,7 +147,7 @@ do -- Electric Standalone Motors
 		Type		 = "Electric",
 		Mass		 = 1500,
 		Torque		 = 3360,
-		FlywheelMass = { Legacy = 11.2 },
+		FlywheelMass = 11.2,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 0,

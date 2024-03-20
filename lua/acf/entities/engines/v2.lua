@@ -17,7 +17,8 @@ do -- Petrol Engines
 		Mass		 = 30,
 		Torque		 = 62,
 		Displacement = 0.6,
-		FlywheelMass = { Realism = 2, Legacy = 0.01 },
+		FlywheelMass = 0.01,
+		FlywheelMassRealism = 2,
 		RPM = {
 			Idle	= 900,
 			Limit	= 7000,
@@ -37,7 +38,8 @@ do -- Petrol Engines
 		Mass		 = 50,
 		Torque		 = 106,
 		Displacement = 1.2,
-		FlywheelMass = { Realism = 3, Legacy = 0.02 },
+		FlywheelMass = 0.02,
+		FlywheelMassRealism = 3,
 		RPM = {
 			Idle	= 725,
 			Limit	= 6250,
@@ -57,7 +59,8 @@ do -- Petrol Engines
 		Mass		 = 100,
 		Torque		 = 200,
 		Displacement = 2.4,
-		FlywheelMass = { Realism = 6, Legacy = 0.075 },
+		FlywheelMass = 0.075,
+		FlywheelMassRealism = 6,
 		RPM = {
 			Idle	= 900,
 			Limit	= 6000,

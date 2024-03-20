@@ -17,7 +17,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 200,
 		Torque		 = 589,
-		FlywheelMass = { Legacy = 2.9 },
+		FlywheelMass = 2.9,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 1400,
@@ -38,7 +38,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 400,
 		Torque		 = 1312,
-		FlywheelMass = { Legacy = 4.3 },
+		FlywheelMass = 4.3,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 1800,
@@ -59,7 +59,7 @@ do -- Forward-facing Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 1100,
 		Torque		 = 2500,
-		FlywheelMass = { Legacy = 10.5 },
+		FlywheelMass = 10.5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 2000,
@@ -82,7 +82,7 @@ do -- Transaxial Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 160,
 		Torque		 = 387,
-		FlywheelMass = { Legacy = 2.3 },
+		FlywheelMass = 2.3,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		RPM = {
@@ -104,7 +104,7 @@ do -- Transaxial Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 320,
 		Torque		 = 750,
-		FlywheelMass = { Legacy = 3.4 },
+		FlywheelMass = 3.4,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		RPM = {
@@ -126,7 +126,7 @@ do -- Transaxial Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 880,
 		Torque		 = 1710,
-		FlywheelMass = { Legacy = 8.4 },
+		FlywheelMass = 8.4,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		RPM = {
@@ -155,7 +155,7 @@ do -- Forward-facing Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 220,
 		Torque		 = 1860,
-		FlywheelMass = { Legacy = 35.5 },
+		FlywheelMass = 35.5,
 		IsElectric	 = true,
 		RPM = {
 			Idle	 = 450,
@@ -176,7 +176,7 @@ do -- Forward-facing Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 440,
 		Torque		 = 3540,
-		FlywheelMass = { Legacy = 38.7 },
+		FlywheelMass = 38.7,
 		IsElectric	 = true,
 		Pitch		 = 1.15,
 		RPM = {
@@ -198,7 +198,7 @@ do -- Forward-facing Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 1300,
 		Torque		 = 9000,
-		FlywheelMass = { Legacy = 168 },
+		FlywheelMass = 168,
 		IsElectric	 = true,
 		Pitch		 = 1.35,
 		RPM = {
@@ -222,7 +222,7 @@ do -- Transaxial Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 200,
 		Torque		 = 1040,
-		FlywheelMass = { Legacy = 20.7 },
+		FlywheelMass = 20.7,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		RPM = {
@@ -244,7 +244,7 @@ do -- Transaxial Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 480,
 		Torque		 = 1123,
-		FlywheelMass = { Legacy = 23.7 },
+		FlywheelMass = 23.7,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		Pitch		 = 1.15,
@@ -267,7 +267,7 @@ do -- Transaxial Ground Gas Turbines
 		Type		 = "Turbine",
 		Mass		 = 1100,
 		Torque		 = 4600,
-		FlywheelMass = { Legacy = 75.6 },
+		FlywheelMass = 75.6,
 		IsElectric	 = true,
 		IsTrans		 = true,
 		Pitch		 = 1.35,

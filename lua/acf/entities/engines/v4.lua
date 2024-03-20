@@ -17,7 +17,8 @@ do -- Diesel Engines
 		Mass		 = 110,
 		Torque		 = 206,
 		Displacement = 1.9,
-		FlywheelMass = { Realism = 8, Legacy = 0.3 },
+		FlywheelMass = 0.3,
+		FlywheelMassRealism = 8,
 		RPM = {
 			Idle	= 650,
 			Limit	= 4000,
@@ -37,7 +38,8 @@ do -- Diesel Engines
 		Mass		 = 275,
 		Torque		 = 600,
 		Displacement = 3.3,
-		FlywheelMass = { Realism = 20, Legacy = 1.05 },
+		FlywheelMass = 1.05,
+		FlywheelMassRealism = 20,
 		RPM = {
 			Idle	= 600,
 			Limit	= 3900,

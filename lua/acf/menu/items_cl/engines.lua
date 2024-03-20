@@ -60,10 +60,9 @@ local function UpdateEngineStats(Label, Data)
 end
 
 --Adds or removes the checkbox if the engine supports the new mobility system.
-local function CheckMobilityUpdateEligibility(ID, Menu, CheckBox)
-	local LegacyEngineIDs = {["EL"] = true, ["EL-S"] = true, ["GGT"] = true, ["GT"] = true}
+local function CheckMobilityUpdateEligibility(Data, Menu, CheckBox)
 
-	if LegacyEngineIDs[ID] then
+	if Data.FlywheelMassRealism == nil then
 		
 		--CheckBox is a table because it is a pass by reference type.
 		if CheckBox[0] != nil then
@@ -91,7 +90,6 @@ local function CheckMobilityUpdateEligibility(ID, Menu, CheckBox)
 
 
 	end
-
 end
 
 local function CreateMenu(Menu)
@@ -177,10 +175,6 @@ local function CreateMenu(Menu)
 		self.ListData.Index = Index
 		self.Selected = Data
 
-		if ACF.MobilityUpdate then
-			CheckMobilityUpdateEligibility(Data.ID, EngineBase, EnableMobilityUpdate)
-		end
-
 		ACF.SetClientData("EngineClass", Data.ID)
 		
 		ACF.LoadSortedList(EngineList, Data.Items, "Mass")
@@ -191,7 +185,11 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
-		
+
+		if ACF.MobilityUpdate then
+			CheckMobilityUpdateEligibility(Data, EngineBase, EnableMobilityUpdate)
+		end
+
 		local ClassData = EngineClass.Selected
 		local ClassDesc = ClassData.Description
 		

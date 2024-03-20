@@ -16,7 +16,8 @@ do
 		Mass		 = 60,
 		Torque		 = 131,
 		Displacement = 1.4,
-		FlywheelMass = { Realism = 8, Legacy = 0.06 },
+		FlywheelMass = 0.06,
+		FlywheelMassRealism = 8,
 		RPM = {
 			Idle	= 600,
 			Limit	= 4500,
@@ -36,7 +37,8 @@ do
 		Mass		 = 125,
 		Torque		 = 225,
 		Displacement = 2.1,
-		FlywheelMass = { Realism = 11, Legacy = 0.15 },
+		FlywheelMass = 0.15,
+		FlywheelMassRealism = 11,
 		RPM = {
 			Idle	= 700,
 			Limit	= 5000,
@@ -56,7 +58,8 @@ do
 		Mass		 = 135,
 		Torque		 = 310,
 		Displacement = 2.4,
-		FlywheelMass = { Realism = 25, Legacy = 0.4 },
+		FlywheelMass = 0.4,
+		FlywheelMassRealism = 25,
 		RPM = {
 			Idle	= 550,
 			Limit	= 2800,
@@ -76,7 +79,8 @@ do
 		Mass		 = 210,
 		Torque		 = 315,
 		Displacement = 3.2,
-		FlywheelMass = { Realism = 13, Legacy = 0.15 },
+		FlywheelMass = 0.15,
+		FlywheelMassRealism = 13,
 		RPM = {
 			Idle	= 900,
 			Limit	= 6500

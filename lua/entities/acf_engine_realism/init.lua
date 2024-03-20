@@ -319,9 +319,8 @@ do -- Spawn and Update functions
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
 		Entity.Displacement		= Engine.Displacement
-		Entity.FlywheelMass     = Engine.FlywheelMass.Realism
-		Entity.FlywheelRadius	= 0.26 -- I don't feel its necessary to give each engine a radius when we can just increase the mass. Hyper realism is not needed here.
-		Entity.Inertia          = Engine.FlywheelMass.Realism * (Entity.FlywheelRadius ^ 2) -- Not completely accurate calculation but we go by feeling when working with Gmod.
+		Entity.FlywheelMass     = Engine.FlywheelMassRealism
+		Entity.Inertia          = Engine.FlywheelMassRealism * (0.26 ^ 2) -- 0.26 is measured in meters.
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
 		Entity.FuelTypes        = Engine.Fuel or { Petrol = true }
