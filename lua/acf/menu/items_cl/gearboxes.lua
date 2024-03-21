@@ -1,6 +1,24 @@
 local ACF = ACF
 local Gearboxes = ACF.Classes.Gearboxes
 
+--Adds or removes the checkbox if the gearbox supports the new mobility system.
+local function CheckMobilityUpdateEligibility(Data, Label)
+	local IneligibleGearboxeIDs = {["3-Auto"] = true, ["5-Auto"] = true, ["7-Auto"] = true, ["CVT"] = true}
+
+	if IneligibleGearboxeIDs[Data.ID] then
+		Label:SetText("This gearbox is ineligible for the mobility update.")
+		ACF.SetClientData("PrimaryClass","acf_gearbox")
+	else
+		Label:SetText("This gearbox is eligible for the mobility update.")
+
+		if ACF.GetClientBool("ACF_MobilityUpdate") then
+			ACF.SetClientData("PrimaryClass","acf_gearbox_realism")
+		else
+			ACF.SetClientData("PrimaryClass","acf_gearbox")
+		end
+	end
+end
+
 local function CreateMenu(Menu)
 	local Entries = Gearboxes.GetEntries()
 
@@ -12,25 +30,11 @@ local function CreateMenu(Menu)
 	local Base = Menu:AddCollapsible("Gearbox Information")
 	local GearboxName = Base:AddTitle()
 	local GearboxDesc = Base:AddLabel()
+	local GearboxMobilityEligibility = Base:AddLabel()
 	local GearboxPreview = Base:AddModelPreview(nil, true)
 
-	if ( ACF.MobilityUpdate ) then
-		local EnableMobilityUpdate = Base:AddCheckBox("Enable Mobility Update")
-		EnableMobilityUpdate:SetClientData("Enable Mobility Update", "OnChange")
-		EnableMobilityUpdate:DefineSetter(function(Panel, _, _, Value)
-			Panel:SetValue(Value)
 
-			if( Value )then
-				ACF.SetClientData("PrimaryClass", "acf_gearbox_realism")
-			else
-				ACF.SetClientData("PrimaryClass", "acf_gearbox")
-			end
-		end)
-	else
-		ACF.SetClientData("PrimaryClass", "acf_gearbox")
-	end
-
-	
+	ACF.SetClientData("PrimaryClass", "acf_gearbox")
 	ACF.SetClientData("SecondaryClass", "N/A")
 
 	ACF.SetToolMode("acf_menu", "Spawner", "Gearbox")
@@ -40,6 +44,11 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
+
+		if ACF.MobilityUpdate then
+			CheckMobilityUpdateEligibility(Data,GearboxMobilityEligibility)
+		end
+
 
 		ACF.SetClientData("GearboxClass", Data.ID)
 

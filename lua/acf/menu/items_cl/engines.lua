@@ -59,36 +59,18 @@ local function UpdateEngineStats(Label, Data)
 	Label:SetText(RPMText:format(RPM.Idle, MinPower, MaxPower, RPM.Limit, Mass, FuelList, Power))
 end
 
---Adds or removes the checkbox if the engine supports the new mobility system.
-local function CheckMobilityUpdateEligibility(Data, Menu, CheckBox)
+local function CheckMobilityUpdateEligibility(Data, Label)
 
 	if Data.FlywheelMassRealism == nil then
-		
-		--CheckBox is a table because it is a pass by reference type.
-		if CheckBox[0] != nil then
-			CheckBox[0]:Remove()
-			CheckBox[0] = nil
-		end
-
+		Label:SetText("This engine is ineligible for the mobility update.")
 		ACF.SetClientData("PrimaryClass","acf_engine")
 	else
-
-		if( CheckBox[0] == nil ) then
-			CheckBox[0] = Menu:AddCheckBox("Enable Mobility Update")
-			CheckBox[0]:SetClientData("Mobility Update", "OnChange")
-			CheckBox[0]:DefineSetter(function(Panel, _, _, Value)
-				Panel:SetValue(Value)
-
-				if(Value)then
-					ACF.SetClientData("PrimaryClass", "acf_engine_realism")
-				else
-					ACF.SetClientData("PrimaryClass", "acf_engine")
-				end
-
-			end)
+		Label:SetText("This engine is eligible for the mobility update.")
+		if ACF.GetClientBool("ACF_MobilityUpdate") then
+			ACF.SetClientData("PrimaryClass","acf_engine_realism")
+		else
+			ACF.SetClientData("PrimaryClass","acf_engine")
 		end
-
-
 	end
 end
 
@@ -104,11 +86,9 @@ local function CreateMenu(Menu)
 	local EngineBase = Menu:AddCollapsible("Engine Information")
 	local EngineName = EngineBase:AddTitle()
 	local EngineDesc = EngineBase:AddLabel()
+	local EngineMobilityEligibility = EngineBase:AddLabel()
 	local EnginePreview = EngineBase:AddModelPreview(nil, true)
 	local EngineStats = EngineBase:AddLabel()
-
-	--This is a table so it can be used in a pass by reference nature for the CheckMobilityUpdateEligibility function.
-	local EnableMobilityUpdate = {}
 
 	Menu:AddTitle("Fuel Tank Settings")
 	local FuelType = Menu:AddComboBox()
@@ -174,7 +154,7 @@ local function CreateMenu(Menu)
 		
 		self.ListData.Index = Index
 		self.Selected = Data
-
+		
 		ACF.SetClientData("EngineClass", Data.ID)
 		
 		ACF.LoadSortedList(EngineList, Data.Items, "Mass")
@@ -187,9 +167,9 @@ local function CreateMenu(Menu)
 		self.Selected = Data
 
 		if ACF.MobilityUpdate then
-			CheckMobilityUpdateEligibility(Data, EngineBase, EnableMobilityUpdate)
+			CheckMobilityUpdateEligibility(Data,EngineMobilityEligibility)
 		end
-
+		
 		local ClassData = EngineClass.Selected
 		local ClassDesc = ClassData.Description
 		
