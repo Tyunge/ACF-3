@@ -59,6 +59,24 @@ local function UpdateEngineStats(Label, Data)
 	Label:SetText(RPMText:format(RPM.Idle, MinPower, MaxPower, RPM.Limit, Mass, FuelList, Power))
 end
 
+local function MobilityUpdateEligibilityCheck(Label, Data)
+	
+	if Data.FlywheelMassUpdate == nil or Data.Displacement == nil then
+		Label:SetText("This engine is ineligible for the mobility update.")
+		ACF.SetClientData("PrimaryClass","acf_engine")
+	else
+		Label:SetText("This engine is eligible for the mobility update.")
+		
+		if GetConVar("acf_mobilityupdate"):GetBool() then
+			ACF.SetClientData("PrimaryClass", "acf_engine_update")
+		else
+			ACF.SetClientData("PrimaryClass","acf_engine")
+		end
+
+	end
+
+end
+
 local function CreateMenu(Menu)
 	local EngineEntries = Engines.GetEntries()
 	local FuelEntries   = FuelTanks.GetEntries()
@@ -71,6 +89,7 @@ local function CreateMenu(Menu)
 	local EngineBase = Menu:AddCollapsible("Engine Information")
 	local EngineName = EngineBase:AddTitle()
 	local EngineDesc = EngineBase:AddLabel()
+	local EngineMobilityUpdate = EngineBase:AddLabel()
 	local EnginePreview = EngineBase:AddModelPreview(nil, true)
 	local EngineStats = EngineBase:AddLabel()
 
@@ -160,6 +179,12 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
+		
+		if ACF.MobilityUpdate then
+			MobilityUpdateEligibilityCheck(EngineMobilityUpdate, Data)
+		else
+			EngineMobilityUpdate:SetText("The mobility update has been disabled on this server.")
+		end
 
 		local ClassData = EngineClass.Selected
 		local ClassDesc = ClassData.Description

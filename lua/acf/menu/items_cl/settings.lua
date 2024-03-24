@@ -47,6 +47,13 @@ do -- Clientside settings
 		Base:AddHelp("Requires hitboxes to be enabled.")
 	end)
 
+	ACF.AddClientSettings(99, "Experimental", function(Base)
+		local MobilityUpdate = Base:AddCheckBox("Enables new mobility logic")
+		MobilityUpdate:SetConVar("acf_mobilityupdate")
+
+		Base:AddHelp("ACF components will spawn as a seperate class from legacy components.")
+	end)
+
 	ACF.AddClientSettings(100, "Sound Volume", function(Base)
 		local Volume = Base:AddSlider("Client Sound Volume", 0, 1, 2)
 		Volume:SetClientData("Volume", "OnValueChanged")
@@ -188,6 +195,14 @@ do -- Serverside settings
 		local RequireFuel = Base:AddCheckBox("Require fuel usage for engines.")
 		RequireFuel:SetServerData("RequireFuel", "OnChange")
 		RequireFuel:DefineSetter(function(Panel, _, _, Value)
+			Panel:SetValue(Value)
+
+			return Value
+		end)
+
+		local MobilityUpdate = Base:AddCheckBox("Allow clients to spawn updated mobility components.")
+		MobilityUpdate:SetServerData("MobilityUpdate","OnChange")
+		MobilityUpdate:DefineSetter(function(Panel, _, _, Value)
 			Panel:SetValue(Value)
 
 			return Value

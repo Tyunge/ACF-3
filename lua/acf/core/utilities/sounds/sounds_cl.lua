@@ -57,7 +57,7 @@ do -- Processing adjustable sounds (for example, engine noises)
 		if not Sound then return end
 
 		Volume = Volume * ACF.Volume
-
+		
 		if Sound:IsPlaying() then
 			Sound:ChangePitch(Pitch, 0.05)
 			Sound:ChangeVolume(Volume, 0.05)
@@ -98,7 +98,7 @@ do -- Processing adjustable sounds (for example, engine noises)
 		else
 			local Pitch = net.ReadUInt(8)
 			local Volume = net.ReadUInt(8) / 100
-
+			
 			Sounds.UpdateAdjustableSound(Origin, Pitch, Volume)
 		end
 	end)
