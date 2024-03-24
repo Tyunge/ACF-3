@@ -327,7 +327,7 @@ do -- Spawn and Update functions
 		Entity.HealthMult       = Type.HealthMult
 		Entity.HitBoxes         = ACF.GetHitboxes(Engine.Model)
 		Entity.Out              = Entity:WorldToLocal(Entity:GetAttachment(Entity:LookupAttachment("driveshaft")).Pos)
-
+		
 		WireIO.SetupInputs(Entity, Inputs, Data, Class, Engine, Type)
 		WireIO.SetupOutputs(Entity, Outputs, Data, Class, Engine, Type)
 
@@ -390,6 +390,7 @@ do -- Spawn and Update functions
 		Entity.LastPhysMass  = 0
 		Entity.DataStore     = Entities.GetArguments("acf_engine_update")
 		Entity.revLimiterEnabled = true
+		Entity.TorqueFeedback = 0
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -767,7 +768,7 @@ function ENT:CalcRPM(SelfTbl)
 	local Displacement = SelfTbl.Displacement
 	
 	-- Engines have a low amount of friction due to oil. The deceleration is from the compression cycle
-	local Drag = ((Displacement*FlyRPM)/100)*(1-math.ceil(Throttle))
+	local Drag = ((Displacement*FlyRPM)/100)*(1-Throttle)
 
 	local Torque = 0
 	if Throttle ~= 0 and FlyRPM < LimitRPM then
@@ -793,7 +794,7 @@ function ENT:CalcRPM(SelfTbl)
 			Boxes = Boxes + 1
 
 			if Ent:GetClutch() > 0 then
-				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( SelfTbl.Torque , DeltaTime, MassRatio )
+				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp(SelfTbl.Torque+SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque)*MassRatio , DeltaTime )
 			end
 
 			if Ent:GearEngaged() then
@@ -817,7 +818,8 @@ function ENT:CalcRPM(SelfTbl)
 
 	local FlyRPMAcceleration = ( NoLoadAcceleration*(1-GearboxLoad) ) - (LoadedAcceleration*GearboxLoad)
 
-	SelfTbl.FlyRPM = math.max(0,SelfTbl.FlyRPM + NoLoadAcceleration)--math.max(0, SelfTbl.FlyRPM + FlyRPMAcceleration)
+	SelfTbl.TorqueFeedback = LoadedTorqueDifference*Inertia
+	SelfTbl.FlyRPM = math.max(0, SelfTbl.FlyRPM + FlyRPMAcceleration)
 	SelfTbl.LastThink = ClockTime
 
 	self:UpdateSound(SelfTbl)

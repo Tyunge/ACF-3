@@ -754,7 +754,7 @@ do -- Movement -----------------------------------------
 		return self.GearRatio != 0
 	end
 
-	function ENT:Calc(InputTorque, DeltaTime, MassRatio)
+	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
@@ -773,7 +773,7 @@ do -- Movement -----------------------------------------
 		local Boxes = 0
 		for Ent, Link in pairs( self.GearboxOut ) do
 			Boxes = Boxes + 1
-			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput/table.Count(self.GearboxOut), DeltaTime, MassRatio ) * GearRatio
+			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput/table.Count(self.GearboxOut), DeltaTime ) * GearRatio
 		end
 
 		if Boxes > 0 then
@@ -815,149 +815,6 @@ do -- Movement -----------------------------------------
 	end
 
 
-/*
-	function ENT:Calc(InputRPM, InputInertia)
-		if self.Disabled then return 0 end
-		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
-
-		if self.ChangeFinished < Clock.CurTime then
-			self.InGear = true
-		end
-
-		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
-		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
-		local Gear = self.Gear
-
-		if self.CVT and Gear == 1 then
-			if self.CVTRatio > 0 then
-				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 1)
-			else
-				local MinRPM  = self.MinRPM
-				self.Gears[1] = Clamp((InputRPM - MinRPM) / (self.MaxRPM - MinRPM), 0.05, 1)
-			end
-
-			self.GearRatio = self.Gears[1] * self.FinalDrive
-
-			WireLib.TriggerOutput(self, "Ratio", self.GearRatio)
-		end
-
-		if self.Automatic and self.Drive == 1 and self.InGear then
-			local PhysVel = BoxPhys:GetVelocity():Length()
-
-			if not self.Hold and Gear ~= self.MaxGear and PhysVel > (self.ShiftPoints[Gear] * self.ShiftScale) then
-				self:ChangeGear(Gear + 1)
-			elseif PhysVel < (self.ShiftPoints[Gear - 1] * self.ShiftScale) then
-				self:ChangeGear(Gear - 1)
-			end
-		end
-
-		local TorqueOutput = 0
-		local TotalReqTq = 0
-		local LClutch = self.LClutch
-		local RClutch = self.RClutch
-		local GearRatio = self.GearRatio
-
-		for Ent, Link in pairs(self.GearboxOut) do
-			local Clutch = Link.Side == 0 and LClutch or RClutch
-
-			Link.ReqTq = 0
-
-			if not Ent.Disabled then
-				local Inertia = 0
-
-				if GearRatio ~= 0 then
-					Inertia = InputInertia / GearRatio
-				end
-
-				Link.ReqTq = abs(Ent:Calc(InputRPM * GearRatio, Inertia) * GearRatio) * Clutch
-				TotalReqTq = TotalReqTq + abs(Link.ReqTq)
-			end
-		end
-
-		for Wheel, Link in pairs(self.Wheels) do
-			Link.ReqTq = 0
-
-			if GearRatio ~= 0 then
-				local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
-				local Clutch = Link.Side == 0 and LClutch or RClutch
-				local OnRPM = ((InputRPM > 0 and RPM < InputRPM) or (InputRPM < 0 and RPM > InputRPM))
-
-				if Clutch > 0 and OnRPM then
-					local Multiplier = 1
-
-					if self.DoubleDiff and self.SteerRate ~= 0 then
-						local Rate = self.SteerRate * 2
-
-						-- this actually controls the RPM of the wheels, so the steering rate is correct
-						if Link.Side == 0 then
-							Multiplier = min(0, Rate) + 1
-						else
-							Multiplier = -math.max(0, Rate) + 1
-						end
-					end
-
-					Link.ReqTq = (InputRPM * Multiplier - RPM) * InputInertia * Clutch
-
-					TotalReqTq = TotalReqTq + abs(Link.ReqTq)
-				end
-			end
-		end
-
-		self.TotalReqTq = TotalReqTq
-		TorqueOutput = min(TotalReqTq, self.MaxTorque)
-		self.TorqueOutput = TorqueOutput
-
-		self:UpdateOverlay()
-
-		return TorqueOutput
-	end
-
-	function ENT:Act(Torque, DeltaTime, MassRatio)
-		if self.Disabled then return end
-
-		if Torque == 0 then
-			self.LastActive = Clock.CurTime
-			return
-		end
-
-		local Loss = Clamp(((1 - 0.4) / 0.5) * ((self.ACF.Health / self.ACF.MaxHealth) - 1) + 1, 0.4, 1) --internal torque loss from damaged
-		local Slop = self.Automatic and 0.9 or 1 --internal torque loss from inefficiency
-		local ReactTq = 0
-		-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
-		local AvailTq = 0
-		local GearRatio = self.GearRatio
-
-		if Torque ~= 0 and GearRatio ~= 0 then
-			AvailTq = min(abs(Torque) / self.TotalReqTq, 1) / GearRatio * -(-Torque / abs(Torque)) * Loss * Slop
-		end
-
-		for Ent, Link in pairs(self.GearboxOut) do
-			Ent:Act(Link.ReqTq * AvailTq, DeltaTime, MassRatio)
-		end
-
-		local Braking = self.Braking
-
-		for Ent, Link in pairs(self.Wheels) do
-			-- If the gearbox is braking, always
-			if not Braking or not Link.IsBraking then
-				local WheelTorque = Link.ReqTq * AvailTq
-				ReactTq = ReactTq + WheelTorque
-
-				ActWheel(Link, Ent, WheelTorque, DeltaTime)
-			end
-		end
-
-		if ReactTq ~= 0 then
-			local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
-
-			if IsValid(BoxPhys) then
-				BoxPhys:ApplyTorqueCenter(self:GetRight() * Clamp(2 * deg(ReactTq * MassRatio) * DeltaTime, -500000, 500000))
-			end
-		end
-
-		self.LastActive = Clock.CurTime
-	end
-*/
 end ----------------------------------------------------
 
 do -- Braking ------------------------------------------
