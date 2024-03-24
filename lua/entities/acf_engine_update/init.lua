@@ -377,6 +377,7 @@ do -- Spawn and Update functions
 		Entity.LastThink     = 0
 		Entity.MassRatio     = 1
 		Entity.FuelUsage     = 0
+		Entity.IdleThrottle  = 0
 		Entity.Throttle      = 0
 		Entity.FlyRPM        = 0
 		Entity.SoundPath     = Engine.Sound
@@ -720,7 +721,6 @@ function ENT:CalcRPM(SelfTbl)
 	local LimitRPM   = SelfTbl.LimitRPM
 	local IdleRPM	 = SelfTbl.IdleRPM
 	local FlyRPM     = SelfTbl.FlyRPM
-	local IdleThrottle = 0
 
 	-- Determine if the rev limiter will engage or disengage
 	local RevLimited = false
@@ -734,12 +734,14 @@ function ENT:CalcRPM(SelfTbl)
 		SelfTbl.RevLimited = RevLimited
 	end
 
-	if FlyRPM < IdleRPM then
-		IdleThrottle = 1
-	end
+	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( IdleRPM - FlyRPM ) / 1e3
+	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle, 0, 1 )
 
+	if FlyRPM > IdleRPM then SelfTbl.IdleThrottle = 0 end
 
-	local Throttle = RevLimited and 0 or math.Clamp( SelfTbl.Throttle + IdleThrottle, 0, 1 )
+	PrintMessage(HUD_PRINTTALK, SelfTbl.IdleThrottle)
+
+	local Throttle = RevLimited and 0 or math.Clamp( SelfTbl.Throttle + SelfTbl.IdleThrottle, 0, 1 )
 
 	-- Calculate fuel usage
 	if IsValid(FuelTank) then
@@ -816,7 +818,7 @@ function ENT:CalcRPM(SelfTbl)
 
 	local FlyRPMAcceleration = ( NoLoadAcceleration * ( 1-GearboxLoad ) ) - ( LoadedAcceleration * GearboxLoad )
 
-	SelfTbl.TorqueFeedback = LoadedTorqueDifference * Inertia
+	SelfTbl.TorqueFeedback = (LoadedTorqueDifference/2) * Inertia
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration )
 	SelfTbl.LastThink = ClockTime
 
