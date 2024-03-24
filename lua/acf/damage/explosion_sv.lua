@@ -14,6 +14,7 @@ local TraceData    = {
 	filter = true,
 	mask   = MASK_SOLID,
 }
+local Ballistics	= ACF.Ballistics
 
 --- Checks whether an entity can be affected by ACF explosions.
 -- @param Entity The entity to be checked.
@@ -22,6 +23,8 @@ function Damage.isValidTarget(Entity)
 	local Type = ACF.Check(Entity)
 
 	if not Type then return false end
+	if Ballistics.TestFilter(Entity) == false then return false end
+
 	if Entity.Exploding then return false end
 	if Type ~= "Squishy" then return true end
 
@@ -397,7 +400,7 @@ do -- Experimental HE code
 					local displacement  = targetPos - origin
 					local distance      = displacement:Length()
 					local sphereAtRange = 4 * 3.1415 * distance^2
-					local circleArea    = ent.ACF.Area / 6.45 / 4 -- Surface area converted to a circle
+					local circleArea    = ent.ACF.Area / ACF.InchToCmSq / 4 -- Surface area converted to a circle
 					local shadowArea    = circleArea / sphereAtRange * blastSurfaceArea
 
 					-- How much power goes to the target

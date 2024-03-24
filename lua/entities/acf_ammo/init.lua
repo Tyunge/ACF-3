@@ -6,6 +6,7 @@ include("shared.lua")
 -- Local Vars -----------------------------------
 
 local ACF          = ACF
+local Contraption  = ACF.Contraption
 local ActiveCrates = ACF.AmmoCrates
 local Utilities    = ACF.Utilities
 local TimerCreate  = timer.Create
@@ -232,6 +233,7 @@ do -- Spawning and Updating --------------------
 		Entity:UpdateMass(true)
 	end
 
+	util.PrecacheModel("models/holograms/hq_cylinder.mdl")
 	util.AddNetworkString("ACF_RequestAmmoData")
 
 	-- Whenever a player requests ammo data, we'll send it to them
@@ -418,9 +420,10 @@ do -- Spawning and Updating --------------------
 end ---------------------------------------------
 
 do -- ACF Activation and Damage -----------------
-	local Clock   = Utilities.Clock
-	local Damage  = ACF.Damage
-	local Objects = Damage.Objects
+	local Clock       = Utilities.Clock
+	local Sounds      = Utilities.Sounds
+	local Damage      = ACF.Damage
+	local Objects     = Damage.Objects
 
 	local function CookoffCrate(Entity)
 		if Entity.Ammo <= 1 or Entity.Damaged < Clock.CurTime then -- Detonate when time is up or crate is out of ammo
@@ -438,10 +441,10 @@ do -- ACF Activation and Damage -----------------
 				local Speed = ACF.MuzzleVelocity(BulletData.PropMass, BulletData.ProjMass * 0.5, BulletData.Efficiency)
 				local Pitch = math.max(255 - BulletData.PropMass * 100,60)
 
-				Entity:EmitSound("ambient/explosions/explode_4.wav", 140, Pitch, ACF.Volume)
+				Sounds.SendSound(Entity, "ambient/explosions/explode_4.wav", 140, Pitch, 1)
 
 				BulletData.Pos    = Entity:LocalToWorld(Entity:OBBCenter() + VectorRand() * Entity:GetSize() * 0.5)
-				BulletData.Flight = VectorRand():GetNormalized() * Speed * 39.37 + ACF_GetAncestor(Entity):GetVelocity()
+				BulletData.Flight = VectorRand():GetNormalized() * Speed * 39.37 + Contraption.GetAncestor(Entity):GetVelocity()
 				BulletData.Owner  = Entity.Inflictor or Entity.Owner
 				BulletData.Gun    = Entity
 				BulletData.Crate  = Entity:EntIndex()
@@ -457,7 +460,7 @@ do -- ACF Activation and Damage -----------------
 
 	function ENT:ACF_Activate(Recalc)
 		local PhysObj = self.ACF.PhysObj
-		local Area    = PhysObj:GetSurfaceArea() * 6.45
+		local Area    = PhysObj:GetSurfaceArea() * ACF.InchToCmSq
 		local Armour  = ACF.AmmoArmor * ACF.ArmorMod
 		local Health  = Area / ACF.Threshold
 		local Percent = 1
@@ -598,14 +601,8 @@ end ---------------------------------------------
 do -- Mass Update -------------------------------
 	local function UpdateMass(Ent)
 		local Mass = math.floor(Ent.EmptyMass + (Ent.AmmoMass * (Ent.Ammo / math.max(Ent.Capacity, 1))))
-		local Phys = Ent:GetPhysicsObject()
 
-		if IsValid(Phys) then
-			Ent.ACF.Mass      = Mass
-			Ent.ACF.LegalMass = Mass
-
-			Phys:SetMass(Ent.ACF.LegalMass)
-		end
+		Contraption.SetMass(Ent,Mass)
 	end
 
 	-------------------------------------------------------------------------------

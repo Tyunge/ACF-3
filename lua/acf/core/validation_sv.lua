@@ -7,12 +7,6 @@ local TimerSimple  = timer.Simple
 local Baddies	   = ACF.GlobalFilter
 local MinimumArmor = ACF.MinimumArmor
 local MaximumArmor = ACF.MaximumArmor
-local NoCollision  = { -- These prevent ACF bullets from hitting an entity
-	[COLLISION_GROUP_DEBRIS] = true,
-	[COLLISION_GROUP_IN_VEHICLE] = true,
-	[COLLISION_GROUP_VEHICLE_CLIP] = true,
-	[COLLISION_GROUP_DOOR_BLOCKER] = true
-}
 
 --[[ ACF Legality Check
 	ALL SENTS MUST HAVE:
@@ -34,17 +28,17 @@ function ACF.IsLegal(Entity)
 	if not ACF.LegalChecks then return true end -- Legal checks are disabled
 
 	local Phys = Entity:GetPhysicsObject()
-	
+
 	if not IsValid(Entity.ACF.PhysObj) or Entity.ACF.PhysObj ~= Phys then
 		if Phys:GetVolume() then
 			Entity.ACF.PhysObj = Phys -- Updated PhysObj
 		else
+			ACF.Shame(Entity,"having a custom physics object (spherical).")
 			return false, "Invalid Physics", "Custom physics objects cannot be applied to ACF entities."
 		end
 	end
-	if not Entity:IsSolid() then return false, "Not Solid", "The entity is invisible to projectiles." end
-	if NoCollision[Entity:GetCollisionGroup()] then return false, "Invalid Collisions", "The entity is invisible to projectiles." end
-	if Entity.ClipData and next(Entity.ClipData) then return false, "Visual Clip", "Visual clip cannot be applied to ACF entities." end -- No visclip
+	if not Entity:IsSolid() then ACF.Shame(Entity,"not being solid.") return false, "Not Solid", "The entity is invisible to projectiles." end
+	if Entity.ClipData and next(Entity.ClipData) then ACF.Shame(Entity,"having visclips.") return false, "Visual Clip", "Visual clip cannot be applied to ACF entities." end -- No visclip
 	if Entity.IsACFWeapon and not ACF.GunsCanFire then return false, "Cannot fire", "Firing disabled by the servers ACF settings." end
 	if Entity.IsRack and not ACF.RacksCanFire then return false, "Cannot fire", "Firing disabled by the servers ACF settings." end
 
@@ -125,15 +119,16 @@ function ACF.UpdateArea(Entity, PhysObj)
 	local Area = PhysObj:GetSurfaceArea()
 
 	if Area then -- Normal collisions
-		Area = Area * 6.45 * 0.52505066107
+		local AreaMult = 0.52505066107 -- This seems to be a conversion from cm to grid units on the architectural scale (approx. 1 / 1.905)
+		Area = Area * ACF.InchToCmSq * AreaMult
 	elseif PhysObj:GetMesh() then -- Box collisions
 		local Size = Entity:OBBMaxs() - Entity:OBBMins()
 
-		Area = ((Size.x * Size.y) + (Size.x * Size.z) + (Size.y * Size.z)) * 6.45
+		Area = ((Size.x * Size.y) + (Size.x * Size.z) + (Size.y * Size.z)) * ACF.InchToCmSq
 	else -- Spherical collisions
 		local Radius = Entity:BoundingRadius()
 
-		Area = 4 * 3.1415 * Radius * Radius * 6.45
+		Area = 4 * 3.1415 * Radius * Radius * ACF.InchToCmSq
 	end
 
 	Entity.ACF.Area = Area
@@ -152,7 +147,6 @@ function ACF.UpdateThickness(Entity, PhysObj, Area, Ductility)
 
 			if Mass ~= Entity.ACF.Mass then
 				Entity.ACF.Mass = Mass
-
 				PhysObj:SetMass(Mass)
 			end
 
@@ -166,11 +160,10 @@ function ACF.UpdateThickness(Entity, PhysObj, Area, Ductility)
 	end
 
 	local Mass  = MassMod and MassMod.Mass or PhysObj:GetMass()
-	local Armor = ACF_CalcArmor(Area, Ductility, Mass)
+	local Armor = ACF.CalcArmor(Area, Ductility, Mass)
 
 	if Mass ~= Entity.ACF.Mass then
 		Entity.ACF.Mass = Mass
-
 		PhysObj:SetMass(Mass)
 
 		duplicator.StoreEntityModifier(Entity, "mass", { Mass = Mass })
@@ -242,8 +235,3 @@ function ACF.Activate(Entity, Recalc)
 	Entity.ACF.MaxArmour = Thickness
 	Entity.ACF.Ductility = Ductility
 end
-
--- Globalize ------------------------------------
-ACF_CheckLegal = ACF.CheckLegal
-ACF_Check      = ACF.Check
-ACF_Activate   = ACF.Activate

@@ -10,6 +10,7 @@ do -- ACF global vars
 
 	-- General Settings
 	ACF.LegalChecks        = true -- Whether or not IsLegal checks should be run on ACF entities
+	ACF.NameAndShame       = false -- Whether or not IsLegal checks should message everyone* about ACF entities getting disabled
 	ACF.VehicleLegalChecks = true -- Whether or not IsLegal checks should be run on vehicle entities
 	ACF.Year               = 1945
 	ACF.IllegalDisableTime = 30 -- Time in seconds for an entity to be disabled when it fails ACF.IsLegal
@@ -39,7 +40,8 @@ do -- ACF global vars
 	ACF.gCmToKgIn          = 0.016387064 -- g/cm³ to kg/in³ :face_vomiting: :face_vomiting: :face_vomiting:
 	ACF.MmToInch		   = 0.0393701 -- Millimeters to inches
 	ACF.InchToMm           = 25.4 -- Inches to millimeters
-	ACF.InchToCmSq		   = 6.45
+	ACF.InchToCmSq		   = 6.45 -- in² to cm²
+  
 	-- Fuzes
 	ACF.MinFuzeCaliber     = 20 -- Minimum caliber in millimeters that can be fuzed
 
@@ -67,6 +69,7 @@ do -- ACF global vars
 		npc_strider = true,
 		npc_dog = true,
 		phys_bone_follower = true,
+		acf_armor = not ACF.AllowProcArmor, -- Procedural armor filter
 	}
 
 	-- Ammo
@@ -92,11 +95,13 @@ do -- ACF global vars
 	ACF.HEATEfficiency     = 0.5     -- Efficiency of converting explosive energy to velocity
 	ACF.LinerThicknessMult = 0.04   -- Metal liner thickness multiplier
 	ACF.MaxChargeHeadLen   = 1.2     -- Maximum shaped charge head length (in charge diameters), lengths above will incur diminishing returns
-	ACF.HEATPenMul         = 0.85    -- Linear jet penetration multiplier
+	ACF.HEATPenMul         = 0.85 * 8    -- Linear jet penetration multiplier
 	ACF.HEATMinPenVel      = 1000    -- m/s, minimum velocity of the copper jet that contributes to penetration
 	ACF.HEATCavityMul      = 1.2     -- Size of the penetration cavity in penetrator volume expended
 	ACF.HEATSpallingArc    = 0.5     -- Cossine of the HEAT spalling angle
 	ACF.HEATBoomConvert    = 1 / 3   -- Percentage of filler that creates HE damage at detonation
+	ACF.HEATStandOffMul = 0.11 -- Percentage of standoff to use in penetration calculation (Original was too hig)
+	ACF.HEATBreakUpMul = 0.15 -- Percentage of breakup time to use in penetration calculation (Original was too high)
 
 	-- Material densities
 	ACF.SteelDensity       = 7.9e-3  -- kg/cm^3
@@ -167,6 +172,7 @@ elseif CLIENT then
 	CreateClientConVar("acf_maxroundsdisplay", 16, true, false, "Maximum rounds to display before using bulk display (0 to only display bulk)", 0, 5000)
 	CreateClientConVar("acf_drawboxes", 1, true, false, "Whether or not to draw hitboxes on ACF entities", 0, 1)
 	CreateClientConVar("acf_legalhints", 1, true, true, "If enabled, ACF will throw a warning hint whenever an entity gets disabled.", 0, 1)
+	CreateClientConVar("acf_legalshame", 0, true, true, "If enabled, you will get a message in console from the server if someone else has an ACF entity get disabled, but only when the server has that logging enabled.", 0, 1)
 	CreateClientConVar("acf_debris", 1, true, false, "Toggles ACF Debris.", 0, 1)
 	CreateClientConVar("acf_debris_collision", 0, true, false, "Toggles debris collisions with other entities.", 0, 1)
 	CreateClientConVar("acf_debris_gibmultiplier", 1, true, false, "The amount of gibs spawned when created by ACF debris.", 0, 1)
