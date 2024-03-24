@@ -795,7 +795,7 @@ do -- Movement -----------------------------------------
 
 		if Wheels > 0 then
 			AverageWheelRPM = AverageWheelRPM / Wheels
-			self.InputRPM = self.InputRPM + AverageWheelRPM*GearRatio
+			self.InputRPM = self.InputRPM + AverageWheelRPM * GearRatio
 		end
 
 		if ReactTq ~= 0 and IsValid(BoxPhys) then

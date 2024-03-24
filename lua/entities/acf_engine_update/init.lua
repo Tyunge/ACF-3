@@ -804,7 +804,7 @@ function ENT:CalcRPM(SelfTbl)
 	AverageGearboxRPM = TotalGearboxRPM / Boxes
 
 	-- Fly wheel acceleration when there is no load applied to engine ( In Neutral, Clutch disengaged, No gearbox attached, etc. )
-	local NoLoadAcceleration = (SelfTbl.Torque - Drag)/Inertia
+	local NoLoadAcceleration = (SelfTbl.Torque - Drag) / Inertia
 
 	-- Find the difference between flywheel rpm and the connected gearbox rpm.
 	local LoadedRPMDifference = SelfTbl.FlyRPM - AverageGearboxRPM
