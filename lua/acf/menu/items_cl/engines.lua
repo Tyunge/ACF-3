@@ -60,13 +60,13 @@ local function UpdateEngineStats(Label, Data)
 end
 
 local function MobilityUpdateEligibilityCheck(Label, Data)
-	
+
 	if Data.FlywheelMassUpdate == nil or Data.Displacement == nil then
 		Label:SetText("This engine is ineligible for the mobility update.")
 		ACF.SetClientData("PrimaryClass","acf_engine")
 	else
 		Label:SetText("This engine is eligible for the mobility update.")
-		
+
 		if GetConVar("acf_mobilityupdate"):GetBool() then
 			ACF.SetClientData("PrimaryClass", "acf_engine_update")
 		else
@@ -179,7 +179,7 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
-		
+
 		if ACF.MobilityUpdate then
 			MobilityUpdateEligibilityCheck(EngineMobilityUpdate, Data)
 		else

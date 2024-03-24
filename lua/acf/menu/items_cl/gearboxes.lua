@@ -59,7 +59,7 @@ local function CreateMenu(Menu)
 		else
 			MobilityEligibility:SetText("The mobility update has been disabled on this server.")
 		end
-		
+
 
 		local ClassData = GearboxClass.Selected
 

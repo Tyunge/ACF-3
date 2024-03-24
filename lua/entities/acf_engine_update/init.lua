@@ -116,7 +116,6 @@ local Clamp        = math.Clamp
 local Round        = math.Round
 local Remap        = math.Remap
 local max          = math.max
-local min          = math.min
 local TimerCreate  = timer.Create
 local TimerSimple  = timer.Simple
 local TimerRemove  = timer.Remove
@@ -196,7 +195,7 @@ local function SetActive(Entity, Value, EntTbl)
 		EntTbl.LastThink = Clock.CurTime
 		EntTbl.Torque    = EntTbl.PeakTorque
 		EntTbl.FlyRPM    = EntTbl.IdleRPM * 1.5
-		
+
 		Entity:UpdateSound(EntTbl)
 
 		TimerSimple(TickInterval(), function()
@@ -327,7 +326,7 @@ do -- Spawn and Update functions
 		Entity.HealthMult       = Type.HealthMult
 		Entity.HitBoxes         = ACF.GetHitboxes(Engine.Model)
 		Entity.Out              = Entity:WorldToLocal(Entity:GetAttachment(Entity:LookupAttachment("driveshaft")).Pos)
-		
+
 		WireIO.SetupInputs(Entity, Inputs, Data, Class, Engine, Type)
 		WireIO.SetupOutputs(Entity, Outputs, Data, Class, Engine, Type)
 
@@ -621,10 +620,10 @@ end
 function ENT:UpdateSound(SelfTbl)
 	SelfTbl = SelfTbl or self:GetTable()
 	local Path = SelfTbl.SoundPath
-	
+
 	if Path ~= SelfTbl.LastSound then
 		self:DestroySound()
-		
+
 		SelfTbl.LastSound = Path
 	end
 
@@ -632,7 +631,7 @@ function ENT:UpdateSound(SelfTbl)
 	if not SelfTbl.Active then return end
 
 	local Pitch, Volume = GetPitchVolume(SelfTbl)
-	
+
 	if math.abs(Pitch - SelfTbl.LastPitch) < 1 then return end -- Don't bother updating if the pitch difference is too small to notice
 
 	SelfTbl.LastPitch = Pitch
@@ -762,13 +761,12 @@ function ENT:CalcRPM(SelfTbl)
 
 	-- Calculate the current torque from flywheel RPM
 	local IdleRPM    = SelfTbl.IdleRPM
-	local PeakRPM    = IsElectric and SelfTbl.FlywheelOverride or SelfTbl.PeakMaxRPM
-	local Inertia    = SelfTbl.Inertia
+	local Inertia	= SelfTbl.Inertia
 	local PeakTorque = SelfTbl.PeakTorque
 	local Displacement = SelfTbl.Displacement
-	
+
 	-- Engines have a low amount of friction due to oil. The deceleration is from the compression cycle
-	local Drag = ((Displacement*FlyRPM)/100)*(1-Throttle)
+	local Drag = ( ( Displacement * FlyRPM ) / 100 ) * ( 1-Throttle )
 
 	local Torque = 0
 	if Throttle ~= 0 and FlyRPM < LimitRPM then
@@ -789,16 +787,16 @@ function ENT:CalcRPM(SelfTbl)
 
 	-- Engines should only connect to a single gearbox. A differential should be used to control torque to multiple gearboxes.
 	-- Get the average RPM from all gearboxes and perform an even split of torque between them.
-	for Ent, Link in pairs(BoxesTbl) do
+	for Ent, _ in pairs(BoxesTbl) do
 		if not Ent.Disabled then
 			Boxes = Boxes + 1
 
 			if Ent:GetClutch() > 0 then
-				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp(SelfTbl.Torque+SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque)*MassRatio , DeltaTime )
+				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio , DeltaTime )
 			end
 
 			if Ent:GearEngaged() then
-				GearboxLoad = 1*Ent:GetClutch()
+				GearboxLoad = 1 * Ent:GetClutch()
 			end
 
 		end
@@ -807,7 +805,7 @@ function ENT:CalcRPM(SelfTbl)
 
 	-- Fly wheel acceleration when there is no load applied to engine ( In Neutral, Clutch disengaged, No gearbox attached, etc. )
 	local NoLoadAcceleration = (SelfTbl.Torque - Drag)/Inertia
-	
+
 	-- Find the difference between flywheel rpm and the connected gearbox rpm.
 	local LoadedRPMDifference = SelfTbl.FlyRPM - AverageGearboxRPM
 	local LoadedPercent = Remap( math.abs(LoadedRPMDifference), 0, self.LimitRPM, 0, 1)
@@ -816,10 +814,10 @@ function ENT:CalcRPM(SelfTbl)
 	local LoadedTorqueDifference = ACF.GetTorque(SelfTbl.TorqueCurve, LoadedPercent) * Sign( LoadedRPMDifference ) * PeakTorque * GearboxLoad
 	local LoadedAcceleration = LoadedTorqueDifference / Inertia
 
-	local FlyRPMAcceleration = ( NoLoadAcceleration*(1-GearboxLoad) ) - (LoadedAcceleration*GearboxLoad)
+	local FlyRPMAcceleration = ( NoLoadAcceleration * ( 1-GearboxLoad ) ) - ( LoadedAcceleration * GearboxLoad )
 
-	SelfTbl.TorqueFeedback = LoadedTorqueDifference*Inertia
-	SelfTbl.FlyRPM = math.max(0, SelfTbl.FlyRPM + FlyRPMAcceleration)
+	SelfTbl.TorqueFeedback = LoadedTorqueDifference * Inertia
+	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration )
 	SelfTbl.LastThink = ClockTime
 
 	self:UpdateSound(SelfTbl)

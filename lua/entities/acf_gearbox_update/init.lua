@@ -735,13 +735,12 @@ do -- Gear Shifting ------------------------------------
 end ----------------------------------------------------
 
 do -- Movement -----------------------------------------
-	local deg = math.deg
 
-	local function ActWheel(Link, Wheel, Torque, DeltaTime)
+	local function ActWheel(Link, Wheel, Torque)
 		local Phys = Wheel:GetPhysicsObject()
 
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
-		
+
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
 		Phys:ApplyTorqueCenter(TorqueAxis * -Clamp(Torque, -5e5, 5e5))
 	end
@@ -751,17 +750,16 @@ do -- Movement -----------------------------------------
 	end
 
 	function ENT:GearEngaged()
-		return self.GearRatio != 0
+		return self.GearRatio ~= 0
 	end
 
-	function ENT:Calc(InputTorque, DeltaTime)
+	function ENT:Calc(InputTorque)
 		if self.Disabled then return 0 end
 
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector( BoxPhys:GetAngleVelocity() )
-		local Gear = self.Gear
 		local GearRatio = self.GearRatio
-		
+
 		self.InputRPM = 0
 		self.TorqueInput = InputTorque
 		self.TorqueOutput = self.TorqueInput * GearRatio
@@ -771,9 +769,9 @@ do -- Movement -----------------------------------------
 		end
 
 		local Boxes = 0
-		for Ent, Link in pairs( self.GearboxOut ) do
+		for Ent, _ in pairs( self.GearboxOut ) do
 			Boxes = Boxes + 1
-			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput/table.Count(self.GearboxOut), DeltaTime ) * GearRatio
+			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput / table.Count( self.GearboxOut ), DeltaTime ) * GearRatio
 		end
 
 		if Boxes > 0 then
@@ -789,10 +787,10 @@ do -- Movement -----------------------------------------
 			AverageWheelRPM = AverageWheelRPM + RPM
 			Wheels = Wheels + 1
 
-			local WheelTorque = self.TorqueOutput/table.Count(self.Wheels)
+			local WheelTorque = self.TorqueOutput / table.Count( self.Wheels )
 			ReactTq = ReactTq + WheelTorque
 
-			ActWheel(Link, Wheel, WheelTorque, DeltaTime)
+			ActWheel(Link, Wheel, WheelTorque)
 		end
 
 		if Wheels > 0 then
@@ -800,14 +798,12 @@ do -- Movement -----------------------------------------
 			self.InputRPM = self.InputRPM + AverageWheelRPM*GearRatio
 		end
 
-		if ReactTq != 0 then
-			if IsValid(BoxPhys) then
-				BoxPhys:ApplyTorqueCenter( self:GetRight() * ReactTq )
-			end
+		if ReactTq ~= 0 and IsValid(BoxPhys) then
+			BoxPhys:ApplyTorqueCenter( self:GetRight() * ReactTq )
 		end
 
 		self:UpdateOverlay()
-		
+
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
 		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
 

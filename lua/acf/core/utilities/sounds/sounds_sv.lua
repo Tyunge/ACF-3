@@ -43,7 +43,7 @@ end
 
 function Sounds.SendAdjustableSound(Origin, ShouldStop, Pitch, Volume)
 	if not IsValid(Origin) then return end
-	
+
 	ShouldStop = ShouldStop or false
 	local Time = CurTime()
 	Origin.ACF.SoundTimer = Origin.ACF.SoundTimer or Time
