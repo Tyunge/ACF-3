@@ -26,8 +26,8 @@ local function CalcWheel(Entity, Link, Wheel, SelfWorld)
 
 	if GearRatio == 0 then return 0 end
 
-	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
-	return BaseRPM / GearRatio / -6
+	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert
+	return BaseRPM / -6
 end
 
 do -- Spawn and Update functions -----------------------
@@ -44,7 +44,9 @@ do -- Spawn and Update functions -----------------------
 	local Outputs = {
 		"Current Gear (Returns the gear currently in use.)",
 		"Ratio (Returns the current gear ratio, based on the current gear and final drive.)",
-		"Entity (The gearbox itself.) [ENTITY]"
+		"Entity (The gearbox itself.) [ENTITY]",
+		"RPM (The RPM of the gearbox.)",
+		"Output Torque (The amount of torque leaving the gearbox.)",
 	}
 
 	local function VerifyData(Data)
@@ -80,7 +82,7 @@ do -- Spawn and Update functions -----------------------
 					Data["Gear" .. I] = nil
 				end
 
-				Gears[I] = Clamp(Gear, -1, 1)
+				Gears[I] = Clamp(Gear, -10, 10)
 			end
 		end
 
@@ -93,7 +95,7 @@ do -- Spawn and Update functions -----------------------
 				Data.Gear0 = nil
 			end
 
-			Data.FinalDrive = Clamp(Final, -1, 1)
+			Data.FinalDrive = Clamp(Final, -10, 10)
 		end
 
 		do -- External verifications
@@ -262,6 +264,10 @@ do -- Spawn and Update functions -----------------------
 		Entity.LClutch        = 1
 		Entity.RClutch        = 1
 		Entity.DataStore      = Entities.GetArguments("acf_gearbox_update")
+		Entity.InputRPM		  = 0
+		Entity.OutputRPM	  = 0
+		Entity.TorqueInput    = 0
+		Entity.TorqueOutput   = 0
 
 		UpdateGearbox(Entity, Data, Class, Gearbox)
 
@@ -729,18 +735,87 @@ do -- Gear Shifting ------------------------------------
 end ----------------------------------------------------
 
 do -- Movement -----------------------------------------
-	local deg         = math.deg
+	local deg = math.deg
 
 	local function ActWheel(Link, Wheel, Torque, DeltaTime)
 		local Phys = Wheel:GetPhysicsObject()
 
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
-
+		
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
-
-		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
+		Phys:ApplyTorqueCenter(TorqueAxis * -Clamp(Torque, -5e5, 5e5))
 	end
 
+	function ENT:GetClutch()
+		return self.LClutch or self.RClutch
+	end
+
+	function ENT:GearEngaged()
+		return self.GearRatio != 0
+	end
+
+	function ENT:Calc(InputTorque, DeltaTime, MassRatio)
+		if self.Disabled then return 0 end
+
+		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
+		local SelfWorld = BoxPhys:LocalToWorldVector( BoxPhys:GetAngleVelocity() )
+		local Gear = self.Gear
+		local GearRatio = self.GearRatio
+		
+		self.InputRPM = 0
+		self.TorqueInput = InputTorque
+		self.TorqueOutput = self.TorqueInput * GearRatio
+
+		if self.ChangeFinished < Clock.CurTime then
+			self.InGear = true
+		end
+
+		local Boxes = 0
+		for Ent, Link in pairs( self.GearboxOut ) do
+			Boxes = Boxes + 1
+			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput/table.Count(self.GearboxOut), DeltaTime, MassRatio ) * GearRatio
+		end
+
+		if Boxes > 0 then
+			self.InputRPM = self.InputRPM / Boxes
+		end
+
+
+		local Wheels = 0
+		local AverageWheelRPM = 0
+		local ReactTq = 0
+		for Wheel, Link in pairs( self.Wheels ) do
+			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
+			AverageWheelRPM = AverageWheelRPM + RPM
+			Wheels = Wheels + 1
+
+			local WheelTorque = self.TorqueOutput/table.Count(self.Wheels)
+			ReactTq = ReactTq + WheelTorque
+
+			ActWheel(Link, Wheel, WheelTorque, DeltaTime)
+		end
+
+		if Wheels > 0 then
+			AverageWheelRPM = AverageWheelRPM / Wheels
+			self.InputRPM = self.InputRPM + AverageWheelRPM*GearRatio
+		end
+
+		if ReactTq != 0 then
+			if IsValid(BoxPhys) then
+				BoxPhys:ApplyTorqueCenter( self:GetRight() * ReactTq )
+			end
+		end
+
+		self:UpdateOverlay()
+		
+		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
+		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
+
+		return self.InputRPM
+	end
+
+
+/*
 	function ENT:Calc(InputRPM, InputInertia)
 		if self.Disabled then return 0 end
 		if self.LastActive == Clock.CurTime then return self.TorqueOutput end
@@ -882,6 +957,7 @@ do -- Movement -----------------------------------------
 
 		self.LastActive = Clock.CurTime
 	end
+*/
 end ----------------------------------------------------
 
 do -- Braking ------------------------------------------
