@@ -739,8 +739,6 @@ function ENT:CalcRPM(SelfTbl)
 
 	if FlyRPM > IdleRPM then SelfTbl.IdleThrottle = 0 end
 
-	PrintMessage(HUD_PRINTTALK, SelfTbl.IdleThrottle)
-
 	local Throttle = RevLimited and 0 or math.Clamp( SelfTbl.Throttle + SelfTbl.IdleThrottle, 0, 1 )
 
 	-- Calculate fuel usage
@@ -816,10 +814,20 @@ function ENT:CalcRPM(SelfTbl)
 	local LoadedTorqueDifference = ACF.GetTorque(SelfTbl.TorqueCurve, LoadedPercent) * Sign( LoadedRPMDifference ) * PeakTorque * GearboxLoad
 	local LoadedAcceleration = LoadedTorqueDifference / Inertia
 
+	-- Mixes unloaded engine acceleration and loaded acceleration with the use of the clutch.
 	local FlyRPMAcceleration = ( NoLoadAcceleration * ( 1-GearboxLoad ) ) - ( LoadedAcceleration * GearboxLoad )
 
+	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
 	SelfTbl.TorqueFeedback = (LoadedTorqueDifference/2) * Inertia
-	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration )
+
+	if( math.abs(LoadedRPMDifference) < 200 and GearboxLoad > 0 ) then
+		-- If the RPM difference is close enough lets just set the flywheel rpm to match the gearbox.
+		SelfTbl.FlyRPM 	= AverageGearboxRPM
+	else
+		-- If the RPM difference is large enough lets accelerate or decelerate the engine based on it's inertia and torque difference.
+		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration )	
+	end
+
 	SelfTbl.LastThink = ClockTime
 
 	self:UpdateSound(SelfTbl)
