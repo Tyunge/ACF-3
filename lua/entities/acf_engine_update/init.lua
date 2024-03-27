@@ -818,9 +818,9 @@ function ENT:CalcRPM(SelfTbl)
 	local FlyRPMAcceleration = ( NoLoadAcceleration * ( 1-GearboxLoad ) ) - ( LoadedAcceleration * GearboxLoad )
 
 	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
-	SelfTbl.TorqueFeedback = (LoadedTorqueDifference/2) * Inertia
+	SelfTbl.TorqueFeedback = -(Drag/2) * Inertia
 
-	if( math.abs(LoadedRPMDifference) < 200 and GearboxLoad > 0 ) then
+	if( math.abs(LoadedRPMDifference) < 200 and GearboxLoad == 1 ) then
 		-- If the RPM difference is close enough lets just set the flywheel rpm to match the gearbox.
 		SelfTbl.FlyRPM 	= AverageGearboxRPM
 	else
