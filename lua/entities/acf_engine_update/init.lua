@@ -314,7 +314,7 @@ do -- Spawn and Update functions
 		Entity.RevLimited       = false
 		Entity.FlywheelOverride = Engine.RPM.Override
 		Entity.FlywheelMass     = Engine.FlywheelMassUpdate
-		Entity.Inertia          = Engine.FlywheelMassUpdate * (0.26 ^ 2) -- 0.26 is in meters. This would be the radius of the flywheel.
+		Entity.Inertia          = Entity.FlywheelMass * (0.26 ^ 2) -- 0.26 is in meters. This would be the radius of the flywheel.
 		Entity.Displacement		= Engine.Displacement
 		Entity.IsElectric       = Engine.IsElectric
 		Entity.IsTrans          = Engine.IsTrans -- driveshaft outputs to the side
@@ -831,6 +831,7 @@ function ENT:CalcRPM(SelfTbl)
 	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
 	SelfTbl.TorqueFeedback = ( -(Drag/2) * Inertia ) + math.max( 0,FlyWheelFeedBack )
 
+	SelfTbl.TorqueFeedback = math.Clamp(SelfTbl.TorqueFeedback, -PeakTorque/3, PeakTorque/3) -- Limiting how much feedback torque is applied until I can find a better formula to approximate the amount of torque
 
 	SelfTbl.LastThink = ClockTime
 

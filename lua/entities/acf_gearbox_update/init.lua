@@ -742,7 +742,7 @@ do -- Movement -----------------------------------------
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
 
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
-		Phys:ApplyTorqueCenter(TorqueAxis * -Clamp(Torque, -5e5, 5e5))
+		Phys:ApplyTorqueCenter(TorqueAxis * -Clamp(Torque * 1.5, -5e5, 5e5))
 	end
 
 	function ENT:GetClutch()
