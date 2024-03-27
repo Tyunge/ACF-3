@@ -761,7 +761,7 @@ do -- Movement -----------------------------------------
 		local GearRatio = self.GearRatio
 
 		self.InputRPM = 0
-		self.TorqueInput = InputTorque * self.LClutch or self.RClutch
+		self.TorqueInput = InputTorque
 		self.TorqueOutput = self.TorqueInput * GearRatio
 
 		if self.ChangeFinished < Clock.CurTime then
@@ -783,14 +783,19 @@ do -- Movement -----------------------------------------
 		local AverageWheelRPM = 0
 		local ReactTq = 0
 		for Wheel, Link in pairs( self.Wheels ) do
+			local Clutch = Link.Side == 1 and self.LClutch or self.RClutch
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
-			AverageWheelRPM = AverageWheelRPM + RPM
-			Wheels = Wheels + 1
+			local WheelTorque = ( self.TorqueOutput * Clutch ) / table.Count( self.Wheels )
+			
+			if Clutch > 0 then
 
-			local WheelTorque = self.TorqueOutput / table.Count( self.Wheels )
-			ReactTq = ReactTq + WheelTorque
+				AverageWheelRPM = AverageWheelRPM + RPM
+				Wheels = Wheels + 1
+				ReactTq = ReactTq + WheelTorque
 
-			ActWheel(Link, Wheel, WheelTorque)
+			end
+
+			ActWheel(Link, Wheel, WheelTorque )
 		end
 
 		if Wheels > 0 then
