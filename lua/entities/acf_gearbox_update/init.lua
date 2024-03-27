@@ -761,7 +761,7 @@ do -- Movement -----------------------------------------
 		local GearRatio = self.GearRatio
 
 		self.InputRPM = 0
-		self.TorqueInput = InputTorque
+		self.TorqueInput = math.Clamp( InputTorque, -self.MaxTorque, self.MaxTorque )
 		self.TorqueOutput = self.TorqueInput * GearRatio
 
 		if self.ChangeFinished < Clock.CurTime then

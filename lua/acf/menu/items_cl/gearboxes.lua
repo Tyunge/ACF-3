@@ -2,8 +2,8 @@ local ACF = ACF
 local Gearboxes = ACF.Classes.Gearboxes
 
 local function MobilityUpdateEligibilityCheck(Label, Data)
-	local ineligibleClassIDs = {["3-Auto"] = true, ["5-Auto"] = true, ["7-Auto"] = true, ["CVT"] = true }
-
+	local ineligibleClassIDs = {["3-Auto"] = true, ["5-Auto"] = true, ["7-Auto"] = true, ["CVT"] = true, ["DoubleDiff"] = true }
+	print(Data.ClassID)
 	if ineligibleClassIDs[Data.ClassID] then
 		Label:SetText("This gearbox type is ineligible for the mobility update.")
 		ACF.SetClientData("PrimaryClass","acf_gearbox")
