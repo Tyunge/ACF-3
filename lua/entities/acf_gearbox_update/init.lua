@@ -199,7 +199,7 @@ do -- Spawn and Update functions -----------------------
 	hook.Add("ACF_OnEntitySpawn", "ACF Cleanup Gearbox Data", CleanupData)
 	hook.Add("ACF_OnEntityUpdate", "ACF Cleanup Gearbox Data", CleanupData)
 	hook.Add("ACF_OnSetupInputs", "ACF Cleanup Gearbox Data", function(Entity, List)
-		if Entity:GetClass() ~= "acf_gearbox_update" then return end
+		if Entity:GetClass() ~= "acf_gearbox_update" and Entity:GetClass() ~= "acf_gearbox" then return end
 
 		local Count = #List
 
@@ -214,7 +214,7 @@ do -- Spawn and Update functions -----------------------
 		end
 	end)
 	hook.Add("ACF_OnEntityLast", "ACF Cleanup Gearbox Data", function(Class, Gearbox)
-		if Class ~= "acf_gearbox_update" then return end
+		if Class ~= "acf_gearbox_update" and Class ~= "acf_gearbox" then return end
 
 		Gearbox:SetBodygroup(1, 0)
 	end)
