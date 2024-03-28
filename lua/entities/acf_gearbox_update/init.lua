@@ -735,14 +735,15 @@ do -- Gear Shifting ------------------------------------
 end ----------------------------------------------------
 
 do -- Movement -----------------------------------------
+	local deg         = math.deg
 
-	local function ActWheel(Link, Wheel, Torque)
+	local function ActWheel(Link, Wheel, Torque, DeltaTime)
 		local Phys = Wheel:GetPhysicsObject()
 
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
 
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
-		Phys:ApplyTorqueCenter(TorqueAxis * -Clamp(Torque * 1.5, -5e5, 5e5))
+		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
 	end
 
 	function ENT:GetClutch()
@@ -753,7 +754,7 @@ do -- Movement -----------------------------------------
 		return self.GearRatio ~= 0
 	end
 
-	function ENT:Calc(InputTorque)
+	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
@@ -795,7 +796,7 @@ do -- Movement -----------------------------------------
 
 			end
 
-			ActWheel(Link, Wheel, WheelTorque )
+			ActWheel(Link, Wheel, WheelTorque, DeltaTime )
 		end
 
 		if Wheels > 0 then
