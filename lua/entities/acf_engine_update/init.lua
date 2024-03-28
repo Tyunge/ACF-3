@@ -720,7 +720,7 @@ function ENT:CalcRPM(SelfTbl)
 	local IsElectric = SelfTbl.IsElectric
 	local LimitRPM   = SelfTbl.LimitRPM
 	local IdleRPM	 = SelfTbl.IdleRPM
-	local FlyRPM     = SelfTbl.FlyRPM
+	local FlyRPM     = max(0,SelfTbl.FlyRPM)
 
 	-- Determine if the rev limiter will engage or disengage
 	local RevLimited = false
@@ -822,7 +822,7 @@ function ENT:CalcRPM(SelfTbl)
 
 	if( math.abs(LoadedRPMDifference) < 200 and GearboxLoad == 1 ) then
 		-- If the RPM difference is close enough lets just set the flywheel rpm to match the gearbox.
-		SelfTbl.FlyRPM 	= AverageGearboxRPM
+		SelfTbl.FlyRPM 	= max(0,AverageGearboxRPM)
 		FlyWheelFeedBack = 0
 	else
 		-- If the RPM difference is large enough lets accelerate or decelerate the engine based on it's inertia and torque difference.
