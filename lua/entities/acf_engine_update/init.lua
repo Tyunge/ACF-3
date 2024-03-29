@@ -735,7 +735,7 @@ function ENT:CalcRPM(SelfTbl)
 	end
 
 	-- Control by delta time.
-	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( IdleRPM - FlyRPM ) / 1e3
+	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( ( IdleRPM - FlyRPM ) / 1e3 ) * (DeltaTime/0.0150146484375)
 	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle, 0, 1 )
 
 	if FlyRPM > IdleRPM then SelfTbl.IdleThrottle = 0 end
@@ -843,7 +843,14 @@ function ENT:CalcRPM(SelfTbl)
 	self:UpdateSound(SelfTbl)
 	self:UpdateOutputs(SelfTbl)
 
-	TimerSimple(TickInterval(), function()
+	--[[
+		BUG:
+			Keep TickInterval just below the server tick rate to ensure it executes each server tick.
+			Setting the delay equal to server tick rate causes the timer to miss a game tick after exactly 255(** possibly related to 8 bit values ??? unable to determine why **) seconds.
+			Once it misses a tick it runs every other tick or at a rate of 33 ticks.
+			Switching from a timer to a hook would most likely solve this issue.
+	]]
+	TimerSimple(TickInterval()*0.9, function()
 		if not IsValid(self) then return end
 
 		self:CalcRPM(SelfTbl)
