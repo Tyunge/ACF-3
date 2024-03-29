@@ -734,6 +734,7 @@ function ENT:CalcRPM(SelfTbl)
 		SelfTbl.RevLimited = RevLimited
 	end
 
+	-- Control by delta time.
 	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( IdleRPM - FlyRPM ) / 1e3
 	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle, 0, 1 )
 
@@ -802,14 +803,17 @@ function ENT:CalcRPM(SelfTbl)
 
 		end
 	end
-	AverageGearboxRPM = TotalGearboxRPM / Boxes
-
+	if( Boxes > 0 ) then
+		AverageGearboxRPM = TotalGearboxRPM / Boxes
+	end
+	
 	-- Fly wheel acceleration when there is no load applied to engine ( In Neutral, Clutch disengaged, No gearbox attached, etc. )
 	local NoLoadAcceleration = (SelfTbl.Torque - Drag) / Inertia
 
 	-- Find the difference between flywheel rpm and the connected gearbox rpm.
 	local LoadedRPMDifference = SelfTbl.FlyRPM - AverageGearboxRPM
 	local LoadedPercent = Remap( math.abs(LoadedRPMDifference), 0, self.LimitRPM, 0, 1)
+
 
 	-- Lets convert speed difference into a torque difference.
 	local LoadedTorqueDifference = ACF.GetTorque(SelfTbl.TorqueCurve, LoadedPercent) * Sign( LoadedRPMDifference ) * PeakTorque * GearboxLoad
@@ -826,7 +830,7 @@ function ENT:CalcRPM(SelfTbl)
 		FlyWheelFeedBack = 0
 	else
 		-- If the RPM difference is large enough lets accelerate or decelerate the engine based on it's inertia and torque difference.
-		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration )	
+		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration*DeltaTime/0.0150146484375 )
 	end
 	
 	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
