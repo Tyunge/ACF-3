@@ -150,13 +150,13 @@ do -- Default gearbox menus
 
 			local RatioConverter = GearBase:AddButton("Convert Ratios")
 			function RatioConverter:DoClickInternal()
-				local FinalDrive = 1/ValuesData.FinalDrive
+				local FinalDrive = 1 / ValuesData.FinalDrive
 				ValuesData.FinalDrive = FinalDrive
 				ACF.SetClientData("FinalDrive", ValuesData.FinalDrive)
 
 				for I = 1, Gears.Max do
 					local Variable = "Gear" .. I
-					local Ratio = 1/ValuesData[Variable]
+					local Ratio = 1 / ValuesData[Variable]
 					ValuesData[Variable] = Ratio
 					ACF.SetClientData(Variable, Ratio)
 
@@ -513,7 +513,7 @@ do -- Default gearbox menus
 					ACF.SetClientData("Shift" .. I, Gear * Multiplier)
 				end
 			end
-			
+
 			local PasteCopiedData = GearBase:AddButton("Paste Copied Data")
 			function PasteCopiedData:DoClickInternal()
 				if ACF.GetClientString("CopiedGearboxData","No Data") == "No Data" then return end

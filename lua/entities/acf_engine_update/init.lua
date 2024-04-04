@@ -744,7 +744,7 @@ function ENT:CalcRPM(SelfTbl)
 	end
 
 	-- Control by delta time.
-	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( ( IdleRPM - FlyRPM ) / 1e3 ) * (DeltaTime/0.0150146484375)
+	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( ( IdleRPM - FlyRPM ) / 1e3 ) * (DeltaTime / 0.0150146484375)
 	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle, 0, 1 )
 
 	if FlyRPM > IdleRPM then SelfTbl.IdleThrottle = 0 end
@@ -779,7 +779,7 @@ function ENT:CalcRPM(SelfTbl)
 	local Drag = ( ( Displacement * FlyRPM ) / 100 ) * ( 1-Throttle )
 
 	local Torque = 0
-	if( Throttle ~= 0 and FlyRPM < LimitRPM )then
+	if ( Throttle ~= 0 and FlyRPM < LimitRPM ) then
 		local Percent = Remap(FlyRPM, IdleRPM, LimitRPM, 0, 1)
 		Torque = Throttle * ACF.GetTorque(SelfTbl.TorqueCurve, Percent) * PeakTorque
 	end
@@ -801,7 +801,7 @@ function ENT:CalcRPM(SelfTbl)
 		if not Ent.Disabled then
 			Boxes = Boxes + 1
 
-			if( Ent:GetClutch() > 0 )then
+			if ( Ent:GetClutch() > 0 ) then
 
 				--Engine sends DeltaTime to the once "Act" function for gearbox's
 				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio, DeltaTime )
@@ -813,10 +813,10 @@ function ENT:CalcRPM(SelfTbl)
 
 		end
 	end
-	if( Boxes > 0 ) then
+	if ( Boxes > 0 ) then
 		AverageGearboxRPM = TotalGearboxRPM / Boxes
 	end
-	
+
 	-- Fly wheel acceleration when there is no load applied to engine ( In Neutral, Clutch disengaged, No gearbox attached, etc. )
 	local NoLoadAcceleration = (SelfTbl.Torque - Drag) / Inertia
 
@@ -834,19 +834,19 @@ function ENT:CalcRPM(SelfTbl)
 
 	local FlyWheelFeedBack = LoadedTorqueDifference / Inertia
 
-	if( math.abs(LoadedRPMDifference) < 200 and GearboxLoad == 1 ) then
+	if ( math.abs(LoadedRPMDifference) < 200 and GearboxLoad == 1 ) then
 		-- If the RPM difference is close enough lets just set the flywheel rpm to match the gearbox.
 		SelfTbl.FlyRPM 	= max(0,AverageGearboxRPM)
 		FlyWheelFeedBack = 0
 	else
 		-- If the RPM difference is large enough lets accelerate or decelerate the engine based on it's inertia and torque difference.
-		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration*DeltaTime/0.0150146484375 )
+		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration * DeltaTime / 0.0150146484375 )
 	end
-	
-	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
-	SelfTbl.TorqueFeedback = ( -(Drag/2) * Inertia ) + math.max( 0,FlyWheelFeedBack )
 
-	SelfTbl.TorqueFeedback = math.Clamp(SelfTbl.TorqueFeedback, -PeakTorque/3, PeakTorque/3) -- Limiting how much feedback torque is applied until I can find a better formula to approximate the amount of torque
+	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
+	SelfTbl.TorqueFeedback = ( - (Drag / 2) * Inertia ) + math.max( 0,FlyWheelFeedBack )
+
+	SelfTbl.TorqueFeedback = math.Clamp(SelfTbl.TorqueFeedback, -PeakTorque / 3, PeakTorque / 3) -- Limiting how much feedback torque is applied until I can find a better formula to approximate the amount of torque
 
 	SelfTbl.LastThink = ClockTime
 
@@ -860,7 +860,7 @@ function ENT:CalcRPM(SelfTbl)
 			Once it misses a tick it runs every other tick or at a rate of 33 ticks.
 			Switching from a timer to a hook would most likely solve this issue.
 	]]
-	TimerSimple(TickInterval()*0.9, function()
+	TimerSimple(TickInterval() * 0.9, function()
 		if not IsValid(self) then return end
 
 		self:CalcRPM(SelfTbl)
