@@ -147,6 +147,42 @@ do -- Default gearbox menus
 
 				return Value
 			end)
+
+			local RatioConverter = GearBase:AddButton("Convert Ratios")
+			function RatioConverter:DoClickInternal()
+				local FinalDrive = 1/ValuesData.FinalDrive
+				ValuesData.FinalDrive = FinalDrive
+				ACF.SetClientData("FinalDrive", ValuesData.FinalDrive)
+
+				for I = 1, Gears.Max do
+					local Variable = "Gear" .. I
+					local Ratio = 1/ValuesData[Variable]
+					ValuesData[Variable] = Ratio
+					ACF.SetClientData(Variable, Ratio)
+
+				end
+			end
+
+			local PasteCopiedData = GearBase:AddButton("Paste Copied Data")
+			function PasteCopiedData:DoClickInternal()
+				if ACF.GetClientString("CopiedGearboxData","No Data") == "No Data" then return end
+				local CopiedData = util.JSONToTable(ACF.GetClientString("CopiedGearboxData","No Data"))
+				table.SortByMember(CopiedData, "Key", true)
+
+				local Ratios = CopiedData[3]["Value"]
+				local FinalDrive = CopiedData[1]["Value"]
+
+				for I = 1, Gears.Max do
+					if Ratios[I] ~= nil then
+						local Variable = "Gear" .. I
+						ValuesData[Variable] = Ratios[I]
+						ACF.SetClientData(Variable, ValuesData[Variable])
+					end
+				end
+
+				ValuesData["FinalDrive"] = FinalDrive
+				ACF.SetClientData("FinalDrive",ValuesData["FinalDrive"])
+			end
 		end
 	end
 
@@ -190,7 +226,7 @@ do -- Default gearbox menus
 			local Text = "Mass : %s\nTorque Rating : %s n/m - %s fl-lb\n"
 			local Mass = ACF.GetProperMass(Data.Mass)
 			local Torque = math.floor(Data.MaxTorque * 0.73)
-
+			local Gears = Class.Gears
 			Base:AddLabel(Text:format(Mass, Data.MaxTorque, Torque))
 
 			if Data.DualClutch then
@@ -230,6 +266,27 @@ do -- Default gearbox menus
 
 					return Value
 				end)
+			end
+
+			local PasteCopiedData = GearBase:AddButton("Paste Copied Data")
+			function PasteCopiedData:DoClickInternal()
+				if ACF.GetClientString("CopiedGearboxData","No Data") == "No Data" then return end
+				local CopiedData = util.JSONToTable(ACF.GetClientString("CopiedGearboxData","No Data"))
+				table.SortByMember(CopiedData, "Key", true)
+
+				local Ratios = CopiedData[3]["Value"]
+				local FinalDrive = CopiedData[1]["Value"]
+
+				for I = 1, Gears.Max do
+					if Ratios[I] ~= nil then
+						local Variable = "Gear" .. I
+						ValuesData[Variable] = Ratios[I]
+						ACF.SetClientData(Variable, ValuesData[Variable])
+					end
+				end
+
+				ValuesData["FinalDrive"] = FinalDrive
+				ACF.SetClientData("FinalDrive",ValuesData["FinalDrive"])
 			end
 		end
 	end
@@ -455,6 +512,27 @@ do -- Default gearbox menus
 
 					ACF.SetClientData("Shift" .. I, Gear * Multiplier)
 				end
+			end
+			
+			local PasteCopiedData = GearBase:AddButton("Paste Copied Data")
+			function PasteCopiedData:DoClickInternal()
+				if ACF.GetClientString("CopiedGearboxData","No Data") == "No Data" then return end
+				local CopiedData = util.JSONToTable(ACF.GetClientString("CopiedGearboxData","No Data"))
+				table.SortByMember(CopiedData, "Key", true)
+
+				local Ratios = CopiedData[3]["Value"]
+				local FinalDrive = CopiedData[1]["Value"]
+
+				for I = 1, Gears.Max do
+					if Ratios[I] ~= nil then
+						local Variable = "Gear" .. I
+						ValuesData[Variable] = Ratios[I]
+						ACF.SetClientData(Variable, ValuesData[Variable])
+					end
+				end
+
+				ValuesData["FinalDrive"] = FinalDrive
+				ACF.SetClientData("FinalDrive",ValuesData["FinalDrive"])
 			end
 		end
 	end

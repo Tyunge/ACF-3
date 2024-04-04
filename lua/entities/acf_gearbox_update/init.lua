@@ -787,7 +787,7 @@ do -- Movement -----------------------------------------
 			local Clutch = Link.Side == 1 and self.LClutch or self.RClutch
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
 			local WheelTorque = ( self.TorqueOutput * Clutch ) / table.Count( self.Wheels )
-			
+
 			if Clutch > 0 then
 
 				AverageWheelRPM = AverageWheelRPM + RPM

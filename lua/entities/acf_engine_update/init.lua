@@ -6,6 +6,15 @@ include("shared.lua")
 local ACF = ACF
 local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
 
+--[[
+	BUGS:
+		pass torque output through the clutch modifier.
+		check engine idling with partial clutc.
+
+		Wheels revvingh in air go wild
+
+]]
+
 --===============================================================================================--
 -- Engine class setup
 --===============================================================================================--
@@ -770,7 +779,7 @@ function ENT:CalcRPM(SelfTbl)
 	local Drag = ( ( Displacement * FlyRPM ) / 100 ) * ( 1-Throttle )
 
 	local Torque = 0
-	if Throttle ~= 0 and FlyRPM < LimitRPM then
+	if( Throttle ~= 0 and FlyRPM < LimitRPM )then
 		local Percent = Remap(FlyRPM, IdleRPM, LimitRPM, 0, 1)
 		Torque = Throttle * ACF.GetTorque(SelfTbl.TorqueCurve, Percent) * PeakTorque
 	end
@@ -792,7 +801,8 @@ function ENT:CalcRPM(SelfTbl)
 		if not Ent.Disabled then
 			Boxes = Boxes + 1
 
-			if Ent:GetClutch() > 0 then
+			if( Ent:GetClutch() > 0 )then
+
 				--Engine sends DeltaTime to the once "Act" function for gearbox's
 				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio, DeltaTime )
 			end
