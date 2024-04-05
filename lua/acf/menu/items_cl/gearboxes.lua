@@ -1,23 +1,6 @@
 local ACF = ACF
 local Gearboxes = ACF.Classes.Gearboxes
 
-local function MobilityUpdateEligibilityCheck(Label, Data)
-	local ineligibleClassIDs = {["3-Auto"] = true, ["5-Auto"] = true, ["7-Auto"] = true, ["CVT"] = true, ["DoubleDiff"] = true }
-
-	if ineligibleClassIDs[Data.ClassID] then
-		Label:SetText("This gearbox type is ineligible for the mobility update.")
-		ACF.SetClientData("PrimaryClass","acf_gearbox")
-	else
-		Label:SetText("This gearbox type is eligible for the mobility update.")
-
-		if GetConVar("acf_mobilityupdate"):GetBool() then
-			ACF.SetClientData("PrimaryClass", "acf_gearbox_update")
-		else
-			ACF.SetClientData("PrimaryClass","acf_gearbox")
-		end
-	end
-end
-
 local function CreateMenu(Menu)
 	local Entries = Gearboxes.GetEntries()
 
@@ -29,7 +12,6 @@ local function CreateMenu(Menu)
 	local Base = Menu:AddCollapsible("Gearbox Information")
 	local GearboxName = Base:AddTitle()
 	local GearboxDesc = Base:AddLabel()
-	local MobilityEligibility = Base:AddLabel()
 	local GearboxPreview = Base:AddModelPreview(nil, true)
 
 	ACF.SetClientData("PrimaryClass", "acf_gearbox")
@@ -53,13 +35,6 @@ local function CreateMenu(Menu)
 
 		self.ListData.Index = Index
 		self.Selected = Data
-
-		if ACF.MobilityUpdate then
-			MobilityUpdateEligibilityCheck(MobilityEligibility, Data)
-		else
-			MobilityEligibility:SetText("The mobility update has been disabled on this server.")
-		end
-
 
 		local ClassData = GearboxClass.Selected
 

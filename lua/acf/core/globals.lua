@@ -178,7 +178,6 @@ elseif CLIENT then
 	CreateClientConVar("acf_debris_gibmultiplier", 1, true, false, "The amount of gibs spawned when created by ACF debris.", 0, 1)
 	CreateClientConVar("acf_debris_giblifetime", 60, true, false, "Defines lifetime in seconds of each debris gib.", 1, 300)
 	CreateClientConVar("acf_debris_lifetime", 60, true, false, "Defines lifetime in seconds of each debris entity.", 1, 300)
-	CreateClientConVar("acf_mobilityupdate", 0, true, true, "If enabled, ACF engines & gearboxs will spawn with updated mobility logic.", 0, 1)
 
 	-- Display Info Bubble ----------------------
 	local ShowInfo = GetConVar("acf_show_entity_info")

@@ -47,13 +47,6 @@ do -- Clientside settings
 		Base:AddHelp("Requires hitboxes to be enabled.")
 	end)
 
-	ACF.AddClientSettings(99, "Experimental", function(Base)
-		local MobilityUpdate = Base:AddCheckBox("Enables new mobility logic")
-		MobilityUpdate:SetConVar("acf_mobilityupdate")
-
-		Base:AddHelp("ACF components will spawn as a seperate class from legacy components.")
-	end)
-
 	ACF.AddClientSettings(100, "Sound Volume", function(Base)
 		local Volume = Base:AddSlider("Client Sound Volume", 0, 1, 2)
 		Volume:SetClientData("Volume", "OnValueChanged")
