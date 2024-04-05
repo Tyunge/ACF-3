@@ -74,7 +74,7 @@ local function CreateMenu(Menu)
 	local EnginePreview = EngineBase:AddModelPreview(nil, true)
 	local EngineStats = EngineBase:AddLabel()
 
-	local MobilityUpdate = nil	
+	local MobilityUpdate = nil
 
 	local PowerGraph = Menu:AddGraph()
 	local PGWidth = Menu:GetWide()
