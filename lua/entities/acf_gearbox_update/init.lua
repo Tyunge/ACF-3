@@ -770,7 +770,7 @@ do -- Movement -----------------------------------------
 		for Ent, _ in pairs( self.GearboxOut ) do
 			Boxes = Boxes + 1
 			local GearboxTorque = self.TorqueOutput / table.Count( self.GearboxOut )
-			local RPM, Load = Ent:Calc( GearboxTorque, DeltaTime ) * GearRatio
+			local RPM = Ent:Calc( GearboxTorque, DeltaTime ) * GearRatio
 			self.InputRPM = self.InputRPM + RPM
 			self.Load = Ent.Load * Clutch
 		end
