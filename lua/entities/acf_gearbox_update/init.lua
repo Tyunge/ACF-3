@@ -263,6 +263,7 @@ do -- Spawn and Update functions -----------------------
 		Entity.LastActive     = 0
 		Entity.LClutch        = 1
 		Entity.RClutch        = 1
+		Entity.Load			  = 0 -- If the gearbox is connected to a load. ( Wheels for example. )
 		Entity.DataStore      = Entities.GetArguments("acf_gearbox_update")
 		Entity.InputRPM		  = 0
 		Entity.OutputRPM	  = 0
@@ -746,24 +747,20 @@ do -- Movement -----------------------------------------
 		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
 	end
 
-	function ENT:GetClutch()
-		return self.LClutch or self.RClutch
-	end
-
-	function ENT:GearEngaged()
-		return self.GearRatio ~= 0
-	end
-
-	function ENT:Calc(InputTorque, DeltaTime)
+	function ENT:Calc(InputTorque, GearboxLoad, DeltaTime)
 		if self.Disabled then return 0 end
 
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector( BoxPhys:GetAngleVelocity() )
 		local GearRatio = self.GearRatio
+		local LClutch = self.LClutch
+		local RClutch = self.RClutch
+		local Clutch = (LClutch + RClutch) / 2
 
+		self.Load = 0
 		self.InputRPM = 0
 		self.TorqueInput = math.Clamp( InputTorque, -self.MaxTorque, self.MaxTorque )
-		self.TorqueOutput = self.TorqueInput * GearRatio
+		self.TorqueOutput = self.TorqueInput * GearRatio * Clutch
 
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
@@ -772,7 +769,10 @@ do -- Movement -----------------------------------------
 		local Boxes = 0
 		for Ent, _ in pairs( self.GearboxOut ) do
 			Boxes = Boxes + 1
-			self.InputRPM = self.InputRPM + Ent:Calc( self.TorqueOutput / table.Count( self.GearboxOut ), DeltaTime ) * GearRatio
+			local GearboxTorque = self.TorqueOutput / table.Count( self.GearboxOut )
+			local RPM, Load = Ent:Calc( GearboxTorque, self.Load, DeltaTime ) * GearRatio
+			self.InputRPM = self.InputRPM + RPM
+			self.Load = Ent.Load * Clutch
 		end
 
 		if Boxes > 0 then
@@ -784,8 +784,9 @@ do -- Movement -----------------------------------------
 		local AverageWheelRPM = 0
 		local ReactTq = 0
 		for Wheel, Link in pairs( self.Wheels ) do
-			local Clutch = Link.Side == 1 and self.LClutch or self.RClutch
+			local Clutch = Link.Side == 0 and LClutch or RClutch
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
+
 			local WheelTorque = ( self.TorqueOutput * Clutch ) / table.Count( self.Wheels )
 
 			if Clutch > 0 then
@@ -795,13 +796,17 @@ do -- Movement -----------------------------------------
 				ReactTq = ReactTq + WheelTorque
 
 			end
-
 			ActWheel(Link, Wheel, WheelTorque, DeltaTime )
 		end
 
 		if Wheels > 0 then
 			AverageWheelRPM = AverageWheelRPM / Wheels
 			self.InputRPM = self.InputRPM + AverageWheelRPM * GearRatio
+			self.Load = 1 * Clutch
+		end
+
+		if self.GearRatio == 0 then
+			self.Load = 0
 		end
 
 		if ReactTq ~= 0 and IsValid(BoxPhys) then
@@ -813,7 +818,7 @@ do -- Movement -----------------------------------------
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
 		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
 
-		return self.InputRPM
+		return self.InputRPM, self.Load
 	end
 
 

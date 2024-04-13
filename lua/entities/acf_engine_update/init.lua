@@ -801,16 +801,9 @@ function ENT:CalcRPM(SelfTbl)
 		if not Ent.Disabled then
 			Boxes = Boxes + 1
 
-			if ( Ent:GetClutch() > 0 ) then
-
-				--Engine sends DeltaTime to the once "Act" function for gearbox's
-				TotalGearboxRPM = TotalGearboxRPM + Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio, DeltaTime )
-			end
-
-			if Ent:GearEngaged() then
-				GearboxLoad = 1 * Ent:GetClutch()
-			end
-
+			GearboxLoad = Ent.Load
+			local RPM, Load = Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio, GearboxLoad,DeltaTime )
+			TotalGearboxRPM = TotalGearboxRPM + RPM
 		end
 	end
 	if ( Boxes > 0 ) then
