@@ -747,7 +747,7 @@ do -- Movement -----------------------------------------
 		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
 	end
 
-	function ENT:Calc(InputTorque, GearboxLoad, DeltaTime)
+	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
@@ -770,7 +770,7 @@ do -- Movement -----------------------------------------
 		for Ent, _ in pairs( self.GearboxOut ) do
 			Boxes = Boxes + 1
 			local GearboxTorque = self.TorqueOutput / table.Count( self.GearboxOut )
-			local RPM, Load = Ent:Calc( GearboxTorque, self.Load, DeltaTime ) * GearRatio
+			local RPM, Load = Ent:Calc( GearboxTorque, DeltaTime ) * GearRatio
 			self.InputRPM = self.InputRPM + RPM
 			self.Load = Ent.Load * Clutch
 		end
@@ -818,7 +818,7 @@ do -- Movement -----------------------------------------
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
 		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
 
-		return self.InputRPM, self.Load
+		return self.InputRPM
 	end
 
 

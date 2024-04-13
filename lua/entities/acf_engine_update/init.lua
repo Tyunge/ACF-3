@@ -802,7 +802,7 @@ function ENT:CalcRPM(SelfTbl)
 			Boxes = Boxes + 1
 
 			GearboxLoad = Ent.Load
-			local RPM, Load = Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio, GearboxLoad,DeltaTime )
+			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio,DeltaTime )
 			TotalGearboxRPM = TotalGearboxRPM + RPM
 		end
 	end
