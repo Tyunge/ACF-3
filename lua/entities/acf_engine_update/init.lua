@@ -235,13 +235,6 @@ local function SetActive(Entity, Value, EntTbl)
 	Entity:UpdateOutputs(EntTbl)
 end
 
-local function Sign(number)
-	if number > 0 then return 1 end
-	if number == 0 then return 0 end
-	if number < 0 then return -1 end
-end
-
-
 --===============================================================================================--
 
 do -- Spawn and Update functions
@@ -730,7 +723,7 @@ function ENT:CalcRPM(SelfTbl)
 
 	local ClockTime = Clock.CurTime
 	local DeltaTime = ClockTime - SelfTbl.LastThink
-	local DefaultTick = 1/66
+	local DefaultTick = 1 / 66
 	local FuelTank = GetNextFuelTank(SelfTbl)
 	local IsElectric = SelfTbl.IsElectric
 	SelfTbl.RevLimited = false
@@ -741,12 +734,12 @@ function ENT:CalcRPM(SelfTbl)
 
 	-- [[ Idle & Throttle Control ]] --
 	local IdleRatio = (SelfTbl.IdleRPM - SelfTbl.FlyRPM) / SelfTbl.IdleRPM
-	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle + ( IdleRatio*0.25) * (DeltaTime / DefaultTick), 0, 0.5 )
+	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle + ( IdleRatio * 0.25) * (DeltaTime / DefaultTick), 0, 0.5 )
 
 	local SmoothedIdle = SelfTbl.IdleThrottle - SelfTbl.LastIdleThrottle
 	SelfTbl.LastIdleThrottle = SelfTbl.IdleThrottle
 
-	local Throttle = SelfTbl.RevLimited and 0 or math.Clamp( SelfTbl.Throttle + (SelfTbl.IdleThrottle + SmoothedIdle*5), 0, 1 )
+	local Throttle = SelfTbl.RevLimited and 0 or math.Clamp( SelfTbl.Throttle + (SelfTbl.IdleThrottle + SmoothedIdle * 5), 0, 1 )
 
 	-- [[ Fuel Usage ]] --
 	if IsValid(FuelTank) then
@@ -785,6 +778,7 @@ function ENT:CalcRPM(SelfTbl)
 	end
 	if ( GearboxCount > 0 ) then
 		GearboxRPM = GearboxRPM / GearboxCount
+		GearboxLoad = GearboxLoad / GearboxCount
 	end
 
 	-- Calculate Engine Vacuum
@@ -805,7 +799,7 @@ function ENT:CalcRPM(SelfTbl)
 	SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
 
-	SelfTbl.FlywheelInertiaTorque = ( (SelfTbl.FlyRPM - SelfTbl.SpeedChange) ) / 60
+	SelfTbl.FlywheelInertiaTorque = (SelfTbl.FlyRPM - SelfTbl.SpeedChange) / 60
 	SelfTbl.SpeedChange = SelfTbl.FlyRPM
 
 	local FlyRPM_Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
