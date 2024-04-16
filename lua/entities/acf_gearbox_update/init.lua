@@ -261,8 +261,9 @@ do -- Spawn and Update functions -----------------------
 		Entity.Braking        = false
 		Entity.LastBrake      = 0
 		Entity.LastActive     = 0
-		Entity.LClutch        = 1
-		Entity.RClutch        = 1
+		Entity.Clutch		  = 1 -- Clutch just for gearbox and engine connections
+		Entity.LClutch        = 1 -- Strictly for dual clutch gearboxes
+		Entity.RClutch        = 1 -- Strictly for dual clutch gearboxes
 		Entity.Load			  = 0 -- If the gearbox is connected to a load. ( Wheels for example. )
 		Entity.DataStore      = Entities.GetArguments("acf_gearbox_update")
 		Entity.InputRPM		  = 0
@@ -468,8 +469,9 @@ do -- Inputs -------------------------------------------
 	end)
 
 	ACF.AddInputAction("acf_gearbox_update", "Clutch", function(Entity, Value)
-		Entity.LClutch = Clamp(1 - Value, 0, 1)
-		Entity.RClutch = Clamp(1 - Value, 0, 1)
+		-- Entity.LClutch = Clamp(1 - Value, 0, 1)
+		-- Entity.RClutch = Clamp(1 - Value, 0, 1)
+		Entity.Clutch = Clamp( 1 - Value, 0, 1)
 	end)
 
 	ACF.AddInputAction("acf_gearbox_update", "Left Clutch", function(Entity, Value)
@@ -755,12 +757,12 @@ do -- Movement -----------------------------------------
 		local GearRatio = self.GearRatio
 		local LClutch = self.LClutch
 		local RClutch = self.RClutch
-		local Clutch = (LClutch + RClutch) / 2
+		local Clutch = self.Clutch
 
 		self.Load = 0
 		self.InputRPM = 0
-		self.TorqueInput = math.Clamp( InputTorque, -self.MaxTorque, self.MaxTorque )
-		self.TorqueOutput = self.TorqueInput * GearRatio * Clutch
+		self.TorqueInput = math.Clamp( InputTorque, -self.MaxTorque, self.MaxTorque ) * Clutch
+		self.TorqueOutput = self.TorqueInput * GearRatio
 
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
@@ -784,12 +786,12 @@ do -- Movement -----------------------------------------
 		local AverageWheelRPM = 0
 		local ReactTq = 0
 		for Wheel, Link in pairs( self.Wheels ) do
-			local Clutch = Link.Side == 0 and LClutch or RClutch
+			local DualClutch = Link.Side == 0 and LClutch or RClutch
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
 
-			local WheelTorque = ( self.TorqueOutput * Clutch ) / table.Count( self.Wheels )
+			local WheelTorque = ( self.TorqueOutput * DualClutch ) / table.Count( self.Wheels )
 
-			if Clutch > 0 then
+			if DualClutch > 0 then
 
 				AverageWheelRPM = AverageWheelRPM + RPM
 				Wheels = Wheels + 1

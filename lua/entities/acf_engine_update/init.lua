@@ -387,6 +387,7 @@ do -- Spawn and Update functions
 		Entity.MassRatio     = 1
 		Entity.FuelUsage     = 0
 		Entity.IdleThrottle  = 0
+		Entity.LastIdleThrottle = 0
 		Entity.Throttle      = 0
 		Entity.FlyRPM        = 0
 		Entity.SoundPath     = Engine.Sound
@@ -400,6 +401,8 @@ do -- Spawn and Update functions
 		Entity.DataStore     = Entities.GetArguments("acf_engine_update")
 		Entity.revLimiterEnabled = true
 		Entity.TorqueFeedback = 0
+		Entity.AverageGearboxRPM = 0
+		Entity.GearboxLoad = 0
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -720,50 +723,40 @@ function ENT:GetConsumption(Throttle, RPM, FuelTank, SelfTbl)
 end
 
 function ENT:CalcRPM(SelfTbl)
-	-- Reusing these entity table pointers helps us cut down on __index calls
-	-- This helps to massively improve performance throughout the entire drivetrain
 	SelfTbl = SelfTbl or self:GetTable()
 	if not SelfTbl.Active then return end
 
-	local ClockTime  = Clock.CurTime
-	local DeltaTime  = ClockTime - SelfTbl.LastThink
-	local FuelTank   = GetNextFuelTank(SelfTbl)
+	local ClockTime = Clock.CurTime
+	local DeltaTime = ClockTime - SelfTbl.LastThink
+	local DefaultTick = 1/66
+	local FuelTank = GetNextFuelTank(SelfTbl)
 	local IsElectric = SelfTbl.IsElectric
-	local LimitRPM   = SelfTbl.LimitRPM
-	local IdleRPM	 = SelfTbl.IdleRPM
-	local FlyRPM     = max(0,SelfTbl.FlyRPM)
+	SelfTbl.RevLimited = false
 
-	-- Determine if the rev limiter will engage or disengage
-	local RevLimited = false
 	if SelfTbl.revLimiterEnabled and not IsElectric then
-		if FlyRPM > LimitRPM * 0.99 then
-			RevLimited = true
-		elseif FlyRPM < LimitRPM * 0.95 then
-			RevLimited = false
-		end
-
-		SelfTbl.RevLimited = RevLimited
+		SelfTbl.RevLimited = SelfTbl.FlyRPM >= SelfTbl.LimitRPM
 	end
 
-	-- Control by delta time.
-	SelfTbl.IdleThrottle = SelfTbl.IdleThrottle + ( ( IdleRPM - FlyRPM ) / 1e3 ) * (DeltaTime / 0.0150146484375)
-	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle, 0, 1 )
+	-- [[ Idle & Throttle Control ]] --
+	local IdleRatio = (SelfTbl.IdleRPM - SelfTbl.FlyRPM) / SelfTbl.IdleRPM
+	SelfTbl.IdleThrottle = math.Clamp( SelfTbl.IdleThrottle + ( IdleRatio*0.25) * (DeltaTime / DefaultTick), 0, 0.5 )
 
-	if FlyRPM > IdleRPM then SelfTbl.IdleThrottle = 0 end
+	local SmoothedIdle = SelfTbl.IdleThrottle - SelfTbl.LastIdleThrottle
+	SelfTbl.LastIdleThrottle = SelfTbl.IdleThrottle
 
-	local Throttle = RevLimited and 0 or math.Clamp( SelfTbl.Throttle + SelfTbl.IdleThrottle, 0, 1 )
+	local Throttle = SelfTbl.RevLimited and 0 or math.Clamp( SelfTbl.Throttle + (SelfTbl.IdleThrottle + SmoothedIdle*5), 0, 1 )
 
-	-- Calculate fuel usage
+	-- [[ Fuel Usage ]] --
 	if IsValid(FuelTank) then
 		SelfTbl.FuelTank = FuelTank
 		SelfTbl.FuelType = FuelTank.FuelType
 
-		local Consumption = self:GetConsumption(Throttle, FlyRPM, FuelTank, SelfTbl) * DeltaTime
+		local Consumption = self:GetConsumption( Throttle, SelfTbl.FlyRPM, SelfTbl.FuelTank, SelfTbl ) * DeltaTime
 
 		SelfTbl.FuelUsage = 60 * Consumption / DeltaTime
 
-		FuelTank:Consume(Consumption, FuelTank:GetTable())
-	elseif ACF.RequireFuel then -- Stay active if fuel consumption is disabled
+		SelfTbl.FuelTank:Consume(Consumption, FuelTank:GetTable())
+	elseif ACF.RequireFuel then
 		SetActive(self, false, SelfTbl)
 
 		SelfTbl.FuelUsage = 0
@@ -771,90 +764,60 @@ function ENT:CalcRPM(SelfTbl)
 		return 0
 	end
 
-	-- Calculate the current torque from flywheel RPM
-	local IdleRPM    = SelfTbl.IdleRPM
-	local Inertia	= SelfTbl.Inertia
-	local PeakTorque = SelfTbl.PeakTorque
-	local Displacement = SelfTbl.Displacement
-
-	-- Engines have a low amount of friction due to oil. The deceleration is from the compression cycle
-	local Drag = ( ( Displacement * FlyRPM ) / 100 ) * ( 1-Throttle )
-
-	local Torque = 0
-	if ( Throttle ~= 0 and FlyRPM < LimitRPM ) then
-		local Percent = Remap(FlyRPM, IdleRPM, LimitRPM, 0, 1)
-		Torque = Throttle * ACF.GetTorque(SelfTbl.TorqueCurve, Percent) * PeakTorque
-	end
-
-	SelfTbl.Torque = Torque
-
-	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
-	local Boxes      = 0
-	local TotalGearboxRPM = 0
-	local AverageGearboxRPM = 0
+	-- [[ Calc RPM ]] --
+	local GearboxCount = 0
 	local GearboxLoad = 0
+	local GearboxRPM = 0
 
-	local BoxesTbl = SelfTbl.Gearboxes
-	local MassRatio = SelfTbl.MassRatio
-
-	-- Engines should only connect to a single gearbox. A differential should be used to control torque to multiple gearboxes.
-	-- Get the average RPM from all gearboxes and perform an even split of torque between them.
-	for Ent, _ in pairs(BoxesTbl) do
+	-- Get Gearbox RPM
+	for Ent, _ in pairs(SelfTbl.Gearboxes) do
 		if not Ent.Disabled then
-			Boxes = Boxes + 1
 
-			GearboxLoad = Ent.Load
-			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + SelfTbl.TorqueFeedback, -PeakTorque, PeakTorque ) * MassRatio,DeltaTime )
-			TotalGearboxRPM = TotalGearboxRPM + RPM
+			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque , -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
+
+			GearboxCount = GearboxCount + 1
+			GearboxLoad = GearboxLoad + Ent.Load
+			GearboxRPM = GearboxRPM + RPM
+
 		end
 	end
-	if ( Boxes > 0 ) then
-		AverageGearboxRPM = TotalGearboxRPM / Boxes
+	if ( GearboxCount > 0 ) then
+		GearboxRPM = GearboxRPM / GearboxCount
 	end
 
-	-- Fly wheel acceleration when there is no load applied to engine ( In Neutral, Clutch disengaged, No gearbox attached, etc. )
-	local NoLoadAcceleration = (SelfTbl.Torque - Drag) / Inertia
+	-- Calculate Engine Vacuum
+	local EngineBrake = SelfTbl.Displacement * (SelfTbl.FlyRPM / 60) * (1 - Throttle)
 
-	-- Find the difference between flywheel rpm and the connected gearbox rpm.
-	local LoadedRPMDifference = SelfTbl.FlyRPM - AverageGearboxRPM
-	local LoadedPercent = Remap( math.abs(LoadedRPMDifference), 0, self.LimitRPM, 0, 1)
+	-- Calculate Engine Speed @ 0 Gearbox Load.
+	local EngineSpeed_NoLoad = (SelfTbl.Torque - EngineBrake) / SelfTbl.Inertia
 
-
-	-- Lets convert speed difference into a torque difference.
-	local LoadedTorqueDifference = ACF.GetTorque(SelfTbl.TorqueCurve, LoadedPercent) * Sign( LoadedRPMDifference ) * PeakTorque * GearboxLoad
-	local LoadedAcceleration = LoadedTorqueDifference / Inertia
-
-	-- Mixes unloaded engine acceleration and loaded acceleration with the use of the clutch.
-	local FlyRPMAcceleration = ( NoLoadAcceleration * ( 1-GearboxLoad ) ) - ( LoadedAcceleration * GearboxLoad )
-
-	local FlyWheelFeedBack = LoadedTorqueDifference / Inertia
-
-	if ( math.abs(LoadedRPMDifference) < 200 and GearboxLoad == 1 ) then
-		-- If the RPM difference is close enough lets just set the flywheel rpm to match the gearbox.
-		SelfTbl.FlyRPM 	= max(0,AverageGearboxRPM)
-		FlyWheelFeedBack = 0
-	else
-		-- If the RPM difference is large enough lets accelerate or decelerate the engine based on it's inertia and torque difference.
-		SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM + FlyRPMAcceleration * DeltaTime / 0.0150146484375 )
+	-- Calculate Engine Speed @ Gearbox Load
+	local SpeedDifference = GearboxRPM - SelfTbl.FlyRPM
+	local SpeedRatio = 0
+	if GearboxRPM ~= 0 or SelfTbl.FlyRPM ~= 0 then
+		SpeedRatio = SpeedDifference / max( GearboxRPM, SelfTbl.FlyRPM )
 	end
 
-	-- Torque to be sent to the wheels. This includes engine braking / giving torque to the wheels to match engine speed.
-	SelfTbl.TorqueFeedback = ( - (Drag / 2) * Inertia ) + math.max( 0,FlyWheelFeedBack )
+	local TorqueDifference = ACF.GetTorque( SelfTbl.TorqueCurve, math.abs(SpeedRatio) ) * SelfTbl.PeakTorque * GearboxLoad * Sign( SpeedRatio )
 
-	SelfTbl.TorqueFeedback = math.Clamp(SelfTbl.TorqueFeedback, -PeakTorque / 3, PeakTorque / 3) -- Limiting how much feedback torque is applied until I can find a better formula to approximate the amount of torque
+	local EngineSpeed_Loaded = TorqueDifference / SelfTbl.Inertia
 
-	SelfTbl.LastThink = ClockTime
+	-- Mix Unloaded & Loaded Engine Speeds.	
+	local EngineSpeed = ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( EngineSpeed_Loaded * GearboxLoad )
+
+	-- Apply Engine Speed To The Flywheel
+	SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
+	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
+
+	local FlyRPM_Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
+	SelfTbl.Torque = ACF.GetTorque(SelfTbl.TorqueCurve, FlyRPM_Percent) * SelfTbl.PeakTorque * Throttle
+	SelfTbl.Torque = SelfTbl.Torque + ( -EngineBrake/ 60 / SelfTbl.Inertia)
 
 	self:UpdateSound(SelfTbl)
 	self:UpdateOutputs(SelfTbl)
 
-	--[[
-		BUG:
-			Keep TickInterval just below the server tick rate to ensure it executes each server tick.
-			Setting the delay equal to server tick rate causes the timer to miss a game tick after exactly 255(** possibly related to 8 bit values ??? unable to determine why **) seconds.
-			Once it misses a tick it runs every other tick or at a rate of 33 ticks.
-			Switching from a timer to a hook would most likely solve this issue.
-	]]
+	SelfTbl.LastThink = ClockTime
+
 	TimerSimple(TickInterval() * 0.9, function()
 		if not IsValid(self) then return end
 
