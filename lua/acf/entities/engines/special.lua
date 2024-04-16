@@ -63,7 +63,7 @@ do -- Special I4 Engines
 		Mass		 = 78,
 		Torque		 = 85,
 		FlywheelMass = 0.031,
-		FlywheelMassUpdate = 2,
+		FlywheelMassUpdate = 3,
 		Displacement = 1,
 		Pitch		 = 0.75,
 		RPM = {
