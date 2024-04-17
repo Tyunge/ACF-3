@@ -790,7 +790,7 @@ do -- Movement -----------------------------------------
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
 			local Multiplier = 1
 
-			if LClutch != RClutch then
+			if LClutch ~= RClutch then
 				Multiplier = 2
 			end
 
