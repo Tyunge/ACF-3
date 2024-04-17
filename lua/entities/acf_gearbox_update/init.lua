@@ -857,7 +857,7 @@ do -- Braking ------------------------------------------
 		if not self.Braking then return end -- Kills the whole thing if its not supposed to be running
 		if not next(self.Wheels) then return end -- No brakes for the non-wheel users
 		if self.LastBrake == Clock.CurTime then return end -- Don't run this twice in a tick
-
+		if not IsValid(Contraption.GetAncestor(self):GetPhysicsObject()) then return end
 		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
 		local SelfWorld = BoxPhys:LocalToWorldVector(BoxPhys:GetAngleVelocity())
 		local DeltaTime = Clock.DeltaTime
