@@ -778,9 +778,9 @@ function ENT:CalcRPM(SelfTbl)
 	end
 	if ( GearboxCount > 0 ) then
 		GearboxRPM = GearboxRPM / GearboxCount
-		 GearboxLoad = GearboxLoad / GearboxCount
+		-- GearboxLoad = GearboxLoad / GearboxCount
 	end
-
+	
 	-- Calculate Engine Vacuum
 	SelfTbl.EngineBrakeTorque = SelfTbl.Displacement * (SelfTbl.FlyRPM / 60) * (1 - Throttle)
 
@@ -790,7 +790,7 @@ function ENT:CalcRPM(SelfTbl)
 	-- Calculate Engine Speed @ Gearbox Load
 	local SpeedDifference = math.max(0,GearboxRPM) - SelfTbl.FlyRPM
 
-	local EngineSpeed_Loaded = ( (SpeedDifference / 6)  / SelfTbl.Inertia )
+	local EngineSpeed_Loaded = math.Clamp( ( (SpeedDifference / 6)  / SelfTbl.Inertia ), -SelfTbl.PeakTorque, SelfTbl.PeakTorque )
 
 	-- Mix Unloaded & Loaded Engine Speeds.	
 	local EngineSpeed = ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( EngineSpeed_Loaded * GearboxLoad )
@@ -804,7 +804,6 @@ function ENT:CalcRPM(SelfTbl)
 		SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
 	end
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
-
 
 	SelfTbl.FlywheelInertiaTorque = (SelfTbl.FlyRPM - SelfTbl.SpeedChange) / 60
 	SelfTbl.SpeedChange = SelfTbl.FlyRPM
