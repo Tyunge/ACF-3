@@ -788,15 +788,18 @@ do -- Movement -----------------------------------------
 		for Wheel, Link in pairs( self.Wheels ) do
 			local DualClutch = Link.Side == 0 and LClutch or RClutch
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
+			local Multiplier = 1
 
-			local WheelTorque = ( self.TorqueOutput * DualClutch ) / table.Count( self.Wheels )
+			if LClutch != RClutch then
+				Multiplier = 2
+			end
+
+			local WheelTorque = ( self.TorqueOutput * DualClutch * Multiplier ) / table.Count( self.Wheels )
 
 			if DualClutch > 0 then
-
 				AverageWheelRPM = AverageWheelRPM + RPM
 				Wheels = Wheels + 1
 				ReactTq = ReactTq + WheelTorque
-
 			end
 			ActWheel(Link, Wheel, WheelTorque, DeltaTime )
 		end
