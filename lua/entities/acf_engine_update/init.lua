@@ -778,7 +778,7 @@ function ENT:CalcRPM(SelfTbl)
 	end
 	if ( GearboxCount > 0 ) then
 		GearboxRPM = GearboxRPM / GearboxCount
-		GearboxLoad = GearboxLoad / GearboxCount
+		 GearboxLoad = GearboxLoad / GearboxCount
 	end
 
 	-- Calculate Engine Vacuum
@@ -796,8 +796,15 @@ function ENT:CalcRPM(SelfTbl)
 	local EngineSpeed = ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( EngineSpeed_Loaded * GearboxLoad )
 
 	-- Apply Engine Speed To The Flywheel
-	SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
+	if math.abs(SpeedDifference) <= 200 and GearboxLoad == 1 then
+		-- Consider the engine fully engaged with gearbox
+		SelfTbl.FlyRPM = GearboxRPM
+	else
+		-- Solve speed difference
+		SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
+	end
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
+
 
 	SelfTbl.FlywheelInertiaTorque = (SelfTbl.FlyRPM - SelfTbl.SpeedChange) / 60
 	SelfTbl.SpeedChange = SelfTbl.FlyRPM
