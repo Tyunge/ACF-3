@@ -6,15 +6,6 @@ include("shared.lua")
 local ACF = ACF
 local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
 
---[[
-	BUGS:
-		pass torque output through the clutch modifier.
-		check engine idling with partial clutc.
-
-		Wheels revvingh in air go wild
-
-]]
-
 --===============================================================================================--
 -- Engine class setup
 --===============================================================================================--
@@ -395,8 +386,6 @@ do -- Spawn and Update functions
 		--[[ New Variables ]] --
 		Entity.IdleThrottle  = 0
 		Entity.LastIdleThrottle = 0
-		Entity.SpeedChange = 0
-		Entity.FlywheelInertiaTorque = 0
 		Entity.EngineBrakeTorque = 0
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
@@ -768,7 +757,7 @@ function ENT:CalcRPM(SelfTbl)
 	for Ent, _ in pairs(SelfTbl.Gearboxes) do
 		if not Ent.Disabled then
 
-			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + ( -SelfTbl.FlywheelInertiaTorque ) + ( -SelfTbl.EngineBrakeTorque / 100 ), -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
+			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + ( -SelfTbl.EngineBrakeTorque / 100 ), -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
 
 			GearboxCount = GearboxCount + 1
 			GearboxLoad = GearboxLoad + Ent.Load
@@ -787,29 +776,13 @@ function ENT:CalcRPM(SelfTbl)
 	-- Calculate Engine Speed @ 0 Gearbox Load.
 	local EngineSpeed_NoLoad = (SelfTbl.Torque - SelfTbl.EngineBrakeTorque) / SelfTbl.Inertia
 
-	-- Calculate Engine Speed @ Gearbox Load
-	local SpeedDifference = math.max(0,GearboxRPM) - SelfTbl.FlyRPM
+	local SpeedDifference = ( ( GearboxRPM - SelfTbl.FlyRPM ) / 6 )
 
-	local EngineSpeed_Loaded = math.Clamp( (SpeedDifference / 6)  / SelfTbl.Inertia, -SelfTbl.PeakTorque, SelfTbl.PeakTorque )
-
-	-- Mix Unloaded & Loaded Engine Speeds.	
-	local EngineSpeed = ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( EngineSpeed_Loaded * GearboxLoad )
-
-	-- Apply Engine Speed To The Flywheel
-	if math.abs(SpeedDifference) <= 200 and GearboxLoad == 1 then
-		-- Consider the engine fully engaged with gearbox
-		SelfTbl.FlyRPM = GearboxRPM
-	else
-		-- Solve speed difference
-		SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineSpeed * (DeltaTime / DefaultTick)
-	end
+	SelfTbl.FlyRPM = SelfTbl.FlyRPM + ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( SpeedDifference * GearboxLoad )
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
 
-	SelfTbl.FlywheelInertiaTorque = (SelfTbl.FlyRPM - SelfTbl.SpeedChange) / 60
-	SelfTbl.SpeedChange = SelfTbl.FlyRPM
-
-	local FlyRPM_Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
-	SelfTbl.Torque = ACF.GetTorque(SelfTbl.TorqueCurve, FlyRPM_Percent) * SelfTbl.PeakTorque * Throttle
+	local Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
+	SelfTbl.Torque = ACF.GetTorque( SelfTbl.TorqueCurve, Percent ) * SelfTbl.PeakTorque * Throttle
 
 	self:UpdateSound(SelfTbl)
 	self:UpdateOutputs(SelfTbl)
