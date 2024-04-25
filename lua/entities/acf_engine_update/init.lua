@@ -784,6 +784,10 @@ function ENT:CalcRPM(SelfTbl)
 	local Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
 	SelfTbl.Torque = ACF.GetTorque( SelfTbl.TorqueCurve, Percent ) * SelfTbl.PeakTorque * Throttle
 
+	if SelfTbl.FlyRPM >= SelfTbl.LimitRPM then
+		SelfTbl.Torque = 0
+	end
+
 	self:UpdateSound(SelfTbl)
 	self:UpdateOutputs(SelfTbl)
 
