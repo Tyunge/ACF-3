@@ -312,7 +312,7 @@ do -- Default gearbox menus
 				local Gear2 = 1 / ValuesData.Gear2
 				ValuesData.Gear2 = Gear2
 				ACF.SetClientData("Gear2",Gear2)
-			end	
+			end
 
 			local PasteCopiedData = GearBase:AddButton("Paste Copied Ratios")
 			function PasteCopiedData:DoClickInternal()

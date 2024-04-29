@@ -758,8 +758,8 @@ do -- Movement -----------------------------------------
 		local Clutch 	= self.Clutch
 		local LClutch 	= self.LClutch
 		local RClutch 	= self.RClutch
-		local LTqRatio	= ( 1+(RClutch - LClutch) ) / Wheels
-		local RTqRatio	= ( 1+(LClutch - RClutch) ) / Wheels
+		local LTqRatio	= ( 1 + (RClutch - LClutch) ) / Wheels
+		local RTqRatio	= ( 1 + (LClutch - RClutch) ) / Wheels
 
 		if LClutch == 0 and RClutch == 0 then
 			LTqRatio = 0
@@ -777,7 +777,7 @@ do -- Movement -----------------------------------------
 
 		--[[ Update connected gearboxes ]]--
 		local AverageGearboxRPM = 0
-		for Ent, Link in pairs( self.GearboxOut ) do
+		for Ent, _ in pairs( self.GearboxOut ) do
 			local GearboxTorque = self.TorqueOutput / Gearboxes
 			local RPM = Ent:Calc( GearboxTorque, DeltaTime )
 
@@ -798,7 +798,7 @@ do -- Movement -----------------------------------------
 			local DualClutch = Link.Side == 1 and LClutch or RClutch
 			local TorqueTransfer = Link.Side == 0 and LTqRatio or RTqRatio
 
-			local WheelTorque = ( ( self.TorqueOutput ) * TorqueTransfer )
+			local WheelTorque = ( self.TorqueOutput ) * TorqueTransfer
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld) * DualClutch
 
 			AverageWheelRPM = AverageWheelRPM + RPM
@@ -836,9 +836,9 @@ do -- Movement -----------------------------------------
 			WireLib.TriggerOutput(self, "Ratio", self.GearRatio)
 		end
 
-		self:UpdateOverlay()	
+		self:UpdateOverlay()
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
-		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)			
+		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)	
 		return self.InputRPM
 	end
 
