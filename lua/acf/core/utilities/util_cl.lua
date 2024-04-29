@@ -210,9 +210,9 @@ do -- Default gearbox menus
 			{
 				Name = "Gear 2",
 				Variable = "Gear2",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
 				Default = -0.1,
 			},
 			{
@@ -227,16 +227,16 @@ do -- Default gearbox menus
 				Name = "Max Target RPM",
 				Variable = "MaxRPM",
 				Min = 101,
-				Max = 10000,
+				Max = 12000,
 				Decimals = 0,
 				Default = 5000,
 			},
 			{
 				Name = "Final Drive",
 				Variable = "FinalDrive",
-				Min = -1,
-				Max = 1,
-				Decimals = 2,
+				Min = -10,
+				Max = 10,
+				Decimals = 3,
 				Default = 1,
 			},
 		}
@@ -253,6 +253,20 @@ do -- Default gearbox menus
 			end
 
 			ACF.SetClientData("PrimaryClass","acf_gearbox")
+
+			local MobilityUpdate = Base:AddCheckBox("[BETA] Enables new mobility logic")
+			MobilityUpdate:SetClientData("MobilityUpdate", "OnChange")
+			MobilityUpdate:DefineSetter(function(Panel, _, _, Value)
+				Panel:SetValue(Value)
+				if Value then
+					ACF.SetClientData("PrimaryClass","acf_gearbox_update")
+				else
+					ACF.SetClientData("PrimaryClass","acf_gearbox")
+				end
+				return Value
+			end)
+
+			Base:AddLabel("With the mobility update enabled \"Max Target RPM\" is unused.")
 			-----------------------------------
 
 			local GearBase = Menu:AddCollapsible("Gear Settings")
@@ -261,7 +275,7 @@ do -- Default gearbox menus
 
 			local ValuesData = Values[Class.ID]
 
-			ACF.SetClientData("Gear1", 0.01)
+			ACF.SetClientData("Gear1", 0.001)
 
 			for _, GearData in ipairs(CVTData) do
 				local Variable = GearData.Variable
@@ -287,6 +301,18 @@ do -- Default gearbox menus
 					return Value
 				end)
 			end
+
+			local RatioConverter = GearBase:AddButton("Convert Ratios")
+			function RatioConverter:DoClickInternal()
+				if ValuesData.FinalDrive ~= 0 then
+					local FinalDrive = 1 / ValuesData.FinalDrive
+					ValuesData.FinalDrive = FinalDrive
+					ACF.SetClientData("FinalDrive", ValuesData.FinalDrive)
+				end
+				local Gear2 = 1 / ValuesData.Gear2
+				ValuesData.Gear2 = Gear2
+				ACF.SetClientData("Gear2",Gear2)
+			end	
 
 			local PasteCopiedData = GearBase:AddButton("Paste Copied Ratios")
 			function PasteCopiedData:DoClickInternal()

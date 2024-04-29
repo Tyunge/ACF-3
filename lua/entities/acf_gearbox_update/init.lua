@@ -469,8 +469,6 @@ do -- Inputs -------------------------------------------
 	end)
 
 	ACF.AddInputAction("acf_gearbox_update", "Clutch", function(Entity, Value)
-		-- Entity.LClutch = Clamp(1 - Value, 0, 1)
-		-- Entity.RClutch = Clamp(1 - Value, 0, 1)
 		Entity.Clutch = Clamp( 1 - Value, 0, 1)
 	end)
 
@@ -746,62 +744,67 @@ do -- Movement -----------------------------------------
 		if not Phys:IsMotionEnabled() then return end -- skipping entirely if its frozen
 
 		local TorqueAxis = Phys:LocalToWorldVector(Link.Axis)
-		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000))
+		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000)) -- Do tests to see if deltatime drops after 255 seconds.
 	end
 
 	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
-		local BoxPhys = Contraption.GetAncestor(self):GetPhysicsObject()
-		local SelfWorld = BoxPhys:LocalToWorldVector( BoxPhys:GetAngleVelocity() )
+		local PhysObj 	= Contraption.GetAncestor(self):GetPhysicsObject()
+		local SelfWorld = PhysObj:LocalToWorldVector( PhysObj:GetAngleVelocity() )
+		local Wheels	= table.Count(self.Wheels)
+		local Gearboxes = table.Count(self.GearboxOut)
 		local GearRatio = self.GearRatio
-		local LClutch = self.LClutch
-		local RClutch = self.RClutch
-		local Clutch = self.Clutch
+		local Clutch 	= self.Clutch
+		local LClutch 	= self.LClutch
+		local RClutch 	= self.RClutch
+		local LTqRatio	= ( 1+(RClutch - LClutch) ) / Wheels
+		local RTqRatio	= ( 1+(LClutch - RClutch) ) / Wheels
+
+		if LClutch == 0 and RClutch == 0 then
+			LTqRatio = 0
+			RTqRatio = 0
+		end
 
 		self.Load = 0
 		self.InputRPM = 0
-		self.TorqueInput = math.Clamp( InputTorque, -self.MaxTorque, self.MaxTorque ) * Clutch
+		self.TorqueInput = math.Clamp(InputTorque, -self.MaxTorque, self.MaxTorque) * Clutch
 		self.TorqueOutput = self.TorqueInput * GearRatio
 
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
 		end
 
-		local Boxes = 0
-		for Ent, _ in pairs( self.GearboxOut ) do
-			Boxes = Boxes + 1
-			local GearboxTorque = self.TorqueOutput / table.Count( self.GearboxOut )
-			local RPM = Ent:Calc( GearboxTorque, DeltaTime ) * GearRatio
-			self.InputRPM = self.InputRPM + RPM
+		--[[ Update connected gearboxes ]]--
+		local AverageGearboxRPM = 0
+		for Ent, Link in pairs( self.GearboxOut ) do
+			local GearboxTorque = self.TorqueOutput / Gearboxes
+			local RPM = Ent:Calc( GearboxTorque, DeltaTime )
+
+			AverageGearboxRPM = AverageGearboxRPM + RPM
+			self.InputRPM = self.InputRPM + RPM * GearRatio
 			self.Load = Ent.Load * Clutch
 		end
 
-		if Boxes > 0 then
-			self.InputRPM = self.InputRPM / Boxes
+		if Gearboxes > 0 then
+			AverageGearboxRPM = AverageGearboxRPM / Gearboxes
+			self.InputRPM = self.InputRPM / Gearboxes
 		end
 
-
-		local Wheels = 0
+		--[[ Update connected wheels ]]--
+		local ChassisTorque = 0
 		local AverageWheelRPM = 0
-		local ReactTq = 0
 		for Wheel, Link in pairs( self.Wheels ) do
-			local DualClutch = Link.Side == 0 and LClutch or RClutch
-			local RPM = CalcWheel(self, Link, Wheel, SelfWorld)
-			local Multiplier = 1
+			local DualClutch = Link.Side == 1 and LClutch or RClutch
+			local TorqueTransfer = Link.Side == 0 and LTqRatio or RTqRatio
 
-			if LClutch ~= RClutch then
-				Multiplier = 2
-			end
+			local WheelTorque = ( ( self.TorqueOutput ) * TorqueTransfer )
+			local RPM = CalcWheel(self, Link, Wheel, SelfWorld) * DualClutch
 
-			local WheelTorque = ( self.TorqueOutput * DualClutch * Multiplier ) / table.Count( self.Wheels )
+			AverageWheelRPM = AverageWheelRPM + RPM
+			ChassisTorque = ChassisTorque + WheelTorque
 
-			if DualClutch > 0 then
-				AverageWheelRPM = AverageWheelRPM + RPM
-				Wheels = Wheels + 1
-				ReactTq = ReactTq + WheelTorque
-			end
-			ActWheel(Link, Wheel, WheelTorque, DeltaTime )
+			ActWheel(Link, Wheel, WheelTorque, DeltaTime)
 		end
 
 		if Wheels > 0 then
@@ -810,22 +813,34 @@ do -- Movement -----------------------------------------
 			self.Load = 1 * Clutch
 		end
 
-		if self.GearRatio == 0 then
+		if GearRatio == 0 then
 			self.Load = 0
 		end
 
-		if ReactTq ~= 0 and IsValid(BoxPhys) then
-			BoxPhys:ApplyTorqueCenter( self:GetRight() * ReactTq )
+		if ChassisTorque ~= 0 and IsValid(PhysObj) then
+			PhysObj:ApplyTorqueCenter( self:GetRight() * ChassisTorque )
 		end
 
-		self:UpdateOverlay()
+		--[[ Calculate Ratios for CVT ]]--
+		if self.CVT and self.Gear == 1 then
+			if self.CVTRatio > 0 then
+				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 1)
+			else
+				local InputRPM = math.max( math.abs(AverageWheelRPM), math.abs(AverageGearboxRPM) )
+				local R = self.MinRPM / math.max(1,math.abs(InputRPM)) / math.abs(self.FinalDrive)
+				self.Gears[1] = math.Clamp(R, 0.01, 10)
 
+			end
+
+			self.GearRatio = self.Gears[1] * self.FinalDrive
+			WireLib.TriggerOutput(self, "Ratio", self.GearRatio)
+		end
+
+		self:UpdateOverlay()	
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
-		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
-
+		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)			
 		return self.InputRPM
 	end
-
 
 end ----------------------------------------------------
 
@@ -863,7 +878,7 @@ do -- Braking ------------------------------------------
 		local DeltaTime = Clock.DeltaTime
 
 		for Wheel, Link in pairs(self.Wheels) do
-			local Brake = Link.Side == 0 and self.LBrake or self.RBrake
+			local Brake = Link.Side == 1 and self.LBrake or self.RBrake
 
 			if Brake > 0 then -- regular ol braking
 				Link.IsBraking = true
