@@ -387,6 +387,8 @@ do -- Spawn and Update functions
 		Entity.IdleThrottle  = 0
 		Entity.LastIdleThrottle = 0
 		Entity.EngineBrakeTorque = 0
+		Entity.FlywheelTorque = 0
+		Entity.LastFlyRPM = 0
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -757,7 +759,7 @@ function ENT:CalcRPM(SelfTbl)
 	for Ent, _ in pairs(SelfTbl.Gearboxes) do
 		if not Ent.Disabled then
 
-			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + ( -SelfTbl.EngineBrakeTorque / 100 ), -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
+			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + ( -SelfTbl.EngineBrakeTorque / 100 ) + (-SelfTbl.FlywheelTorque), -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
 
 			GearboxCount = GearboxCount + 1
 			GearboxLoad = GearboxLoad + Ent.Load
@@ -780,6 +782,10 @@ function ENT:CalcRPM(SelfTbl)
 
 	SelfTbl.FlyRPM = SelfTbl.FlyRPM + ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( SpeedDifference * GearboxLoad )
 	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
+
+	-- Calculate Flywheel Torque
+	SelfTbl.FlywheelTorque = ( ( SelfTbl.FlyRPM - SelfTbl.LastFlyRPM ) / 6 ) * SelfTbl.Inertia
+	SelfTbl.LastFlyRPM = SelfTbl.FlyRPM
 
 	local Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
 	SelfTbl.Torque = ACF.GetTorque( SelfTbl.TorqueCurve, Percent ) * SelfTbl.PeakTorque * Throttle
