@@ -798,7 +798,7 @@ do -- Movement -----------------------------------------
 			local DualClutch = Link.Side == 1 and LClutch or RClutch
 			local TorqueTransfer = Link.Side == 0 and LTqRatio or RTqRatio
 
-			local WheelTorque = ( self.TorqueOutput ) * TorqueTransfer
+			local WheelTorque = self.TorqueOutput * TorqueTransfer
 			local RPM = CalcWheel(self, Link, Wheel, SelfWorld) * DualClutch
 
 			AverageWheelRPM = AverageWheelRPM + RPM
@@ -838,7 +838,7 @@ do -- Movement -----------------------------------------
 
 		self:UpdateOverlay()
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
-		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)	
+		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)
 		return self.InputRPM
 	end
 
