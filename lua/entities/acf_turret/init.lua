@@ -71,7 +71,7 @@ do	-- Spawn and Update funcs
 		local Model		= Turret.Model
 		local Size		= Data.RingSize
 
-		if (Size < 12) and (Data.Turret == "Turret-H") then
+		if (Size <= 12.5) and (Data.Turret == "Turret-H") then
 			Model	= Turret.ModelSmall
 		end
 
@@ -627,7 +627,7 @@ do -- Overlay
 		local SlewAccel = math.Round(self.SlewAccel * self.DamageScale, 4)
 		local TotalMass = math.Round(self.TurretData.TotalMass, 1)
 
-		local Text = "Max " .. SlewMax .. " deg/s\nAccel: " .. SlewAccel .. " deg/s^2\nTeeth: " .. self.TurretData.Teeth .. "t\nCurrent Mass: " .. TotalMass .. "kg"
+		local Text = "Max " .. SlewMax .. " deg/s\nAccel: " .. SlewAccel .. " deg/s^2\nTeeth: " .. self.TurretData.Teeth .. " t\nCurrent Mass: " .. TotalMass .. " kg"
 
 		if self.HasArc then Text = Text .. "\nArc: " .. self.MinDeg .. "/" .. self.MaxDeg end
 
