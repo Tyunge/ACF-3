@@ -17,7 +17,7 @@ do -- Petrol Engines
 		Mass		 = 40,
 		Torque		 = 118,
 		FlywheelMass = 0.05,
-		FlywheelMassUpdate = 5,
+		FlywheelMassUpdate = 10,
 		Displacement = 1.2,
 		RPM = {
 			Idle	= 1100,
