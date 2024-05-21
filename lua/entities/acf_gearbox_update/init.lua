@@ -917,7 +917,7 @@ do -- Braking ------------------------------------------
 
 		self.LastBrake = Clock.CurTime
 
-		timer.Simple(DeltaTime, function()
+		timer.Simple(engine.TickInterval() * 0.9, function()
 			if not IsValid(self) then return end
 
 			self:ApplyBrakes()
