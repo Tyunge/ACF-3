@@ -5,6 +5,8 @@ include("shared.lua")
 
 local ACF = ACF
 local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
+local RPMToRads = 0.10472
+local RadsToRPM = 9.5493
 
 --===============================================================================================--
 -- Engine class setup
@@ -226,6 +228,7 @@ local function SetActive(Entity, Value, EntTbl)
 	Entity:UpdateOutputs(EntTbl)
 end
 
+
 --===============================================================================================--
 
 do -- Spawn and Update functions
@@ -386,9 +389,9 @@ do -- Spawn and Update functions
 		--[[ New Variables ]] --
 		Entity.IdleThrottle  = 0
 		Entity.LastIdleThrottle = 0
-		Entity.EngineBrakeTorque = 0
 		Entity.FlywheelTorque = 0
-		Entity.LastFlyRPM = 0
+		Entity.LastVar = 0
+		Entity.Var = 0
 
 		UpdateEngine(Entity, Data, Class, Engine, Type)
 
@@ -754,45 +757,48 @@ function ENT:CalcRPM(SelfTbl)
 	local GearboxCount = 0
 	local GearboxLoad = 0
 	local GearboxRPM = 0
+	local GearboxInertia = 0
 
 	-- Get Gearbox RPM
 	for Ent, _ in pairs(SelfTbl.Gearboxes) do
 		if not Ent.Disabled then
 
-			local RPM = Ent:Calc( math.Clamp( SelfTbl.Torque + ( -SelfTbl.EngineBrakeTorque / 100 ) + (-SelfTbl.FlywheelTorque), -SelfTbl.PeakTorque, SelfTbl.PeakTorque ) * SelfTbl.MassRatio, DeltaTime )
+			-- Pass engine torque and inertia torque to the gearbox
+			local RPM = Ent:Calc( SelfTbl.FlywheelTorque* SelfTbl.MassRatio, DeltaTime )
 
 			GearboxCount = GearboxCount + 1
 			GearboxLoad = GearboxLoad + Ent.Load
 			GearboxRPM = GearboxRPM + RPM
-
+			GearboxInertia = GearboxInertia + Ent.Inertia
 		end
 	end
 	if ( GearboxCount > 0 ) then
 		GearboxRPM = GearboxRPM / GearboxCount
-		-- GearboxLoad = GearboxLoad / GearboxCount
 	end
-
-	-- Calculate Engine Vacuum
-	SelfTbl.EngineBrakeTorque = SelfTbl.Displacement * (SelfTbl.FlyRPM / 60) * (1 - Throttle)
-
-	-- Calculate Engine Speed @ 0 Gearbox Load.
-	local EngineSpeed_NoLoad = (SelfTbl.Torque - SelfTbl.EngineBrakeTorque) / SelfTbl.Inertia
-
-	local SpeedDifference = ( ( GearboxRPM - SelfTbl.FlyRPM ) / 6 )
-
-	SelfTbl.FlyRPM = SelfTbl.FlyRPM + ( EngineSpeed_NoLoad * ( 1 - GearboxLoad ) ) + ( SpeedDifference * GearboxLoad )
-	SelfTbl.FlyRPM = max( 0, SelfTbl.FlyRPM )
-
-	-- Calculate Flywheel Torque
-	SelfTbl.FlywheelTorque = ( ( SelfTbl.FlyRPM - SelfTbl.LastFlyRPM ) / 6 ) * SelfTbl.Inertia
-	SelfTbl.LastFlyRPM = SelfTbl.FlyRPM
-
 	local Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
 	SelfTbl.Torque = ACF.GetTorque( SelfTbl.TorqueCurve, Percent ) * SelfTbl.PeakTorque * Throttle
 
 	if SelfTbl.FlyRPM >= SelfTbl.LimitRPM then
 		SelfTbl.Torque = 0
 	end
+
+	--[[ Oscillation Problem with low gears.]]
+	local CompressionBrake = -(SelfTbl.Displacement * 0.05) * (SelfTbl.FlyRPM * RPMToRads) * ( 1 - Throttle )
+
+	local SlipDifference = GearboxRPM - SelfTbl.FlyRPM
+
+	local GearboxFeedbackTq = ( (SlipDifference * GearboxInertia * GearboxLoad) / 2 )
+
+	if SelfTbl.Torque < math.abs(GearboxFeedbackTq) then
+		SelfTbl.FlywheelTorque = -GearboxFeedbackTq
+	else
+		SelfTbl.FlywheelTorque = SelfTbl.Torque
+	end
+
+	local EngineTorque = SelfTbl.Torque + (GearboxFeedbackTq * GearboxLoad) + ( CompressionBrake * ( 1 - GearboxLoad ) )
+
+	SelfTbl.FlyRPM = SelfTbl.FlyRPM + EngineTorque / math.max(SelfTbl.Inertia, GearboxInertia * GearboxLoad)
+	SelfTbl.FlyRPM = math.max(0, SelfTbl.FlyRPM)
 
 	self:UpdateSound(SelfTbl)
 	self:UpdateOutputs(SelfTbl)

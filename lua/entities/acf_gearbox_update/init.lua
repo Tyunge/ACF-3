@@ -270,6 +270,8 @@ do -- Spawn and Update functions -----------------------
 		Entity.OutputRPM	  = 0
 		Entity.TorqueInput    = 0
 		Entity.TorqueOutput   = 0
+		Entity.Inertia		  = 0
+		Entity.IsDualClutch   = Gearbox.DualClutch and true or false
 
 		UpdateGearbox(Entity, Data, Class, Gearbox)
 
@@ -747,6 +749,13 @@ do -- Movement -----------------------------------------
 		Phys:ApplyTorqueCenter(TorqueAxis * Clamp(deg(-Torque * 1.5) * DeltaTime, -500000, 500000)) -- Do tests to see if deltatime drops after 255 seconds.
 	end
 
+	local function GetRotationalInertia(Link, Wheel)
+		local Phys = Wheel:GetPhysicsObject()
+
+		return (Phys:GetInertia() * Link.Axis):Length()
+	end
+
+
 	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
@@ -765,9 +774,13 @@ do -- Movement -----------------------------------------
 			LTqRatio = 0
 			RTqRatio = 0
 		end
+		if LClutch == RClutch and self.IsDualClutch then
+			Clutch = LClutch
+		end
 
 		self.Load = 0
 		self.InputRPM = 0
+		self.Inertia = 0
 		self.TorqueInput = math.Clamp(InputTorque, -self.MaxTorque, self.MaxTorque) * Clutch
 		self.TorqueOutput = self.TorqueInput * GearRatio
 
@@ -784,6 +797,7 @@ do -- Movement -----------------------------------------
 			AverageGearboxRPM = AverageGearboxRPM + RPM
 			self.InputRPM = self.InputRPM + RPM * GearRatio
 			self.Load = Ent.Load * Clutch
+			self.Inertia = self.Inertia + Ent.Inertia
 		end
 
 		if Gearboxes > 0 then
@@ -803,6 +817,7 @@ do -- Movement -----------------------------------------
 
 			AverageWheelRPM = AverageWheelRPM + RPM
 			ChassisTorque = ChassisTorque + WheelTorque
+			self.Inertia = self.Inertia + GetRotationalInertia(Link, Wheel)
 
 			ActWheel(Link, Wheel, WheelTorque, DeltaTime)
 		end
@@ -820,20 +835,31 @@ do -- Movement -----------------------------------------
 		if ChassisTorque ~= 0 and IsValid(PhysObj) then
 			PhysObj:ApplyTorqueCenter( self:GetRight() * ChassisTorque )
 		end
-
+		
 		--[[ Calculate Ratios for CVT ]]--
 		if self.CVT and self.Gear == 1 then
 			if self.CVTRatio > 0 then
 				self.Gears[1] = Clamp(self.CVTRatio, 0.01, 1)
 			else
-				local InputRPM = math.max( math.abs(AverageWheelRPM), math.abs(AverageGearboxRPM) )
-				local R = self.MinRPM / math.max(1,math.abs(InputRPM)) / math.abs(self.FinalDrive)
-				self.Gears[1] = math.Clamp(R, 0.01, 10)
+				local AvrgIdle = 0
+				local Count = 0
+				for Engine in pairs(self.Engines) do
+					AvrgIdle = AvrgIdle + Engine.IdleRPM
+					Count = Count + 1
+				end
+				AvrgIdle = ( AvrgIdle / Count )
+				local InputRPM = math.max( math.abs(AverageGearboxRPM), math.abs(AverageWheelRPM))
 
+ 				local R = self.MinRPM / math.max(AvrgIdle/2,InputRPM) / math.abs(self.FinalDrive)
+				self.Gears[1] = math.Clamp(R, 1, 10)
 			end
 
 			self.GearRatio = self.Gears[1] * self.FinalDrive
 			WireLib.TriggerOutput(self, "Ratio", self.GearRatio)
+		end
+
+		if GearRatio != 0 then
+			self.Inertia = self.Inertia / math.abs(GearRatio)
 		end
 
 		self:UpdateOverlay()
