@@ -6,7 +6,6 @@ include("shared.lua")
 local ACF = ACF
 local MaxDistance = ACF.LinkDistance * ACF.LinkDistance
 local RPMToRads = 0.10472
-local RadsToRPM = 9.5493
 
 --===============================================================================================--
 -- Engine class setup
@@ -117,7 +116,6 @@ local IsValid      = IsValid
 local Clamp        = math.Clamp
 local Round        = math.Round
 local Remap        = math.Remap
-local max          = math.max
 local TimerCreate  = timer.Create
 local TimerSimple  = timer.Simple
 local TimerRemove  = timer.Remove
@@ -764,7 +762,7 @@ function ENT:CalcRPM(SelfTbl)
 		if not Ent.Disabled then
 
 			-- Pass engine torque and inertia torque to the gearbox
-			local RPM = Ent:Calc( SelfTbl.FlywheelTorque* SelfTbl.MassRatio, DeltaTime )
+			local RPM = Ent:Calc( SelfTbl.FlywheelTorque * SelfTbl.MassRatio, DeltaTime )
 
 			GearboxCount = GearboxCount + 1
 			GearboxLoad = GearboxLoad + Ent.Load
