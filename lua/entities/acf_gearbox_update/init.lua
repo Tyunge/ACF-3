@@ -850,7 +850,7 @@ do -- Movement -----------------------------------------
 				AvrgIdle = ( AvrgIdle / Count )
 				local InputRPM = math.max( math.abs(AverageGearboxRPM), math.abs(AverageWheelRPM) )
 
- 				local R = self.MinRPM / math.max(AvrgIdle / 2,InputRPM) / math.abs(self.FinalDrive)
+				local R = self.MinRPM / math.max(AvrgIdle / 2,InputRPM) / math.abs(self.FinalDrive)
 				self.Gears[1] = math.Clamp(R, 1, 10)
 			end
 
