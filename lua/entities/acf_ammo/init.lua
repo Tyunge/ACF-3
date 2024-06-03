@@ -188,6 +188,7 @@ do -- Spawning and Updating --------------------
 		Entity.EntType    = "Ammo Crate"
 		Entity.ClassData  = Class
 		Entity.Class      = Class.ID -- Needed for custom killicons
+		Entity.WeaponData = Weapon
 		Entity.Caliber    = Caliber
 
 		WireIO.SetupInputs(Entity, Inputs, Data, Class, Weapon, Ammo)
@@ -464,7 +465,7 @@ do -- ACF Activation and Damage -----------------
 				Sounds.SendSound(Entity, "ambient/explosions/explode_4.wav", 140, Pitch, 1)
 
 				BulletData.Pos    = Entity:LocalToWorld(Entity:OBBCenter() + VectorRand() * Entity:GetSize() * 0.5) -- Random position in the ammo crate
-				BulletData.Flight = VectorRand():GetNormalized() * Speed * 39.37 + ACF_GetAncestor(Entity):GetVelocity() -- Random direction including baseplate speed
+				BulletData.Flight = VectorRand():GetNormalized() * Speed * 39.37 + Contraption.GetAncestor(Entity):GetVelocity() -- Random direction including baseplate speed
 
 				BulletData.Owner  = Entity.Inflictor or Entity.Owner
 				BulletData.Gun    = Entity
@@ -645,11 +646,13 @@ end ---------------------------------------------
 
 do -- Ammo Consumption -------------------------
 	function ENT:CanConsume()
-		if self.Disabled then return false end
-		if not self.Load then return false end
-		if self.Damaged then return false end
+		local SelfTbl = self:GetTable()
 
-		return self.Ammo > 0
+		if SelfTbl.Disabled then return false end
+		if not SelfTbl.Load then return false end
+		if SelfTbl.Damaged then return false end
+
+		return SelfTbl.Ammo > 0
 	end
 
 	function ENT:Consume(Num)
