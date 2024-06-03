@@ -272,6 +272,7 @@ do -- Spawn and Update functions -----------------------
 		Entity.TorqueOutput   = 0
 		Entity.Inertia		  = 0
 		Entity.IsDualClutch   = Gearbox.DualClutch and true or false
+		Entity.TotalRatio 	  = 0
 
 		UpdateGearbox(Entity, Data, Class, Gearbox)
 
@@ -755,7 +756,6 @@ do -- Movement -----------------------------------------
 		return (Phys:GetInertia() * Link.Axis):Length()
 	end
 
-
 	function ENT:Calc(InputTorque, DeltaTime)
 		if self.Disabled then return 0 end
 
@@ -770,39 +770,27 @@ do -- Movement -----------------------------------------
 		local LTqRatio	= ( 1 + (RClutch - LClutch) ) / Wheels
 		local RTqRatio	= ( 1 + (LClutch - RClutch) ) / Wheels
 
+
+		if self.IsDualClutch then
+			if LClutch == RClutch then
+				Clutch = LClutch
+			end
+		end
+
 		if LClutch == 0 and RClutch == 0 then
 			LTqRatio = 0
 			RTqRatio = 0
 		end
-		if LClutch == RClutch and self.IsDualClutch then
-			Clutch = LClutch
-		end
 
-		self.Load = 0
+		--self.Load = 0
 		self.InputRPM = 0
 		self.Inertia = 0
 		self.TorqueInput = math.Clamp(InputTorque, -self.MaxTorque, self.MaxTorque) * Clutch
 		self.TorqueOutput = self.TorqueInput * GearRatio
+		self.TotalRatio = math.abs(GearRatio)
 
 		if self.ChangeFinished < Clock.CurTime then
 			self.InGear = true
-		end
-
-		--[[ Update connected gearboxes ]]--
-		local AverageGearboxRPM = 0
-		for Ent, _ in pairs( self.GearboxOut ) do
-			local GearboxTorque = self.TorqueOutput / Gearboxes
-			local RPM = Ent:Calc( GearboxTorque, DeltaTime )
-
-			AverageGearboxRPM = AverageGearboxRPM + RPM
-			self.InputRPM = self.InputRPM + RPM * GearRatio
-			self.Load = Ent.Load * Clutch
-			self.Inertia = self.Inertia + Ent.Inertia
-		end
-
-		if Gearboxes > 0 then
-			AverageGearboxRPM = AverageGearboxRPM / Gearboxes
-			self.InputRPM = self.InputRPM / Gearboxes
 		end
 
 		--[[ Update connected wheels ]]--
@@ -826,6 +814,27 @@ do -- Movement -----------------------------------------
 			AverageWheelRPM = AverageWheelRPM / Wheels
 			self.InputRPM = self.InputRPM + AverageWheelRPM * GearRatio
 			self.Load = 1 * Clutch
+		end
+
+		--[[ Update connected gearboxes ]]--
+		local AverageGearboxRPM = 0
+		local CombinedRatio = 0
+		for Ent, _ in pairs( self.GearboxOut ) do
+			local GearboxTorque = self.TorqueOutput / Gearboxes
+			local RPM = Ent:Calc( GearboxTorque, DeltaTime )
+
+			AverageGearboxRPM = AverageGearboxRPM + RPM
+			CombinedRatio = CombinedRatio + math.abs(Ent.TotalRatio)
+			self.InputRPM = self.InputRPM + RPM * GearRatio
+			self.Load = math.Clamp(self.Load + Ent.Load,0,1) * Clutch
+			self.Inertia = self.Inertia + Ent.Inertia
+		end
+
+		if Gearboxes > 0 then
+			AverageGearboxRPM = AverageGearboxRPM / Gearboxes
+			CombinedRatio = CombinedRatio / Gearboxes
+			self.InputRPM = self.InputRPM / Gearboxes
+			self.TotalRatio = self.TotalRatio * math.abs(CombinedRatio)
 		end
 
 		if GearRatio == 0 then
@@ -861,7 +870,6 @@ do -- Movement -----------------------------------------
 		if GearRatio ~= 0 then
 			self.Inertia = self.Inertia / math.abs(GearRatio)
 		end
-
 		self:UpdateOverlay()
 		WireLib.TriggerOutput(self, "RPM", self.InputRPM)
 		WireLib.TriggerOutput(self, "Output Torque", self.TorqueOutput)

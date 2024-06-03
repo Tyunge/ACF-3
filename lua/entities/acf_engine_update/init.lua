@@ -756,6 +756,7 @@ function ENT:CalcRPM(SelfTbl)
 	local GearboxLoad = 0
 	local GearboxRPM = 0
 	local GearboxInertia = 0
+	local GearboxTotalRatio = 0
 
 	-- Get Gearbox RPM
 	for Ent, _ in pairs(SelfTbl.Gearboxes) do
@@ -768,11 +769,14 @@ function ENT:CalcRPM(SelfTbl)
 			GearboxLoad = GearboxLoad + Ent.Load
 			GearboxRPM = GearboxRPM + RPM
 			GearboxInertia = GearboxInertia + Ent.Inertia
+			GearboxTotalRatio = GearboxTotalRatio + Ent.TotalRatio
 		end
 	end
 	if ( GearboxCount > 0 ) then
 		GearboxRPM = GearboxRPM / GearboxCount
+		GearboxTotalRatio = GearboxTotalRatio / GearboxCount
 	end
+
 	local Percent = Remap( SelfTbl.FlyRPM, SelfTbl.IdleRPM, SelfTbl.LimitRPM, 0, 1 )
 	SelfTbl.Torque = ACF.GetTorque( SelfTbl.TorqueCurve, Percent ) * SelfTbl.PeakTorque * Throttle
 
@@ -780,18 +784,16 @@ function ENT:CalcRPM(SelfTbl)
 		SelfTbl.Torque = 0
 	end
 
-	--[[ Oscillation Problem with low gears.]]
 	local CompressionBrake = -(SelfTbl.Displacement * 0.05) * (SelfTbl.FlyRPM * RPMToRads) * ( 1 - Throttle )
 
 	local SlipDifference = GearboxRPM - SelfTbl.FlyRPM
 
-	local GearboxFeedbackTq = ( (SlipDifference * GearboxInertia * GearboxLoad) / 2 )
+	local GearboxFeedbackTq = ( (SlipDifference * GearboxInertia * GearboxLoad) / 2)
 
-	if SelfTbl.Torque < math.abs(GearboxFeedbackTq) then
-		SelfTbl.FlywheelTorque = -GearboxFeedbackTq
-	else
-		SelfTbl.FlywheelTorque = SelfTbl.Torque
-	end
+	local maxTq = ( (math.abs(SlipDifference) * GearboxInertia) / GearboxTotalRatio )
+
+	SelfTbl.FlywheelTorque = SelfTbl.Torque - math.Clamp(GearboxFeedbackTq, -maxTq, maxTq)
+
 
 	local EngineTorque = SelfTbl.Torque + (GearboxFeedbackTq * GearboxLoad) + ( CompressionBrake * ( 1 - GearboxLoad ) )
 
