@@ -770,11 +770,8 @@ do -- Movement -----------------------------------------
 		local LTqRatio	= ( 1 + (RClutch - LClutch) ) / Wheels
 		local RTqRatio	= ( 1 + (LClutch - RClutch) ) / Wheels
 
-
-		if self.IsDualClutch then
-			if LClutch == RClutch then
-				Clutch = LClutch
-			end
+		if self.IsDualClutch and LClutch == RClutch then
+			Clutch = LClutch
 		end
 
 		if LClutch == 0 and RClutch == 0 then
